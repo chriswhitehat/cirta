@@ -1,0 +1,77 @@
+'''
+Copyright (c) 2014 Chris White
+
+Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), 
+to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, 
+and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE 
+WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR 
+COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, 
+ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+'''
+
+import splunklib.client as client, random
+import logging, os, socket
+
+log = logging.getLogger(__name__)
+
+class SplunkIt():
+    def __init__(self, splunkEnabled, splunkIndexers, splunkPort, splunkUser, splunkPassword, splunkIndex, host, cirta_id):
+        self.splunkEnabled = splunkEnabled
+        if not self.splunkEnabled:
+            return
+        log.debug('msg="initializing splunkit"')
+        self.indexName = splunkIndex
+        self.host = host
+        self.source = cirta_id
+        
+        random.shuffle(splunkIndexers)
+        for splunkServer in splunkIndexers:
+            try:
+                log.debug('msg="selected random splunk indexer" indexer="%s"' % splunkServer)
+                self.service = client.connect(host=splunkServer, port=splunkPort, username=splunkUser, password=splunkPassword)
+                self.index = self.service.indexes[splunkIndex]
+                break
+            except(socket.error):
+                log.warning("Warning: Unable to connect to Splunk Indexer, skipping indexer.")
+                log.debug('msg="Unable to connect to Splunk instance" server="%s" port="%s" user="%s" host="%s"' % (splunkServer, splunkPort, splunkUser, host))
+                pass
+        
+        if not hasattr(self, 'index'):
+            log.warning("Warning: Unable to connect to any Splunk Indexers, skipping splunk data push.")
+            self.splunkEnabled = False
+        
+            
+        
+    def push(self, sourcetype, filename=None, eventList=None, event=None):
+        
+        if not self.splunkEnabled:
+            return
+        
+        if filename:
+            if os.path.exists(filename):
+                events = open(filename, 'rb')
+            else:
+                events = []
+        elif eventList:
+            events = eventList
+        elif event:
+            events = [event]
+        else:
+            log.warning('Warning: no data to push.')
+            log.debug('msg="no data to push" type="%s"' % sourcetype)
+            return
+            
+        with self.index.attached_socket(host=self.host, source=self.source, sourcetype=sourcetype) as sock:
+            i = 0
+            for line in events:
+                i += 1
+                if line.endswith('\n'):
+                    sock.send(line)
+                else:
+                    sock.send(line + '\n')
+            log.debug('msg="pushed data to splunk" type="%s" event_count="%s"' % (sourcetype, i))
+    
