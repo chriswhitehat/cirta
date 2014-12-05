@@ -126,7 +126,8 @@ class Event(object):
         self.setEventDateTime(datetime.datetime.today())
         self._analystUsername = getpass.getuser()
         self._analystHostname = gethostname()
-        self._splunk = SplunkIt(configs['cirta']['settings']['SPLUNK_ENABLED'],
+        if configs['cirta']['settings']['SPLUNK_ENABLED']:
+            self._splunk = SplunkIt(configs['cirta']['settings']['SPLUNK_ENABLED'],
                                 [x.strip() for x in configs['cirta']['settings']['SPLUNK_INDEXERS'].split(',')],
                                 configs['cirta']['settings']['SPLUNK_PORT'],
                                 configs['cirta']['settings']['SPLUNK_USER'],
@@ -134,6 +135,8 @@ class Event(object):
                                 configs['cirta']['settings']['SPLUNK_INDEX'],
                                 self._analystHostname, 
                                 self.cirta_id)
+        else:
+            self._splunk = SplunkIt(None, None, None, None, None, None, None, None)
         self._stackTraces = []
         self._outDir = configs['cirta']['settings']['IR_PATH'] + self._DT.date().isoformat()
         self._resourcesPath = os.path.join(self._cirtaHome, 'resources')
