@@ -34,6 +34,10 @@ def execute(event):
             event.setAttribute('_sID', value=splitID[0], force=True)
             event.setAttribute('_cID', value=splitID[1], force=True)
             
+            query = 'SELECT timestamp, INET_NTOA(src_ip), INET_NTOA(dst_ip), signature FROM event WHERE sid in (%s) AND cid in (%s);' % (event._sID, event._cID)
+            
+            log.debug('msg="MySQL query statement for alert id" alert_id="%s" query="%s"' % (event.alertID, query))
+            
             queryResults = getSguilSql('SELECT timestamp, INET_NTOA(src_ip), INET_NTOA(dst_ip), signature FROM event WHERE sid in (%s) AND cid in (%s);' % (event._sID, event._cID), sguilserver=SGUIL_SERVER, tableSplit=True)
 
             return queryResults[-1]
