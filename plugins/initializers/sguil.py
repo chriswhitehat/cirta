@@ -36,14 +36,14 @@ def execute(event):
             
             query = 'SELECT timestamp, INET_NTOA(src_ip), INET_NTOA(dst_ip), signature FROM event WHERE sid in (%s) AND cid in (%s);' % (event._sID, event._cID)
             
-            log.debug('msg="MySQL query statement for alert id" alert_id="%s" query="%s"' % (event.alertID, query))
+            log.debug('msg="MySQL query statement for alert id" alertID="%s" query="%s"' % (event.alertID, query))
             
             queryResults = getSguilSql('SELECT timestamp, INET_NTOA(src_ip), INET_NTOA(dst_ip), signature FROM event WHERE sid in (%s) AND cid in (%s);' % (event._sID, event._cID), sguilserver=SGUIL_SERVER, tableSplit=True)
 
             return queryResults[-1]
             
         except(IndexError):
-            print('Invalid AlertID. Try again.\n')
+            print('Invalid AlertID or DB Error. Try again.\n')
             return set_sID_cID()
     
     timestamp, srcIP, dstIP, signature = set_sID_cID()
