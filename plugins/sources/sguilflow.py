@@ -57,7 +57,7 @@ def execute(event):
     
     queryResults = getSguilSql(query, tableSplit=True)
     
-    orf = '%s.%s' % (event._baseFilePath, confVars.outputExtension)
+    orf = '%s.%s' % (event._baseFilePath, sguilserver=so_server, confVars.outputExtension)
     
     outRawFile = open(orf, 'w')
     
