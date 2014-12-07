@@ -53,6 +53,8 @@ def execute(event):
                                                                                                                                event.ip_address)
     query += "ORDER BY datetime, src_port ASC LIMIT %s;" % event._sqlLimit
     
+    log.debug('msg="Sguil Flow Query" query="%s"' % query)
+    
     queryResults = getSguilSql(query, tableSplit=True)
     
     orf = '%s.%s' % (event._baseFilePath, confVars.outputExtension)

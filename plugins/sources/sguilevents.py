@@ -54,6 +54,8 @@ def execute(event):
                                                                                                                                                  event.ip_address)
     query += "src_port ASC LIMIT %s" % event._sqlLimit
     
+    log.debug('msg="Sguil Events Query" query="%s"' % query)
+    
     queryResults = getSguilSql(query, sguilserver=so_server, tableSplit=True)
     
     orf = '%s.%s' % (event._baseFilePath, confVars.outputExtension)
