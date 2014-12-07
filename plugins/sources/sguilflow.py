@@ -55,9 +55,9 @@ def execute(event):
     
     log.debug('msg="Sguil Flow Query" query="%s"' % query)
     
-    queryResults = getSguilSql(query, tableSplit=True)
+    queryResults = getSguilSql(query, sguilserver=so_server, tableSplit=True)
     
-    orf = '%s.%s' % (event._baseFilePath, sguilserver=so_server, confVars.outputExtension)
+    orf = '%s.%s' % (event._baseFilePath, confVars.outputExtension)
     
     outRawFile = open(orf, 'w')
     
