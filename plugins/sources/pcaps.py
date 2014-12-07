@@ -255,7 +255,8 @@ def execute(event):
      
         tcpdumpFiles(event, ssh, server, dailies)
         
-    mergePCAPGroups(event)
+    if confVars.mergeGroups:
+        mergePCAPGroups(event)
         #print dailies
     
     
