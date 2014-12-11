@@ -14,9 +14,14 @@ ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEAL
 '''
 
 from lib.util import runBash, printStatusMsg
+from getpass import getuser, getpass
 
 def input(event):
-    '''Requires no input'''
+    inputHeader = '%s Query Options' % FORMAL_NAME
+    event.setOutPath()
+    
+    event.setAttribute('epoUser', getuser())
+    event.setAttribute('epoPassword', getpass())
     
     
 def adhocInput(event):
@@ -63,7 +68,7 @@ def execute(event):
         
         resDict['Tags'] = ','.join([x for x in resDict['Tags'].split(',') if 'Deploy' not in x])
         
-        printStatusMsg('ePO Informational Details', length=20, char='-', color=colors.HEADER2)
+        printStatusMsg('Informational Details', length=20, char='-', color=colors.HEADER2)
 
         for info in ['Description', 'System Description', 'Is Laptop', 'Tags', 'Time Zone', 'Last Communication']:
             print "%s -- %s" % (info, resDict[info])
