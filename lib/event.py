@@ -14,7 +14,7 @@ COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER I
 ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 '''
 
-import datetime, pytz, logging, getpass, pytz, getpass, os, re, sys
+import datetime, pytz, logging, getpass, pytz, getpass, os, re, sys, pwd, grp
 from collections import OrderedDict
 from socket import gethostname
 from logging.handlers import SysLogHandler
@@ -139,6 +139,7 @@ class Event(object):
             self._splunk = SplunkIt(None, None, None, None, None, None, None, None)
         self._stackTraces = []
         self._outDir = configs['cirta']['settings']['IR_PATH'] + self._DT.date().isoformat()
+        self._outDirOwner = configs['cirta']['settings']['IR_PATH_OWNER']
         self._resourcesPath = os.path.join(self._cirtaHome, 'resources')
     
     
@@ -236,6 +237,12 @@ class Event(object):
 
         try:
             os.makedirs(os.path.join(self._outDir, 'bin'))
+            if self._outDirOwner:
+                for root, dirs, files in os.walk(self._outDir):  
+                    for momo in dirs:  
+                        os.chown(os.path.join(root, momo), -1, grp.getgrnam(self._outDirOwner).gr_gid)
+                    for momo in files:
+                        os.chown(os.path.join(root, momo), -1, grp.getgrnam(self._outDirOwner).gr_gid)
         except(OSError):
             pass
 
