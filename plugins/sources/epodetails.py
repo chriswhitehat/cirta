@@ -30,7 +30,7 @@ def execute(event):
             break
         
     if result:
-        print result
+        print result.read()
     else:
         print 'nada'
 
