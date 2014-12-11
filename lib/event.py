@@ -139,7 +139,7 @@ class Event(object):
             self._splunk = SplunkIt(None, None, None, None, None, None, None, None)
         self._stackTraces = []
         self._outDir = configs['cirta']['settings']['IR_PATH'] + self._DT.date().isoformat()
-        self._outDirOwner = configs['cirta']['settings']['IR_PATH_OWNER']
+        self._outDirGroup = configs['cirta']['settings']['IR_PATH_GROUP']
         self._resourcesPath = os.path.join(self._cirtaHome, 'resources')
     
     
@@ -237,12 +237,12 @@ class Event(object):
 
         try:
             os.makedirs(os.path.join(self._outDir, 'bin'))
-            if self._outDirOwner:
+            if self._outDirGroup:
                 for root, dirs, files in os.walk(self._outDir):  
                     for momo in dirs:  
-                        os.chown(os.path.join(root, momo), -1, grp.getgrnam(self._outDirOwner).gr_gid)
+                        os.chown(os.path.join(root, momo), -1, grp.getgrnam(self._outDirGroup).gr_gid)
                     for momo in files:
-                        os.chown(os.path.join(root, momo), -1, grp.getgrnam(self._outDirOwner).gr_gid)
+                        os.chown(os.path.join(root, momo), -1, grp.getgrnam(self._outDirGroup).gr_gid)
         except(OSError):
             pass
 
