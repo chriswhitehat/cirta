@@ -238,7 +238,7 @@ class Event(object):
         try:
             os.makedirs(os.path.join(self._outDir, 'bin'))
             if self._outDirGroup:
-                os.chown(root, -1, grp.getgrnam(self._outDirGroup).gr_gid)
+                os.chown(self._outDir, -1, grp.getgrnam(self._outDirGroup).gr_gid)
                 for root, dirs, files in os.walk(self._outDir):  
                     for momo in dirs:  
                         os.chown(os.path.join(root, momo), -1, grp.getgrnam(self._outDirGroup).gr_gid)
