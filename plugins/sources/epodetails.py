@@ -15,6 +15,13 @@ ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEAL
 
 from lib.util import runBash
 
+def input(event):
+    '''Requires no input'''
+    
+    
+def adhocInput(event):
+    '''Requires no input'''
+    
 def execute(event):
     
     for server in epoServers:
