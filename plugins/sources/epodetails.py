@@ -61,7 +61,7 @@ def execute(event):
         event.setAttribute('system_location', resDict['System Location'])
         event.setAttribute('fqdn', resDict['DNS Name'].lower())
         
-        if resDict['Is Laptop']:
+        if int(resDict['Is Laptop']):
             resDict['Is Laptop'] = 'True'
         else:
             resDict['Is Laptop'] = 'False'
