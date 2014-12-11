@@ -40,7 +40,29 @@ def execute(event):
                 key, val = r.split(':', 1)
                 resDict[key] = val.lstrip()
 
-        print resDict
+        event.setAttribute('hostname', resDict['System Name'].lower())
+        event.setAttribute('domain_name', resDict['Domain Name'].lower())
+        if resDict['User Name'] != 'N/A':
+            event.setAttribute('username', resDict['User Name'])
+        
+        mac = ''
+        for i, digit in enumerate(resDict['MAC Address'].lower()):
+            if i and not i%2:
+                mac += ':'
+            mac += digit
+            
+        event.setAttribute('mac_address', mac)
+        event.setAttribute('operating_system', resDict['OS Type'])
+        event.setAttribute('system_location', resDict['System Location'])
+        event.setAttribute('fqdn', resDict['DNS Name'].lower())
+        
+        if resDict['Is Laptop']:
+            resDict['Is Laptop'] = 'True'
+        else:
+            resDict['Is Laptop'] = 'False'
+        
+        for info in ['Description', 'System Description', 'Time Zone', 'Tags', 'Time Zone', 'Last Communication']:
+            print "%s: %s" % (info, resDict[info])
     else:
         print 'nada'
 
