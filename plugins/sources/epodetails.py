@@ -36,8 +36,8 @@ def execute(event):
     if sresult:
         resDict = {}
         for r in sresult[1:]:
-            key, val = r.split(':')
-            resDict[key] = val
+            key, val = r.split(':', 1)
+            resDict[key] = val.lstrip()
 
         print resDict
     else:
