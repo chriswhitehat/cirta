@@ -13,7 +13,7 @@ COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER I
 ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 '''
 
-from lib.util import runBash
+from lib.util import runBash, printStatusMsg
 
 def input(event):
     '''Requires no input'''
@@ -63,8 +63,9 @@ def execute(event):
         
         resDict['Tags'] = ','.join([x for x in resDict['Tags'].split(',') if 'Deploy' not in x])
         
-        print('\nePO Informational Details:\n')
-        for info in ['Description', 'System Description', 'Tags', 'Time Zone', 'Last Communication']:
+        printStatusMsg('ePO Informational Details', length=20, char='-', color=colors.HEADER2)
+
+        for info in ['Description', 'System Description', 'Is Laptop', 'Tags', 'Time Zone', 'Last Communication']:
             print "%s -- %s" % (info, resDict[info])
     else:
         print 'nada'
