@@ -61,8 +61,10 @@ def execute(event):
         else:
             resDict['Is Laptop'] = 'False'
         
-        print('')
-        for info in ['Description', 'System Description', 'Time Zone', 'Tags', 'Time Zone', 'Last Communication']:
+        resDict['Tags'] = ','.join([x for x in resDict['Tags'].split(',') if 'Deploy' not in x])
+        
+        print('\nePO Informational Details:\n')
+        for info in ['Description', 'System Description', 'Tags', 'Time Zone', 'Last Communication']:
             print "%s -- %s" % (info, resDict[info])
     else:
         print 'nada'
