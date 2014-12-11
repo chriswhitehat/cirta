@@ -236,14 +236,15 @@ class Event(object):
             self._outDir = os.path.dirname(os.path.abspath(self._baseFilePath))
 
 #        try:
-        os.makedirs(os.path.join(self._outDir, 'bin'))
-        if self._outDirGroup:
-            os.chown(self._outDir, -1, grp.getgrnam(self._outDirGroup).gr_gid)
-            for root, dirs, files in os.walk(self._outDir):  
-                for momo in dirs:  
-                    os.chown(os.path.join(root, momo), -1, grp.getgrnam(self._outDirGroup).gr_gid)
-                for momo in files:
-                    os.chown(os.path.join(root, momo), -1, grp.getgrnam(self._outDirGroup).gr_gid)
+        if not os.path.exists(os.path.join(self._outDir, 'bin')):
+            os.makedirs(os.path.join(self._outDir, 'bin'))
+            if self._outDirGroup:
+                os.chown(self._outDir, -1, grp.getgrnam(self._outDirGroup).gr_gid)
+                for root, dirs, files in os.walk(self._outDir):  
+                    for momo in dirs:  
+                        os.chown(os.path.join(root, momo), -1, grp.getgrnam(self._outDirGroup).gr_gid)
+                    for momo in files:
+                        os.chown(os.path.join(root, momo), -1, grp.getgrnam(self._outDirGroup).gr_gid)
  #       except(OSError):
  #           pass
 
