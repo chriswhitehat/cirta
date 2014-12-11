@@ -20,17 +20,17 @@ def input(event):
     inputHeader = '%s Query Options' % FORMAL_NAME
     event.setOutPath()
     
-    event.setAttribute('epoUser', prompt="ePO Username")
+    event.setAttribute('epoUser', prompt="ePO Username", header=inputHeader)
     event.setAttribute('epoPassword', getpass())
     
     
 def adhocInput(event):
-    '''Requires no input'''
+    input(event)
     
 def execute(event):
     
     for server in [x.strip() for x in epoServers.split(',')]:
-        result = runBash('curl -k -u %s:%s https://%s/remote/system.find?searchText=%s' % (epoUser, epoPassword, server, event.ip_address))
+        result = runBash('curl -k -u %s:%s https://%s/remote/system.find?searchText=%s' % (event.epoUser, event.epoPassword, server, event.ip_address))
         if result:
             sresult = result.read().splitlines()
             if sresult and sresult[0] == "OK:" and len(sresult) > 3:
