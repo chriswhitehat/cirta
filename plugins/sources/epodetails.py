@@ -20,7 +20,7 @@ def input(event):
     inputHeader = '%s Query Options' % FORMAL_NAME
     event.setOutPath()
     
-    event.setAttribute('epoUser', getuser())
+    event.setAttribute('epoUser', prompt="ePO Username")
     event.setAttribute('epoPassword', getpass())
     
     
@@ -33,7 +33,7 @@ def execute(event):
         result = runBash('curl -k -u %s:%s https://%s/remote/system.find?searchText=%s' % (epoUser, epoPassword, server, event.ip_address))
         if result:
             sresult = result.read().splitlines()
-            if sresult[0] == "OK:" and len(sresult) > 3:
+            if sresult and sresult[0] == "OK:" and len(sresult) > 3:
                 break
             else:
                 sresult = None
