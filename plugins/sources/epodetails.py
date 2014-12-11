@@ -34,7 +34,12 @@ def execute(event):
                 sresult = None
         
     if sresult:
-        print sresult
+        resDict = {}
+        for r in sresult[1:]:
+            key, val = r.split(':')
+            resDict[key] = val
+
+        print resDict
     else:
         print 'nada'
 
