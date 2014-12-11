@@ -27,10 +27,14 @@ def execute(event):
     for server in [x.strip() for x in epoServers.split(',')]:
         result = runBash('curl -k -u %s:%s https://%s/remote/system.find?searchText=%s' % (epoUser, epoPassword, server, event.ip_address))
         if result:
-            break
+            sresult = result.read().splitlines()
+            if sresult[0] == "OK:" and len(sresult) > 3:
+                break
+            else:
+                sresult = None
         
-    if result:
-        print result.read()
+    if sresult:
+        print sresult
     else:
         print 'nada'
 
