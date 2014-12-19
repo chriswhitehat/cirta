@@ -280,7 +280,7 @@ class ISOLogSource(object):
                 print('There is a strong likelihood that log data will be missed.')
             
             
-            if (today.date() - startDate.date()).days > int(compressionDelay):
+            if (today.date() - startDate.date()).days >= int(compressionDelay):
                 if compressionExtension == 'bz2' or compressionExtension == 'gz':
                     if compressionExtension == 'bz2':
                         catCmd = 'bzcat'
