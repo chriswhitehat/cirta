@@ -15,7 +15,7 @@ ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEAL
 
 import datetime, re
 from lib.datasource import ISOLogSource 
-from lib.util import getIPAddress, getMACAddress, uniq, getTimeBisect
+from lib.util import getIPAddress, getMACAddress, uniq, getTimeBisect, ciscoTimeExtract
 
 
 def input(event):
@@ -106,7 +106,7 @@ def execute(event):
         
         event._splunk.push(sourcetype=confVars.splunkSourcetype, filename='%s.%s' % (event._baseFilePath, confVars.outputExtension))
         
-        before, after = getTimeBisect(event._DT, results)
+        before, after = getTimeBisect(event._DT, results, ciscoTimeExtract)
         
         for line in reversed(before):
             hostname = getHostName(line)

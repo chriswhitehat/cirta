@@ -95,13 +95,13 @@ def getMACAddress(input):
         return None
 
 # Generalize the syslogTime piece to take a function
-def getTimeBisect(anchor, input):
+def getTimeBisect(anchor, input, timeExtract):
     before = []
     after = []
     i = 0
     lines = input.splitlines()
     for line in lines:
-        time = syslogTimeToDatetime(line.split(' ', 1)[0])
+        time = timeExtract(line)
 
         if time <= anchor:
             before.append(line)
@@ -181,6 +181,10 @@ def datetimeToEpoch(dateInDatetime):
 
 def syslogTimeToDatetime(input):
     return datetime.strptime(input[:-6], '%Y-%m-%dT%H:%M:%S')
+
+def ciscoTimeExtract(line):
+    year = datetime.datetime.today().year
+    return datetime.datetime.strptime(year + ' '.join(line.split(' ', 3)[:3]), '%Y %b %d %H:%M:%S')
 
 def getUTCTimeDelta():
     return datetime.now(pytz.timezone('US/Pacific')).utcoffset()
