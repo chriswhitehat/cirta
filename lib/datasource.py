@@ -290,6 +290,7 @@ class ISOLogSource(object):
                     if not toStdOut or collect:
                         print("Checking %s.%s.log.%s..." % (fileName, currentDate, compressionExtension))
                     fullcmd = '%s %s.%s.log.%s | %s' % (catCmd, logpath, currentDate, compressionExtension, cmd)
+                    logging.DEBUG('msg="Complete pull command" fullcmd="%s"' % fullcmd)
                     stdin, stdout, stderr = server.exec_command(fullcmd)
                     #print stderr.readlines()
                 else:
@@ -299,6 +300,7 @@ class ISOLogSource(object):
                 if not toStdOut or collect:
                     print("Checking %s.%s.log..." % (fileName, currentDate))
                 fullcmd = 'cat %s.%s.log | %s' % (logpath, currentDate, cmd)
+                logging.DEBUG('msg="Complete pull command" fullcmd="%s"' % fullcmd)
                 stdin, stdout, stderr = server.exec_command(fullcmd)
                 #print stderr.readlines()
                 
