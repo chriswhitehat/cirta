@@ -46,7 +46,7 @@ def execute(event):
         formatted.append('-' * 80)
         for line in uniq(input.splitlines()):
             sline = line.split(']:')
-            time = datetime.datetime.strptime(' '.join(sline[0].split()[:3]), '%b %d %H:%M:%S')
+            time = datetime.datetime.strptime(sline[0][:15], '%b %d %H:%M:%S')
             msg =  sline[1].strip()
             for r in remove:
                 msg = msg.replace(r, '')
