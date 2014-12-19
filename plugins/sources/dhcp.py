@@ -47,7 +47,7 @@ def execute(event):
         for line in uniq(input.splitlines()):
             sline = line.split(']:')
             time = datetime.datetime.strptime(' '.join(sline[0].split()[:3]), '%b %d %H:%M:%S')
-            msg =  sline[1].split()
+            msg =  sline[1].strip()
             for r in remove:
                 msg = msg.replace(r, '')
             msg = msg.split('via')[0].split()
