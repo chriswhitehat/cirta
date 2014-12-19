@@ -58,7 +58,7 @@ def execute(event):
         return '\n'.join(uniq(formatted))
        
     def getHostName(input):
-        hostname = re.search(r"\([a-zA-Z0-9_]+\) via", input)
+        hostname = re.search(r"\([a-zA-Z0-9_\-]+\) via", input)
         if hostname:
             return hostname.group().split()[0].strip('()').lower()
         else:
