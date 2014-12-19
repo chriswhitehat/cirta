@@ -116,13 +116,13 @@ def execute(event):
         
         for line in reversed(before):
             if 'DHCPACK' in line:
-                if getIPAddress(line) == event.ip_address:
+                if getIPAddress(line.split(']:')[-1]) == event.ip_address:
                     event.setAttribute('mac_address', getMACAddress(line))
                     return
                 
         for line in after:
             if 'DHCPACK' in line:
-                if getIPAddress(line) == event.ip_address:
+                if getIPAddress(line.split(']:')[-1]) == event.ip_address:
                     event.setAttribute('mac_address', getMACAddress(line))
                     return
                 
