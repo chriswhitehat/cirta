@@ -183,8 +183,8 @@ def syslogTimeToDatetime(input):
     return datetime.strptime(input[:-6], '%Y-%m-%dT%H:%M:%S')
 
 def ciscoTimeExtract(line):
-    year = datetime.datetime.today().year
-    return datetime.datetime.strptime(year + ' '.join(line.split(' ', 3)[:3]), '%Y %b %d %H:%M:%S')
+    year = datetime.today().year
+    return datetime.strptime(year + ' '.join(line.split(' ', 3)[:3]), '%Y %b %d %H:%M:%S')
 
 def getUTCTimeDelta():
     return datetime.now(pytz.timezone('US/Pacific')).utcoffset()
