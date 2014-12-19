@@ -51,7 +51,7 @@ def execute(event):
             for r in remove:
                 msg = msg.replace(r, '')
             msg = msg.split('via')[0].split()
-            formatted.append('%s  %-8s %s' % (time.strftime('%Y-%m-%d %H:%M:%S'), msg[0].split('DHCP')[1], ' '.join(msg[1:])))
+            formatted.append('%s  %-8s %s' % (time.strftime('%b %d %H:%M:%S'), msg[0].split('DHCP')[1], ' '.join(msg[1:])))
             
         formatted.append('')
             
