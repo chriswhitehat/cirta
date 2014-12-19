@@ -163,7 +163,8 @@ def initSSH(server, user=None, pwd=None, pubpriv=True):
             return initSSH(server, pubpriv=False)
     else:
         if user == None:
-            user = getuser()
+            #user = getuser()
+            user = getUserIn("Username")
         if pwd == None:
             pwd = getpass()
         ssh.connect(server, username=user, password=pwd)
