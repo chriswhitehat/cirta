@@ -286,6 +286,8 @@ class ISOLogSource(object):
                         catCmd = 'bzcat'
                     elif compressionExtension == 'gz':
                         catCmd = 'zcat'
+                    elif compressionExtension == 'xz':
+                        catCmd = 'xzcat'
                 
                     if not toStdOut or collect:
                         print("Checking %s.%s.log.%s..." % (fileName, currentDate, compressionExtension))
