@@ -281,7 +281,7 @@ class ISOLogSource(object):
             
             
             if (today.date() - startDate.date()).days >= int(compressionDelay):
-                if compressionExtension == 'bz2' or compressionExtension == 'gz':
+                if compressionExtension in ['bz2', 'gz', 'xz']:
                     if compressionExtension == 'bz2':
                         catCmd = 'bzcat'
                     elif compressionExtension == 'gz':
