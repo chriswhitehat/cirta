@@ -38,7 +38,7 @@ def execute(event):
         else:
             event._include = event.detectInputCases(ip_address, yes=True, trailingChar='\\b')
             
-    ils = DailyLogSource(event)
+    ils = ISOLogSource(event)
     ils.pullDaily(egrepInclude=event._include, 
                   egrepExclude=None, 
                   startDate=event._startDate, 
