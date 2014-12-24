@@ -56,7 +56,7 @@ def execute(event):
                       formatter=None,
                       retResults=False)
     else:
-        ils.pullDaily(egrepInclude=event._include, 
+        results = ils.pullDaily(egrepInclude=event._include, 
               egrepExclude=None, 
               startDate=event._startDate, 
               endDate=event._endDate, 
