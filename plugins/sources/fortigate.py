@@ -13,7 +13,7 @@ COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER I
 ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 '''
 
-import re
+import re, shlex
 from lib.datasource import ISOLogSource 
 from lib.util import uniq, getTimeBisect, ciscoTimeExtract
 
@@ -80,25 +80,31 @@ def execute(event):
     if not event.adHoc:
         before, after = getTimeBisect(event._DT, results, ciscoTimeExtract)
 
-        befuser = '-'
-        afuser = '-'
+        befuser = 'guest'
+        afuser = 'guest'
         for bef, af in map(lambda *s: tuple(s), reversed(before), after):
             if bef:
-                befuser = bef.split()[-1]
+                befDict = dict([y for y in [token.split('=',1) for token in shlex.split(bef)] if len(y) == 2])
+                befuser = befDict['user']
             if af:
-                afuser = af.split()[-1]
+                afDict = dict([y for y in [token.split('=',1) for token in shlex.split(af)] if len(y) == 2])
+                afuser = afDict['user']
             
-            if befuser != '-' and not re.search('\$$', befuser):
+            if befuser != 'guest':
                 event.setAttribute('username', befuser)
                 break
-            elif afuser != '-' and not re.search('\$$', afuser):
+            elif afuser != 'guest':
                 event.setAttribute('username', afuser)
                 break
             
         print('')
         
+        
+        
         stdOutLines = uniq(before)[-10:]
         stdOutLines.extend(uniq(after)[:10])
         
         for line in stdOutLines:
-            print(line)
+            l = dict([y for y in [token.split('=',1) for token in shlex.split(line)] if len(y) == 2])
+            print('%(date)sT%(time)s %(srcip)s %(user)s %(eventtype)s %(hostname)s%(url)s' % l)
+            
