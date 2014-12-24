@@ -85,10 +85,12 @@ def execute(event):
         for bef, af in map(lambda *s: tuple(s), reversed(before), after):
             if bef:
                 befDict = dict([y for y in [token.split('=',1) for token in shlex.split(bef)] if len(y) == 2])
-                befuser = befDict['user']
+                if 'user' in befDict:
+                    befuser = befDict['user']
             if af:
                 afDict = dict([y for y in [token.split('=',1) for token in shlex.split(af)] if len(y) == 2])
-                afuser = afDict['user']
+                if 'user' in afDict:
+                    afuser = afDict['user']
             
             if befuser != 'guest':
                 event.setAttribute('username', befuser)
@@ -101,10 +103,12 @@ def execute(event):
         
         
         
-        stdOutLines = uniq(before)[-10:]
-        stdOutLines.extend(uniq(after)[:10])
-        
+        stdOutLines = uniq([x for x in before if 'type=utm' in x])[-10:]
+        stdOutLines.extend(uniq([x for x in after if 'type=utm' in x])[:10])
+
         for line in stdOutLines:
             l = dict([y for y in [token.split('=',1) for token in shlex.split(line)] if len(y) == 2])
-            print('%(date)sT%(time)s %(srcip)s %(user)s %(eventtype)s %(hostname)s%(url)s' % l)
+            if 'user' not in l:
+                l['user'] = '-'
+            print('%(date)sT%(time)s %(srcip)s %(user)s %(status)s %(hostname)s%(url)s' % l)
             
