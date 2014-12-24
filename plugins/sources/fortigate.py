@@ -93,10 +93,10 @@ def execute(event):
                     afuser = afDict['user']
             
             if befuser != 'guest':
-                event.setAttribute('username', befuser)
+                event.setAttribute('username', befuser.lower())
                 break
             elif afuser != 'guest':
-                event.setAttribute('username', afuser)
+                event.setAttribute('username', afuser.lower())
                 break
             
         print('')
