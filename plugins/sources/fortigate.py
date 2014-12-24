@@ -14,7 +14,7 @@ ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEAL
 '''
 
 from lib.datasource import ISOLogSource 
-
+from lib.util import uniq, getTimeBisect, ciscoTimeExtract
 
 def input(event):
     inputHeader = '%s Query Options' % FORMAL_NAME
@@ -39,19 +39,65 @@ def execute(event):
             event._include = event.detectInputCases(ip_address, yes=True, trailingChar='\\b')
             
     ils = ISOLogSource(event)
-    ils.pullDaily(egrepInclude=event._include, 
-                  egrepExclude=None, 
-                  startDate=event._startDate, 
-                  endDate=event._endDate, 
-                  server=confVars.server, 
-                  logpath=confVars.logpath, 
-                  outputExtension=confVars.outputExtension, 
-                  compressionDelay=confVars.compressionDelay, 
-                  compressionExtension=confVars.compressionExtension, 
-                  formalName=FORMAL_NAME,
-                  toFile=True, 
-                  toStdOut=False, 
-                  collect=False, 
-                  formatter=None)
+    if event.adHoc:
+        ils.pullDaily(egrepInclude=event._include, 
+                      egrepExclude=None, 
+                      startDate=event._startDate, 
+                      endDate=event._endDate, 
+                      server=confVars.server, 
+                      logpath=confVars.logpath, 
+                      outputExtension=confVars.outputExtension, 
+                      compressionDelay=confVars.compressionDelay, 
+                      compressionExtension=confVars.compressionExtension, 
+                      formalName=FORMAL_NAME,
+                      toFile=True, 
+                      toStdOut=False, 
+                      collect=False, 
+                      formatter=None,
+                      retResults=False)
+    else:
+        ils.pullDaily(egrepInclude=event._include, 
+              egrepExclude=None, 
+              startDate=event._startDate, 
+              endDate=event._endDate, 
+              server=confVars.server, 
+              logpath=confVars.logpath, 
+              outputExtension=confVars.outputExtension, 
+              compressionDelay=confVars.compressionDelay, 
+              compressionExtension=confVars.compressionExtension, 
+              formalName=FORMAL_NAME,
+              toFile=True, 
+              toStdOut=False, 
+              collect=True, 
+              formatter=None,
+              retResults=True)
+
     
     event._splunk.push(sourcetype=confVars.splunkSourcetype, filename='%s.%s' % (event._baseFilePath, confVars.outputExtension))
+
+
+    if not event.adHoc:
+        before, after = getTimeBisect(event._DT, results, ciscoTimeExtract)
+
+        befuser = '-'
+        afuser = '-'
+        for bef, af in map(lambda *s: tuple(s), reversed(before), after):
+            if bef:
+                befuser = bef.split()[-1]
+            if af:
+                afuser = af.split()[-1]
+            
+            if befuser != '-' and not re.search('\$$', befuser):
+                event.setAttribute('username', befuser)
+                break
+            elif afuser != '-' and not re.search('\$$', afuser):
+                event.setAttribute('username', afuser)
+                break
+            
+        print('')
+        
+        stdOutLines = uniq(before)[-10:]
+        stdOutLines.extend(uniq(after)[:10])
+        
+        for line in stdOutLines:
+            print(line)
