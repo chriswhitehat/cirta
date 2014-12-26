@@ -54,7 +54,7 @@ class Attribute(object):
     def setValue(self, val):
         
         if self.notSet or not self.immutable or not self._value or self.force:
-            if val:
+            if val is not None:
                 self.notSet = False
                 self._value = val
             elif hasattr(self, 'prompt'):
@@ -71,7 +71,7 @@ class Attribute(object):
             if self.logged:
                 log.debug('msg="attribute set" name="%s" value="%s"' % (self.name, val))
             self.valuesHistory.append((self.currentPlugin, val))
-            if val:
+            if val is not None:
                 self.values.add(val)
         except(TypeError):
             pass    
@@ -85,6 +85,7 @@ class Attribute(object):
     def runPrompt(self):
         if self.header:
             printStatusMsg(self.header)
+            self.header = None
              
         if self.description:
             if self.multiline:
