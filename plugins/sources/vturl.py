@@ -54,7 +54,7 @@ def execute(event):
             
             proxyFile = event._baseFilePath + '.fg'
             
-            before, after = getTimeBisect(event._DT, [x for x in open(proxyFile, 'r').read().splitlines() if 'url=' in x], ciscoTimeExtract)
+            before, after = getTimeBisect(event._DT, '\n'.join([x for x in open(proxyFile, 'r').read().splitlines() if 'url=' in x]), ciscoTimeExtract)
 
             swath = before[-25:]
             swath.extend(after[:25])
