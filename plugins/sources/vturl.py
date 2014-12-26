@@ -14,7 +14,7 @@ ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEAL
 '''
 
 from lib import virustotal
-from lib.util import runBash, YES
+from lib.util import YES, getTimeBisect
 
 def input(event):
     '''Requires no input'''
