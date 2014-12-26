@@ -38,8 +38,8 @@ class VirusTotal(object):
         self.maxConcurrent = {"https://www.virustotal.com/vtapi/v2/file/scan": 1,
                               "https://www.virustotal.com/vtapi/v2/file/report": 1,
                               "https://www.virustotal.com/vtapi/v2/file/rescan": 1,
-                              "https://www.virustotal.com/vtapi/v2/url/report": 1,
-                              "https://www.virustotal.com/vtapi/v2/url/scan": 1,
+                              "https://www.virustotal.com/vtapi/v2/url/report": 25,
+                              "https://www.virustotal.com/vtapi/v2/url/scan": 25,
                               "https://www.virustotal.com/vtapi/v2/ip-address/report": 1,
                               "https://www.virustotal.com/vtapi/v2/domain/report": 1}
 
