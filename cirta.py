@@ -277,9 +277,21 @@ class Playbook(object):
                 self.pluginDict[plugin].log = logging.getLogger(path)
             
     def getPlugin(self, plugin):
-        log.debug('msg="plugin requested" plugin="%s"' % plugin)
-        return self.pluginDict[plugin]
-
+        
+        vPlugin = None
+        if plugin in self.pluginDict:
+            vPlugin = plugin
+        elif plugin.split('.')[-1] in self.pluginDict:
+            vPlugin = plugin.split('.')[-1]
+        
+        if vPlugin:
+            log.debug('msg="plugin requested" plugin="%s"' % vPlugin)
+            return self.pluginDict[vPlugin]
+        else:
+            log.error('msg="Attempted to retrieve non-existent plugin" plugin="%s"' % plugin)
+            exit()
+        
+        
 
 def printModeHeader(playbook, event):
     if playbook.adHoc:
