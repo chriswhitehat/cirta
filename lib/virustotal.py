@@ -117,15 +117,17 @@ class VirusTotal(object):
 
     def setItems(self, items, delim=None):
         log.debug('msg="original item list" items="%s"' % items)
+        log.debug('msg="item delimeter" value="%s"' % delim)
         if isinstance(items, str):
+            log.debug('msg="Items passed as a string"')
             items = items.split(delim)
+            log.debug('msg="Items after delimeter split" items="%s"' % items)
         elif not isinstance(items, list):
             raise TypeError
     
         self.items = list(set([x.strip().rstrip('-') for x in items if x]))
-    
-        log.debug('msg="set item list" items="%s"' % self.items)
-    
+        log.debug('msg="Items after unique and stripping" items="%s"' % self.items)
+        
     def removeScan(self, report):
         self.scans = [x for x in self.scans if x != report['scan_id']]
 
@@ -275,6 +277,7 @@ class VirusTotal(object):
         
         #self.items = [urllib2.quote(x) for x in self.items]
         self.items = [x.replace(',', '%2C') for x in self.items]
+        log.debug('msg="URL Encoding for commas" items="%s"' % self.items)
         
         if not force:
             self.getReports(self.items, "https://www.virustotal.com/vtapi/v2/url/report", 'resource', {'apikey': self.apiKey, 'scan': '1'}, ', ')

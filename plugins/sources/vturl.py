@@ -64,7 +64,7 @@ def execute(event):
             for line in swath:
                 urls.append("%(hostname)s%(url)s" % dict([y for y in [token.split('=',1) for token in shlex.split(line)] if len(y) == 2]))
 
-            log.debug('msg="check temporal webproxy with virustotal" urls="%s"' % (', '.join(urls)))
+            log.debug('msg="check temporal webproxy with virustotal" urls="%s"' % urls)
             
             reports = vt.retrieveURL(urls, maxIter=5)
             
