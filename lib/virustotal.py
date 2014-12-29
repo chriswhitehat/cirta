@@ -280,7 +280,9 @@ class VirusTotal(object):
         log.debug('msg="URL Encoding for commas" items="%s"' % self.items)
         
         if not force:
-            self.getReports(self.items, "https://www.virustotal.com/vtapi/v2/url/report", 'resource', {'apikey': self.apiKey, 'scan': '1'}, ', ')
+            # Testing newline alternative to comma seperated
+#            self.getReports(self.items, "https://www.virustotal.com/vtapi/v2/url/report", 'resource', {'apikey': self.apiKey, 'scan': '1'}, ', ')
+            self.getReports(self.items, "https://www.virustotal.com/vtapi/v2/url/report", 'resource', {'apikey': self.apiKey, 'scan': '1'}, '\n')
         else:
             self.getReports(self.items, "https://www.virustotal.com/vtapi/v2/url/scan", 'url', {'apikey': self.apiKey}, '\n')
             
