@@ -459,7 +459,8 @@ def main():
     if not playbook.actionsLaunched:
         launchActions(playbook, event)
         
-    launchBackgroundedSources(playbook, event)
+    if hasattr(event, "_backgroundedDS"):
+        launchBackgroundedSources(playbook, event)
     
     log.info('msg="cirta execution finished"')
 
