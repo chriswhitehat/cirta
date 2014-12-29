@@ -366,6 +366,34 @@ def launchSources(playbook, event, preAction=True):
             log.debug('msg="fatal data source exception" source="%s"' % event.currentPlugin)
             pass
 
+
+def launchBackgroundedSources(playbook, event):
+    
+    log.info('msg="launching Backgrounded Sources"')
+        
+    for source in event._backgroundedDS:
+        
+        srcPlugin = playbook.getPlugin(source)
+        try:
+            printStatusMsg('%s Results' % srcPlugin.FORMAL_NAME)
+            
+            event.currentPlugin = source
+            log.state('msg="execute" type="source" plugin="%s" stage="start" %s' % (source, event.getAttrs()))
+            srcPlugin.execute(event)
+            log.state('msg="execute" type="source" plugin="%s" stage="finish" %s' % (source, event.getAttrs()))
+            event.currentPlugin = 'cirta'
+            printProvided(event, srcPlugin)
+            
+        except(KeyboardInterrupt):
+            raise
+        except:
+            tb = traceback.format_exc()
+            event._stackTraces.append(tb)
+            print('\n' + colors.GREY + tb + colors.ENDC)
+            log.error('Failure: Data Source Exception. Skipping...')
+            log.debug('msg="fatal data source exception" source="%s"' % event.currentPlugin)
+            pass
+
 def launchActionsNow(playbook, event):
     log.info('msg="prompt to launch actions"')
     msg = '''Launching Playbook Actions now means the remaining Playbook Sources will be executed at the end.
@@ -430,6 +458,8 @@ def main():
         
     if not playbook.actionsLaunched:
         launchActions(playbook, event)
+        
+    launchBackgroundedSources(playbook, event)
     
     log.info('msg="cirta execution finished"')
 
