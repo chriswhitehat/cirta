@@ -287,7 +287,7 @@ class Event(object):
     def addToBackground(self, name):
         log.info('msg="backgrounding plugin" source="%s"' % (name))
         if hasattr(self, '_backgroundedDS'):
-            self.append(name)
+            self._backgroundedDS.append(name)
         else:
             self._backgroundedDS = [name]
             
