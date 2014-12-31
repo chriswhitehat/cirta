@@ -55,6 +55,10 @@ def execute(event):
             
             proxyFile = event._baseFilePath + '.fg'
             
+            if not os.path.exists(proxyFile):
+                log.warn('msg="Proxy file missing, potential proxy source plugin failure upstream" proxy_file="%s"' % proxyFile)
+                return
+            
             before, after = getTimeBisect(event._DT, '\n'.join([x for x in open(proxyFile, 'r').read().splitlines() if 'url=' in x]), ciscoTimeExtract)
 
             swath = before[-25:]

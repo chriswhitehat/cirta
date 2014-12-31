@@ -102,28 +102,28 @@ def ldapCIRTA(name):
     
     attrs = OrderedDict()
     
-    if 'description' in entry:
-        attrs['_description'] = entry['description'][0]
     if 'physicalDeliveryOfficeName' in entry:
         attrs['_physicalDeliveryOfficeName'] = entry['physicalDeliveryOfficeName'][0]
     if 'distinguishedName' in entry:
         attrs['_userADDN'] = entry['distinguishedName'][0]
+    if 'displayNamePrintable' in entry:
+        attrs['full_name'] = entry['displayNamePrintable'][0]
     if 'givenName' in entry:
         attrs['_firstName'] = entry['givenName'][0]
     if 'sn' in entry:
         attrs['_lastName'] = entry['sn'][0]
-    if 'givenName' in entry and 'sn' in entry:
-        attrs['full_name'] = '%s %s' % (entry['givenName'][0], entry['sn'][0])
     if 'mail' in entry:
         attrs['email'] = entry['mail'][0]
     if 'telephoneNumber' in entry:
         attrs['phone_number'] = entry['telephoneNumber'][0]
     if 'title' in entry:
-        attrs['job_title'] = ' '.join([x.lower().capitalize() for x in entry['title'][0].split()])
+        attrs['job_title'] = entry['title'][0]
     if 'department' in entry:
-        attrs['department'] = ' '.join([x.lower().capitalize() for x in entry['department'][0].split()])
-    if manager and 'givenName' in manager:
-        attrs['manager'] = '%s %s' % (manager['givenName'][0], manager['sn'][0])
+        attrs['department'] = entry['department'][0]
+    if 'postalAddress' in entry:
+        attrs['postal']
+    if manager and 'displayNamePrintable' in manager:
+        attrs['manager'] = manager['displayNamePrintable'][0]
     if manager and 'mail' in manager:
         attrs['manager_email'] = manager['mail'][0]
     
