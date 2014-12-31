@@ -23,7 +23,7 @@ def input(event):
     # Temporary while waiting for service account credentials to work.
     printStatusMsg(inputHeader)
     confVars.userDN = getUserIn("Username")
-    confVars.userDN = getpass()
+    confVars.password = getpass()
     
     attempts = 0
     successful = False
