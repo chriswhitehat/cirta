@@ -14,10 +14,17 @@ ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEAL
 '''
 
 from lib import pydap
+from lib.util import getUserIn, printStatusMsg
+from getpass import getpass
 
 def input(event):
     inputHeader = '%s Query Options' % FORMAL_NAME
         
+    # Temporary while waiting for service account credentials to work.
+    printStatusMsg(inputHeader)
+    confVars.userDN = getUserIn("Username")
+    confVars.userDN = getpass()
+    
     attempts = 0
     successful = False
     while not successful:
