@@ -64,6 +64,14 @@ def execute(event):
     for line in queryResults:
         outRawFile.write(','.join(line) + '\n')
         
+    splunkSguilFlow = []
+    for line in open(orf, 'rb'):
+        if 'INET_NTOA' not in line:
+            splunkSguilFlow.append(line)
+
+    event._splunk.push(sourcetype=confVars.splunkSourcetype, eventList=splunkSguilFlow)
+
+    
     print('\n%s results saved to: %s' % (FORMAL_NAME, orf))
 
     
