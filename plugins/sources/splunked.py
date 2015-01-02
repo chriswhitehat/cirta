@@ -23,7 +23,6 @@ def adhocInput(event):
 
 
 def execute(event):
-    splunkEnabled, splunkIndexers, splunkPort, splunkUser, splunkPassword, splunkIndex, host, cirta_id
     if event._splunk.splunkEnabled:
         print(event._splunk.CIRTASplunkURL)
     else:
