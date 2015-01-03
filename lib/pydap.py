@@ -82,9 +82,9 @@ def ldapSearch(searchFilter = 'none', retrieveAttributes = None):
     return result_set
     
 
-def ldapCIRTA(name):
+def ldapCIRTA(lFilter):
     
-    entr = ldapSearch('cn=' + name)
+    entr = ldapSearch(lFilter)
     if not entr:
         return {}
     

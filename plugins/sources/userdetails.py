@@ -53,7 +53,7 @@ def execute(event):
     
     pydap.ldapConnect(confVars.ldapServer, confVars.userDN, confVars.password, confVars.baseDistinguishedName)
     
-    attrs = pydap.ldapCIRTA(event.username)
+    attrs = pydap.ldapCIRTA('sAMAccountName=' + event.username)
     
     for attr, value in attrs.iteritems():
         if attr[0] != '_':

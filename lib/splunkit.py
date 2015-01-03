@@ -26,9 +26,9 @@ class SplunkIt():
                                                                                                                          splunkIndex,
                                                                                                                          cirta_id)
         
-        self.splunkCirtaAppURL = 'https://%s:%s/en-US/app/cirta/incident_details?form.selCirtaID%%3D%s' % (splunkSearchHead,
-                                                                                                           splunkSearchHeadPort,
-                                                                                                           cirta_id)
+        self.splunkCirtaAppURL = 'https://%s:%s/en-US/app/cirta/incident_details?earliest=0&latest=&form.selCirtaID=%s' % (splunkSearchHead,
+                                                                                                                           splunkSearchHeadPort,
+                                                                                                                           cirta_id)
         
         if not self.splunkEnabled:
             return
