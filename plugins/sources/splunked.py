@@ -13,6 +13,7 @@ COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER I
 ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 '''
 
+from util import printStatusMsg
 
 def input(event):
     return
@@ -24,6 +25,9 @@ def adhocInput(event):
 
 def execute(event):
     if event._splunk.splunkEnabled:
-        print(event._splunk.CIRTASplunkURL)
+        printStatusMsg('Splunk CIRTA Incident Details', length=20, char='-', color=colors.HEADER2)
+        print(event._splunk.splunkCirtaAppURL)
+        printStatusMsg('Splunk Raw Search', length=20, char='-', color=colors.HEADER2)
+        print(event._splunk.splunkCirtaSearchURL)
     else:
         print("Splunk not enabled.")
