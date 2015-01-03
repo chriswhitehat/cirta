@@ -21,9 +21,9 @@ def input(event):
     inputHeader = '%s Query Options' % FORMAL_NAME
         
     # Temporary while waiting for service account credentials to work.
-    printStatusMsg(inputHeader)
-    confVars.userDN = getUserIn("Username")
-    confVars.password = getpass()
+    #printStatusMsg(inputHeader)
+    #confVars.userDN = getUserIn("Username")
+    #confVars.password = getpass()
     
     attempts = 0
     successful = False
