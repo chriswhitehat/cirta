@@ -74,6 +74,9 @@ def execute(event):
                 postal += ' ' + attrs['_zip']
             if '_country' in attrs:
                 postal += ' ' + attrs['_country']
+                
+            if postal:
+                attrs['postal_address'] = postal
         
     print('Checking ldap...\n')
     
@@ -120,7 +123,10 @@ def execute(event):
     
     for ldapName, attrName in empAttrMap:
         if ldapName in entry and attrName not in attrs:
+            print('setting: %s %s %s' % (ldapName, attrName, entry[ldapName][0]))
             attrs[attrName] = entry[ldapName][0]
+        else:
+            print('skipping: %s %s' % (ldapName, attrName))
 
     createFullName(attrs)
     createPostalAddress(attrs)
