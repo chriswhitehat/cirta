@@ -145,7 +145,7 @@ def execute(event):
     
     if 'manager' in manAttrs:
         attrs['manager'] = manAttrs['manager']
-    if 'manager_email' in manAttrs['manager_email']:
+    if 'manager_email' in manAttrs:
         attrs['manager_email'] = manAttrs['manager_email']
     
     for attr, value in attrs.iteritems():
