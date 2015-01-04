@@ -86,6 +86,7 @@ def execute(event):
             print('')
             vt.prettyPrint(reports)
         else:
+            print('This is taking too long, backgrounding.')
             event.addToBackground(__name__)
             event.__vtscans__ = urls
             
