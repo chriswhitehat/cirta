@@ -102,6 +102,8 @@ def ldapCIRTA(lFilter):
     
     attrs = OrderedDict()
     
+    if 'employeeType' in entry:
+        attrs['employee_type'] = entry['employeeType'][0]
     if 'physicalDeliveryOfficeName' in entry:
         attrs['_physicalDeliveryOfficeName'] = entry['physicalDeliveryOfficeName'][0]
     if 'distinguishedName' in entry:
@@ -121,7 +123,7 @@ def ldapCIRTA(lFilter):
     if 'department' in entry:
         attrs['department'] = entry['department'][0]
     if 'postalAddress' in entry:
-        attrs['postal']
+        attrs['postal_address'] = entry['postalAddress'][0]
     if manager and 'displayNamePrintable' in manager:
         attrs['manager'] = manager['displayNamePrintable'][0]
     if manager and 'mail' in manager:

@@ -117,6 +117,7 @@ class Event(object):
         object.__setattr__(self, '_fifoAttrs', OrderedDict())
         object.__setattr__(self, 'attrDefaults', configs['attributes'])
         object.__setattr__(self, 'currentPlugin', 'cirta')
+        self.cirta_id = cirta_id
         self._configs = configs
         self._options = options
         self._playbook = playbook
