@@ -70,7 +70,7 @@ class SplunkIt():
         elif event:
             events = [event]
         else:
-            log.warning('Warning: no data to push.')
+            log.warning('Warning: no data to push to Splunk.')
             log.debug('msg="no data to push" type="%s"' % sourcetype)
             return
             
