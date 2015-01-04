@@ -137,9 +137,9 @@ def execute(event):
                   ('displayName', 'manager'),
                   ('mail', 'manager_email')]     
     
-    for ldapName, attrName in empAttrMap:
-        if ldapName in entry:
-            attrs[attrName] = entry[ldapName][0]
+    for ldapName, attrName in manAttrMap:
+        if ldapName in manager:
+            manAttrs[attrName] = manager[ldapName][0]
     
     
     createFullName(manAttrs)
