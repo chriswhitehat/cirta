@@ -154,7 +154,7 @@ def execute(event):
     for attr, value in attrs.iteritems():
         if attr[0] != '_':
             event.setAttribute(attr, value)
-            print('%s: %s' % (attr.replace('_', ' '), value))
+            #print('%s: %s' % (attr.replace('_', ' '), value))
         else:
             event.setAttribute(attr, value)
     
