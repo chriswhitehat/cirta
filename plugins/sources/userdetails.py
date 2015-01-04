@@ -123,10 +123,7 @@ def execute(event):
     
     for ldapName, attrName in empAttrMap:
         if ldapName in entry and attrName not in attrs:
-            print('setting: %s %s %s' % (ldapName, attrName, entry[ldapName][0]))
             attrs[attrName] = entry[ldapName][0]
-        else:
-            print('skipping: %s %s' % (ldapName, attrName))
 
     createFullName(attrs)
     createPostalAddress(attrs)
