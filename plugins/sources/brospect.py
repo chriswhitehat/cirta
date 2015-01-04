@@ -68,6 +68,8 @@ def execute(event):
             if 'files.log' in dest:
                 filesPath = dest
             print('Bro Generated: %s' % dest)
+            
+            event._splunk.push(sourcetype="brospect_" + dest.split('.')[-2], filename=dest)
 
         if os.path.exists(tempPath + '/extract_files'):
             files = open(filesPath).read().splitlines()
