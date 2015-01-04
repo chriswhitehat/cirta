@@ -41,10 +41,10 @@ def adhocInput(event):
     
     input(event)
     
-    if not username or not password:
-        event.setAttribute('username', prompt='Lookup Username')
+    if hasattr(event, 'username'):
+        event.setAttribute('username', prompt='LDAP Query')
     else:
-        event.setAttribute('username', prompt='Lookup Username', header=inputHeader)
+        event.setAttribute('username', prompt='LDAP Query', header=inputHeader)
         
     
 
