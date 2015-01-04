@@ -78,7 +78,7 @@ def execute(event):
             if postal:
                 attrs['postal_address'] = postal
         
-    print('Checking ldap...\n')
+    print('Checking ldap...')
     
     pydap.ldapConnect(confVars.ldapServer, confVars.userDN, confVars.password, confVars.baseDistinguishedName)
     
