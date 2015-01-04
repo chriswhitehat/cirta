@@ -112,10 +112,10 @@ def execute(event):
                   ('mail', 'email'),
                   ('telephoneNumber', 'phone_number'),
                   ('employeeType', 'employee_type'),
-                  ('title', 'job_title')
+                  ('title', 'job_title'),
                   ('description', 'job_title'),
                   ('department', 'department'),
-                  ('costco-district', 'costco_district')
+                  ('costco-district', 'costco_district'),
                   ('postalAddress', 'postal_address')]
     
     for ldapName, attrName in empAttrMap:
