@@ -14,7 +14,7 @@ ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEAL
 '''
 
 import splunklib.client as client, random
-import logging, os, socket
+import logging, os, socket, re
 
 log = logging.getLogger(__name__)
 
