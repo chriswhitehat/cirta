@@ -66,9 +66,13 @@ def execute(event):
                   ('distinguishedName', 'ad_ou'),
                   ('operatingSystem', 'operating_system')]
                   
+    
     for ldapName, attrName in sysAttrMap:
         if ldapName in entry and attrName not in attrs:
             attrs[attrName] = entry[ldapName][0]
+            
+    if 'ad_ou' in attrs:
+        attrs['ad_ou'] = ','.join(attrs['ad_ou'].split(',')[1:])
 
     for attr, value in attrs.iteritems():
             event.setAttribute(attr, value)
