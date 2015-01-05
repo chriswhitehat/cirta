@@ -55,7 +55,7 @@ class SplunkIt():
         
             
         
-    def push(self, sourcetype, filename=None, eventList=None, event=None):
+    def push(self, sourcetype, filename=None, eventList=None, event=None, exclusionRegex=None, inclusionRegex=None):
         
         if not self.splunkEnabled:
             return
@@ -77,6 +77,12 @@ class SplunkIt():
         with self.index.attached_socket(host=self.host, source=self.source, sourcetype=sourcetype) as sock:
             i = 0
             for line in events:
+                if exclusionRegex and not inclusionRegex:
+                    if re.search(exclusionRegex, line):
+                        continue
+                elif inclusionRegex:
+                    if not re.search(inclusionRegex, line):
+                        continue
                 i += 1
                 if line.endswith('\n'):
                     sock.send(line)
