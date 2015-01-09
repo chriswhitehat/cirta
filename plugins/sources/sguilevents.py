@@ -72,7 +72,7 @@ def execute(event):
 
     event._splunk.push(sourcetype=confVars.splunkSourcetype, eventList=splunkSguilEvents)
     
-    print('%s results saved to: %s' % (FORMAL_NAME, orf))
+    print('\n%s results saved to: %s' % (FORMAL_NAME, orf))
 
     
 
