@@ -20,7 +20,7 @@ def input(event):
     inputHeader = '%s Query Options' % FORMAL_NAME
     event.setOutPath()
     
-    if 'epoUser' not in confVars and not confVars['epoUser']:
+    if not epoPassword:
         event.setAttribute('epoUser', prompt="ePO Username", header=inputHeader)
         event.setAttribute('epoPassword', getpass())
     
