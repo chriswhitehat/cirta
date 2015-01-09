@@ -126,7 +126,10 @@ class Event(object):
         self._tracked = self._playbook.tracked
         self._adhoc = self._playbook.adHoc
         self.setEventDateTime(datetime.datetime.today())
-        self._analystUsername = getpass.getuser()
+        if configs['cirta']['settings']['ANALYST_USERNAME']:
+            self._analystUsername = configs['cirta']['settings']['ANALYST_USERNAME']
+        else:
+            self._analystUsername = getpass.getuser()
         self._analystHostname = gethostname()
         if configs['cirta']['settings']['SPLUNK_ENABLED']:
             self._splunkEnabled = True
