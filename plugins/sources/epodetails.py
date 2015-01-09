@@ -20,8 +20,9 @@ def input(event):
     inputHeader = '%s Query Options' % FORMAL_NAME
     event.setOutPath()
     
-    event.setAttribute('epoUser', prompt="ePO Username", header=inputHeader)
-    event.setAttribute('epoPassword', getpass())
+    if 'epoUser' not in confVars and not confVars['epoUser']:
+        event.setAttribute('epoUser', prompt="ePO Username", header=inputHeader)
+        event.setAttribute('epoPassword', getpass())
     
     
 def adhocInput(event):
