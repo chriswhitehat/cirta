@@ -156,7 +156,10 @@ def initSSH(server, user=None, pwd=None, pubpriv=True):
     
     if pubpriv:
         try:
-            ssh.connect(server)
+            if user:
+                ssh.connect(server, username=user)
+            else:
+                ssh.connect(server)
             return ssh
         except(paramiko.AuthenticationException):
             print('Public/Private Key Auth failed for %s@%s.\nConsider running pubpriv.\n' % (getuser(), server))
