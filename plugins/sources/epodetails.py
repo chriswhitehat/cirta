@@ -21,6 +21,9 @@ def input(event):
     event.setOutPath()
     
     if not epoPassword:
+        event.setAttribute('epoUser', epoUser)
+        event.setAttribute('epoPassword', epoPassword)
+    else:
         event.setAttribute('epoUser', prompt="ePO Username", header=inputHeader)
         event.setAttribute('epoPassword', getpass())
     
