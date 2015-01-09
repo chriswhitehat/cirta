@@ -306,6 +306,9 @@ def printModeHeader(playbook, event):
         printStatusMsg(padding + title, char=' ', length=50, color=colors.TITLE)
         
 
+def printCirtaID(event):
+    print('CIRTA ID: %s' % event.cirta_id)
+
 def launchInitializers(playbook, event):
     log.info('msg="launching initializers"')
     for initializer in playbook.INITIALIZERS:
@@ -451,6 +454,8 @@ def main():
     event = Event(cirta_id, configs, options, playbook, cirtaHome)
         
     printModeHeader(playbook, event)
+    
+    printCirtaID(event)
     
     launchInitializers(playbook, event)
     
