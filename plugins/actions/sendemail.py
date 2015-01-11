@@ -27,7 +27,7 @@ def execute(event):
     #subject = getUserInWithDef('Subject', '%s %s' % (subjectStart, event.Category.split(',')[0]))
     
     event.ir_ticket = getUserIn('IR Ticket')
-    event.caps_ticket = 'n/a'
+    event.setAttribute('caps_ticket','-')
     
     toAddress = splitAndStrip(getUserInWithDef('Recipient(s)', confVars.toAddr))
     
