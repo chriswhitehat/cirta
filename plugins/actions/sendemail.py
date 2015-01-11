@@ -23,8 +23,7 @@ def execute(event):
     
     def splitAndStrip(raw):
         return [x.strip() for x in raw.split(',')]
-    
-    toAddress = splitAndStrip(getUserInWithDef('Recipient(s)', confVars.toAddr))
+      
 
     if confVars.cc:
         cc = [confVars.cc]
@@ -40,7 +39,17 @@ def execute(event):
     
     #subject = getUserInWithDef('Subject', '%s %s' % (subjectStart, event.Category.split(',')[0]))
     
-    subject = getUserInWithDef('Subject', confVars.subject)
+    event.ir_ticket = getUserIn('IR Ticket')
+    event.caps_ticket = ' '
+    
+    toAddress = splitAndStrip(getUserInWithDef('Recipient(s)', confVars.toAddr))
+    
+    if event.hostname:
+        subjectAdd = event.hostname
+    else:
+        subjectAdd = event.ip_address
+        
+    subject = getUserInWithDef('Subject', '%s - %s' (confVars.subject, subjectAdd))
     
     print('')
 
@@ -94,8 +103,6 @@ def execute(event):
 
     msg += confVars.footer
      
-    
-                
     ticketFilePath = event._baseFilePath + '.ticket'
     f = open(ticketFilePath, 'w')
     f.write(msg)
@@ -105,7 +112,26 @@ def execute(event):
     msg = f.read()
     f.close()
     
-    printStatusMsg('Final Ticket', 22, '-', color=colors.HEADER2)
+    printStatusMsg('CAPS Final Ticket', 22, '-', color=colors.HEADER2)
+    
+    print('Subject: %s\n' % subject)
+    print(msg + '\n')
+    
+    event.setAttribute('caps_ticket', prompt='CAPS Ticket Number', force=True)
+    
+    msg = msg.replace('CAPS Ticket --  ', 'CAPS Ticket -- %s' % event.caps_ticket)
+    
+    printStatusMsg('IR Final Ticket', 22, '-', color=colors.HEADER2)
+    
+    print('Subject: %s\n' % subject)
+    print(msg + '\n')
+    
+    printStatusMsg('Email Final Ticket', 22, '-', color=colors.HEADER2)
+    
+    f = open(ticketFilePath, 'w')
+    f.write(msg)
+    f.close()
+    
     print('From: %s' % confVars.fromAddr)
     print('To:   %s' % ', '.join(toAddress))
     if cc:
@@ -118,7 +144,4 @@ def execute(event):
     if getUserIn('Send Email?') in YES:
         if not event._testing:
             mailServer.sendMail(subject, msg, ccAddr=cc, bccAddr=bcc, prior=priority)
-        
-    
-    
     
