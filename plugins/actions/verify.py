@@ -18,7 +18,7 @@ def verifyAttributes(event):
     for attr in [attr for attr in event._fifoAttrs.values() if attr.verify]:
         if attr.conflictsExist():
             printStatusMsg('Warning: %s Conflicts' % attr.name, 30, '-', color=colors.WARNING)
-            print('\n'.join(["%s --> %s" %(x, y) for x, y in attr.valuesHistory]))
+            print('\n'.join(["%s --> %s" %(x, y) for x, y in attr.valuesHistory if y is not None]))
             print('')
         if attr.value:
             event.setAttribute(attr.name, getUserInWithDef(attr.formalName, attr.value), force=True)

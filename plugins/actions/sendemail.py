@@ -24,7 +24,13 @@ def execute(event):
     def splitAndStrip(raw):
         return [x.strip() for x in raw.split(',')]
       
-
+    #subject = getUserInWithDef('Subject', '%s %s' % (subjectStart, event.Category.split(',')[0]))
+    
+    event.ir_ticket = getUserIn('IR Ticket')
+    event.caps_ticket = ' '
+    
+    toAddress = splitAndStrip(getUserInWithDef('Recipient(s)', confVars.toAddr))
+    
     if confVars.cc:
         cc = [confVars.cc]
     else:
@@ -36,13 +42,6 @@ def execute(event):
         bcc = []
         
     mailServer = MailServer(confVars.fromAddr, toAddress, server=confVars.mailServerName)
-    
-    #subject = getUserInWithDef('Subject', '%s %s' % (subjectStart, event.Category.split(',')[0]))
-    
-    event.ir_ticket = getUserIn('IR Ticket')
-    event.caps_ticket = ' '
-    
-    toAddress = splitAndStrip(getUserInWithDef('Recipient(s)', confVars.toAddr))
     
     if event.hostname:
         subjectAdd = event.hostname
