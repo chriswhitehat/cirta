@@ -111,19 +111,23 @@ def execute(event):
     msg = f.read()
     f.close()
     
-    printStatusMsg('CARTS Final Ticket', 22, '-', color=colors.HEADER2)
+    printStatusMsg('CARTS Final Ticket', 22, '>', color=colors.HEADER2)
     
     print('Subject: %s\n' % subject)
     print(msg + '\n')
+    
+    printStatusMsg('CARTS Final Ticket', 22, '<', color=colors.HEADER2)
     
     event.setAttribute('carts_ticket', prompt='CARTS Ticket Number', force=True)
     
     msg = msg.replace('CARTS Ticket --  ', 'CARTS Ticket -- %s' % event.carts_ticket)
     
-    printStatusMsg('IR Final Ticket', 22, '-', color=colors.HEADER2)
+    printStatusMsg('IR Final Ticket', 22, '>', color=colors.HEADER2)
     
     print('Subject: %s\n' % subject)
     print(msg + '\n')
+    
+    printStatusMsg('IR Final Ticket', 22, '<', color=colors.HEADER2)
     
     printStatusMsg('Email Final Ticket', 22, '-', color=colors.HEADER2)
     
