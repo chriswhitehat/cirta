@@ -27,7 +27,7 @@ def execute(event):
     #subject = getUserInWithDef('Subject', '%s %s' % (subjectStart, event.Category.split(',')[0]))
     
     event.ir_ticket = getUserIn('IR Ticket')
-    event.setAttribute('caps_ticket','-')
+    event.carts_ticket = ' '
     
     toAddress = splitAndStrip(getUserInWithDef('Recipient(s)', confVars.toAddr))
     
@@ -111,14 +111,14 @@ def execute(event):
     msg = f.read()
     f.close()
     
-    printStatusMsg('CAPS Final Ticket', 22, '-', color=colors.HEADER2)
+    printStatusMsg('CARTS Final Ticket', 22, '-', color=colors.HEADER2)
     
     print('Subject: %s\n' % subject)
     print(msg + '\n')
     
-    event.setAttribute('caps_ticket', prompt='CAPS Ticket Number', force=True)
+    event.setAttribute('carts_ticket', prompt='CARTS Ticket Number', force=True)
     
-    msg = msg.replace('CAPS Ticket --  ', 'CAPS Ticket -- %s' % event.caps_ticket)
+    msg = msg.replace('CARTS Ticket --  ', 'CARTS Ticket -- %s' % event.carts_ticket)
     
     printStatusMsg('IR Final Ticket', 22, '-', color=colors.HEADER2)
     
