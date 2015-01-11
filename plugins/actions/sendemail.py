@@ -48,7 +48,7 @@ def execute(event):
     else:
         subjectAdd = event.ip_address
         
-    subject = getUserInWithDef('Subject', '%s - %s' (confVars.subject, subjectAdd))
+    subject = getUserInWithDef('Subject', '%s - %s' % (confVars.subject, subjectAdd))
     
     print('')
 
