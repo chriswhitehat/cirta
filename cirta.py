@@ -312,11 +312,11 @@ def seedAttributes(event):
     
     while True:
         attrName = getUserMultiChoice('Defined Attributes', 
-                                      'Attribute to Seed', 
+                                      'Attribute to seed', 
                                       [x for x in sorted(event._configs['attributes'].keys()) if not x.startswith('_')], 
                                       numCols=4, 
                                       allowMultiple=False)[0]
-        event.setAttribute(attrName, getUserIn("Seed value for %s" % attrName))
+        event.setAttribute(attrName, value=getUserIn("Seed value for %s" % attrName))
         print("")
         if getUserIn('Seed more attributes?') not in YES:
             break
