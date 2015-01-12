@@ -51,7 +51,7 @@ def processArgs(configs):
        
     flow = parser.add_argument_group('Flow Control', 'Influence the flow of CIRTA Playbooks with the following controls.')
 
-    flow.add_argument('--seed', action='store_true', help='Seed event attributes with externally known values or corrective values from previous CIRTA executions.')
+    flow.add_argument('--seed', action='store_true', help='Seed event attributes with externally known values or corrective values from previous CIRTA executions. Seeded values are set immutable.')
     flow.add_argument('--disable', nargs='+', metavar='<plugin_name>', help="globally disables any initializer, source, or action by the name of the plugin.")
     flow.add_argument('--skip_actions_prompt', action='store_true', help='disables the "Execute Actions Prompt" which occurs after the Pre-Actions sources have completed')
        
