@@ -51,6 +51,7 @@ def processArgs(configs):
        
     flow = parser.add_argument_group('Flow Control', 'Influence the flow of CIRTA Playbooks with the following controls.')
 
+    flow.add_argument('--seed', action='store_true', help='Seed event attributes with externally known values or corrective values from previous CIRTA executions.')
     flow.add_argument('--disable', nargs='+', metavar='<plugin_name>', help="globally disables any initializer, source, or action by the name of the plugin.")
     flow.add_argument('--skip_actions_prompt', action='store_true', help='disables the "Execute Actions Prompt" which occurs after the Pre-Actions sources have completed')
        
@@ -70,11 +71,8 @@ def processArgs(configs):
                 
                 
     behavior = parser.add_argument_group('Misc', 'Control the misc CIRTA functions with these switches.')
-    behavior.add_argument('--runorder', action='store_true', help='Display data sources, their run order, required attributes and provided attributes')
-    behavior.add_argument('--pipeit', metavar='<file>', help='Converts a newline separated file to a single line pipe delimited.')
     behavior.add_argument('--debug', action="store_true", help='set logging level to debug.')
     behavior.add_argument('--local_logging', action="store_true", help='log to local debug file')
-    behavior.add_argument('--init', action="store_true", help='Initialize CIRTA environment, directories, git etc')
     behavior.add_argument('--test', action='store_true', help='Test run script. Suppresses CIRTA and External actions.')
     
     log.debug('msg="parsing provided arguments"')
@@ -308,6 +306,14 @@ def printModeHeader(playbook, event):
 
 def printCirtaID(event):
     print('CIRTA ID: %s' % event.cirta_id)
+    
+def seedAttributes(event):
+    printStatusMsg("Pre-Seed Attributes")
+    
+    while True:
+        attrName = getUserMultiChoice('Defined Attributes', 'Attribute to Seed', event._configs.keys(), numCols=4, allowMultiple=False)[0]
+        if getUserIn('Seed more attributes?') not in YES:
+            break
 
 def launchInitializers(playbook, event):
     log.info('msg="launching initializers"')
@@ -456,6 +462,9 @@ def main():
     printModeHeader(playbook, event)
     
     printCirtaID(event)
+    
+    if options.seed:
+        seedAttributes(event)
     
     launchInitializers(playbook, event)
     
