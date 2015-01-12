@@ -352,7 +352,8 @@ def launchSources(playbook, event, preAction=True):
         
     def initProvides(event, provides):
         for attr in provides:
-            event.setAttribute(attr)
+            if not hasattr(event, attr):
+                event.setAttribute(attr)
 
     if preAction:
         sources = playbook.PRE_SOURCES
