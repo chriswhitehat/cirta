@@ -316,7 +316,7 @@ def seedAttributes(event):
                                       [x for x in sorted(event._configs['attributes'].keys()) if not x.startswith('_')], 
                                       numCols=4, 
                                       allowMultiple=False)[0]
-        event.setAttribute(attrName, value=getUserIn("Seed value for %s" % attrName))
+        event.setAttribute(attrName, value=getUserIn("Seed value for %s" % attrName), immutable=True)
         print("")
         if getUserIn('Seed more attributes?') not in YES:
             break
