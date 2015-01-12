@@ -21,7 +21,7 @@ from logging import Formatter, FileHandler
 from logging.handlers import SysLogHandler
 from lib.configure import config
 from lib.event import Event
-from lib.util import printStatusMsg, colors, getUserIn, bcolors, YES
+from lib.util import printStatusMsg, colors, getUserIn, bcolors, YES, getUserMultiChoice
 
 log = logging.getLogger('cirta')
 errorFormatter = Formatter(colors.FAIL + '\n%(message)s\n' + colors.ENDC)
