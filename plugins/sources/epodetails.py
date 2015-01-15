@@ -36,19 +36,18 @@ def execute(event):
     
     for server in [x.strip() for x in epoServers.split(',')]:
         epoURL = 'https://%s/remote/system.find?searchText=%s' % (server, event.ip_address)
-        username = event.epoUser
-        password = event.epoPassword
 
         passman = urllib2.HTTPPasswordMgrWithDefaultRealm()
-
-        passman.add_password(None, theurl, username, password)
+        
+        passman.add_password(None, theurl, event.epoUser, event.epoPassword)
 
         authhandler = urllib2.HTTPBasicAuthHandler(passman)
 
         opener = urllib2.build_opener(authhandler)
 
         urllib2.install_opener(opener)
-        result = urllib2.urlopen(theurl)
+
+        result = urllib2.urlopen(epoURL)
 
         #print('curl -k -u %s:%s https://%s/remote/system.find?searchText=%s' % (event.epoUser, event.epoPassword, server, event.ip_address))
         #result = runBash('curl -k -u %s:%s https://%s/remote/system.find?searchText=%s' % (event.epoUser, event.epoPassword, server, event.ip_address))
