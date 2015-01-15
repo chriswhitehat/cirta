@@ -13,6 +13,7 @@ COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER I
 ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 '''
 
+import urllib2
 from lib.util import runBash, printStatusMsg
 from getpass import getuser, getpass
 
@@ -34,8 +35,23 @@ def adhocInput(event):
 def execute(event):
     
     for server in [x.strip() for x in epoServers.split(',')]:
-        print('curl -k -u %s:%s https://%s/remote/system.find?searchText=%s' % (event.epoUser, event.epoPassword, server, event.ip_address))
-        result = runBash('curl -k -u %s:%s https://%s/remote/system.find?searchText=%s' % (event.epoUser, event.epoPassword, server, event.ip_address))
+        epoURL = 'https://%s/remote/system.find?searchText=%s' % (server, event.ip_address)
+        username = event.epoUser
+        password = event.epoPassword
+
+        passman = urllib2.HTTPPasswordMgrWithDefaultRealm()
+
+        passman.add_password(None, theurl, username, password)
+
+        authhandler = urllib2.HTTPBasicAuthHandler(passman)
+
+        opener = urllib2.build_opener(authhandler)
+
+        urllib2.install_opener(opener)
+        result = urllib2.urlopen(theurl)
+
+        #print('curl -k -u %s:%s https://%s/remote/system.find?searchText=%s' % (event.epoUser, event.epoPassword, server, event.ip_address))
+        #result = runBash('curl -k -u %s:%s https://%s/remote/system.find?searchText=%s' % (event.epoUser, event.epoPassword, server, event.ip_address))
         if result:
             sresult = result.read().splitlines()
             if sresult and sresult[0] == "OK:" and len(sresult) > 3:
