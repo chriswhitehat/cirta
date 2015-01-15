@@ -239,7 +239,7 @@ class Event(object):
             else:
                 try:
                     with open(existingFiles[0], 'a'):
-                        log.warn('Warning: files with this base path exist. Proceeding with this base path will likely overwrite a previous run.')
+                        log.warn('Warning: files with this base path exist. Proceeding will very likely overwrite a previous run.')
                         if getUserInWithDef('Proceed? (Yes/No)', 'No') in YES:
                             return proposedPath
                         else:
