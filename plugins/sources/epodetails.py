@@ -35,6 +35,7 @@ def adhocInput(event):
 def execute(event):
     
     for server in [x.strip() for x in epoServers.split(',')]:
+        print('Checking ePO (%s)...' % server)
         epoURL = 'https://%s/remote/system.find?searchText=%s' % (server, event.ip_address)
 
         passman = urllib2.HTTPPasswordMgrWithDefaultRealm()
