@@ -50,7 +50,7 @@ def execute(event):
 
         try:
             result = urllib2.urlopen(epoURL)
-        except(HTTPError):
+        except(urllib2.HTTPError):
             log.warn('Warning: HTTPError returned from ePO server, skipping...')
             log.warn('msg="HTTPError returned from ePO server, skipping" server="%s"' % server)
             return
