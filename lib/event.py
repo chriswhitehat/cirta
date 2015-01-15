@@ -243,6 +243,7 @@ class Event(object):
                         if getUserInWithDef('Proceed? (Yes/No)', 'No') in YES:
                             return proposedPath
                         else:
+                            print('')
                             return checkPath(filePath)
                 except(IOError):
                     log.warn('Warning: files with this base path exist. You do not have permissions to overwrite, please modify and try again.')
