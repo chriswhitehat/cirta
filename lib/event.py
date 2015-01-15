@@ -14,12 +14,13 @@ COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER I
 ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 '''
 
-import datetime, pytz, logging, getpass, pytz, getpass, os, re, sys, pwd, grp
+import datetime, pytz, logging, getpass, pytz, getpass, os, re, sys, pwd, grp, glob
 from collections import OrderedDict
 from socket import gethostname
 from logging.handlers import SysLogHandler
 from lib.util import datetimeToEpoch, printStatusMsg, getUserIn, getUserInWithDef, YES
 from lib.splunkit import SplunkIt
+from tkMessageBox import YESNO
 
 log = logging.getLogger(__name__)
 
@@ -229,6 +230,24 @@ class Event(object):
             
         
     def setOutPath(self, defFileName=None):
+        
+        def checkPath(filePath):
+            proposedPath = getUserInWithDef('Path', filePath)
+            existingFiles = glob.glob(proposedPath + '.*')
+            
+            if not existingFiles:
+                return proposedPath
+            else:
+                try:
+                    with open(existingFiles[0], 'a'):
+                        log.warn('Warning: files with this base path exist. Proceeding with this base path will likely overwrite a previous run.')
+                        if getUserInWithDef('Proceed? (Yes/No)', 'No') in YES:
+                            return proposedPath
+                except(IOError):
+                    log.warn('Warning: files with this base path exist. You do not have permissions to overwrite, please modify and try again.')
+                    return checkPath(filePath)
+                
+                            
         if hasattr(self, '_baseFilePath') and self._baseFilePath:
             return
         printStatusMsg("Output base file path")
