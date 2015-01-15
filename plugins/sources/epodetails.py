@@ -34,6 +34,7 @@ def adhocInput(event):
 def execute(event):
     
     for server in [x.strip() for x in epoServers.split(',')]:
+        print('curl -k -u %s:%s https://%s/remote/system.find?searchText=%s' % (event.epoUser, event.epoPassword, server, event.ip_address))
         result = runBash('curl -k -u %s:%s https://%s/remote/system.find?searchText=%s' % (event.epoUser, event.epoPassword, server, event.ip_address))
         if result:
             sresult = result.read().splitlines()
