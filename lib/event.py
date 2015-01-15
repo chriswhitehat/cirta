@@ -257,7 +257,7 @@ class Event(object):
             baseFilePath = "%s/%s_%s" % (self._outDir, self._analystUsername, datetime.datetime.today().strftime("%H%M"))
         
         
-        self.setAttribute('_baseFilePath', prompt='Path', default=baseFilePath)
+        self.setAttribute('_baseFilePath', checkPath(baseFilePath))
         
         if self._outDir not in self._baseFilePath:
             self._outDir = os.path.dirname(os.path.abspath(self._baseFilePath))
