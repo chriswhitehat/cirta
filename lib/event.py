@@ -242,6 +242,8 @@ class Event(object):
                         log.warn('Warning: files with this base path exist. Proceeding with this base path will likely overwrite a previous run.')
                         if getUserInWithDef('Proceed? (Yes/No)', 'No') in YES:
                             return proposedPath
+                        else:
+                            return checkPath(filePath)
                 except(IOError):
                     log.warn('Warning: files with this base path exist. You do not have permissions to overwrite, please modify and try again.')
                     return checkPath(filePath)
