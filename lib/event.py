@@ -20,7 +20,6 @@ from socket import gethostname
 from logging.handlers import SysLogHandler
 from lib.util import datetimeToEpoch, printStatusMsg, getUserIn, getUserInWithDef, YES
 from lib.splunkit import SplunkIt
-from tkMessageBox import YESNO
 
 log = logging.getLogger(__name__)
 
