@@ -52,7 +52,7 @@ def execute(event):
             result = urllib2.urlopen(epoURL)
         except(urllib2.HTTPError):
             log.warn('Warning: HTTPError returned from ePO server, skipping...')
-            log.warn('msg="HTTPError returned from ePO server, skipping" server="%s"' % server)
+            log.debug('msg="HTTPError returned from ePO server, skipping" server="%s"' % server)
             return
 
         #print('curl -k -u %s:%s https://%s/remote/system.find?searchText=%s' % (event.epoUser, event.epoPassword, server, event.ip_address))
