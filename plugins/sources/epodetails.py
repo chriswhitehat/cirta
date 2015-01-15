@@ -39,7 +39,7 @@ def execute(event):
 
         passman = urllib2.HTTPPasswordMgrWithDefaultRealm()
         
-        passman.add_password(None, theurl, event.epoUser, event.epoPassword)
+        passman.add_password(None, epoURL, event.epoUser, event.epoPassword)
 
         authhandler = urllib2.HTTPBasicAuthHandler(passman)
 
