@@ -246,7 +246,7 @@ class Event(object):
                             print('')
                             return checkPath(filePath)
                 except(IOError):
-                    log.warn('Warning: files with this base path exist. You do not have permissions to overwrite, please modify and try again.')
+                    log.warn('Warning: files with this base path exist. You are not able to overwrite, please modify and try again.')
                     return checkPath(filePath)
                 
                             
@@ -265,7 +265,6 @@ class Event(object):
         if self._outDir not in self._baseFilePath:
             self._outDir = os.path.dirname(os.path.abspath(self._baseFilePath))
 
-#        try:
         if not os.path.exists(os.path.join(self._outDir, 'bin')):
             os.makedirs(os.path.join(self._outDir, 'bin'))
             if self._outDirGroup:
@@ -275,8 +274,6 @@ class Event(object):
                         os.chown(os.path.join(root, momo), -1, grp.getgrnam(self._outDirGroup).gr_gid)
                     for momo in files:
                         os.chown(os.path.join(root, momo), -1, grp.getgrnam(self._outDirGroup).gr_gid)
- #       except(OSError):
- #           pass
 
                  
     def detectInputCases(self, input, yes=False, trailingChar='\\b'):
