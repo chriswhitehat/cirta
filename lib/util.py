@@ -152,6 +152,10 @@ def proceed():
         print("\nExiting.")
         exit()
         
+        
+class SSHConnectionFailure(Exception):
+    pass
+        
 def initSSH(server, u=None, p=None, k=None, event=None, prompt=False):
     if event:
         module = event._playbook.getPlugin(event.currentPlugin)
@@ -261,10 +265,10 @@ def initSSH(server, u=None, p=None, k=None, event=None, prompt=False):
             return ssh
         except(paramiko.AuthenticationException):
             log.error('Error: All authentication methods exhausted for this server, plugin features dependent on this ssh session will fail.')
-            return ssh
+            raise SSHConnectionFailure
     else:
         log.error('Error: All authentication methods exhausted for this server, plugin features dependent on this ssh session will fail.')
-        return ssh
+        raise SSHConnectionFailure
     
 
 def establishSSHAuth(server, u=None, p=None, k=None, event=None):
