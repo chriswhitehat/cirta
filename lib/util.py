@@ -213,26 +213,26 @@ def initSSH(server, u=None, p=None, k=None, event=None):
         
     if pwd:
         try:
-            log.debug('msg="SSH Password mode" server="%s" username="%s"' % (server, defaultUsername))
-            ssh.connect(server, username=defaultUsername, password=pwd)
-            log.debug('msg="SSH Password mode successful" server="%s" username="%s"' % (server, defaultUsername))
+            log.debug('msg="SSH Password mode" server="%s" username="%s"' % (server, defaultUser))
+            ssh.connect(server, username=defaultUser, password=pwd)
+            log.debug('msg="SSH Password mode successful" server="%s" username="%s"' % (server, defaultUser))
             return ssh
         except(paramiko.AuthenticationException):
             pass
         
     if priv:
         try:
-            log.debug('msg="SSH Private Key mode" server="%s" username="%s" pkey="%s"' % (server, defaultUsername, priv))
-            ssh.connect(server, username=defaultUsername, pkey=priv)
-            log.debug('msg="SSH Private Key mode successful" server="%s" username="%s" pkey="%s"' % (server, defaultUsername, priv))
+            log.debug('msg="SSH Private Key mode" server="%s" username="%s" pkey="%s"' % (server, defaultUser, priv))
+            ssh.connect(server, username=defaultUser, pkey=priv)
+            log.debug('msg="SSH Private Key mode successful" server="%s" username="%s" pkey="%s"' % (server, defaultUser, priv))
             return ssh
         except(paramiko.AuthenticationException):
             pass
         
     try:
-        log.debug('msg="SSH Specified Analyst Username and Default Private Key mode" server="%s" username="%s"' % (server, defaultUsername))
-        ssh.connect(server, username=defaultUsername)
-        log.debug('msg="SSH Specified Analyst Username and Default Private Key mode successful" server="%s" username="%s"' % (server, defaultUsername))
+        log.debug('msg="SSH Specified Analyst Username and Default Private Key mode" server="%s" username="%s"' % (server, defaultUser))
+        ssh.connect(server, username=defaultUser)
+        log.debug('msg="SSH Specified Analyst Username and Default Private Key mode successful" server="%s" username="%s"' % (server, defaultUser))
         return ssh
     except(paramiko.AuthenticationException):
         pass
