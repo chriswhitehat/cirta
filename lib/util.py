@@ -261,10 +261,10 @@ def initSSH(server, u=None, p=None, k=None, event=None, prompt=False):
             return ssh
         except(paramiko.AuthenticationException):
             log.error('Error: All authentication methods exhausted for this server, plugin features dependent on this ssh session will fail.')
-            return None
+            return ssh
     else:
         log.error('Error: All authentication methods exhausted for this server, plugin features dependent on this ssh session will fail.')
-        return None
+        return ssh
     
 
 def establishSSHAuth(server, u=None, p=None, k=None, event=None):
