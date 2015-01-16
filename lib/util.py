@@ -22,6 +22,8 @@ from email.MIMEMultipart import MIMEMultipart
 from getpass import getpass, getuser
 from datetime import datetime
 
+log = logging.getLogger(__name__)
+
 with warnings.catch_warnings():
     warnings.simplefilter("ignore")
     try:
