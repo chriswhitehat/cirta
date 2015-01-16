@@ -272,7 +272,7 @@ def initSSH(server, u=None, p=None, k=None, event=None, prompt=False):
     
 
 def establishSSHAuth(server, u=None, p=None, k=None, event=None):
-    ssh = initSSH(server, u, p, k, event)
+    ssh = initSSH(server, u, p, k, event, prompt=True)
     
     if ssh and ssh.exec_command('date').read():
         return True
