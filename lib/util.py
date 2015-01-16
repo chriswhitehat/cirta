@@ -243,13 +243,7 @@ def initSSH(server, u=None, p=None, k=None, event=None, prompt=True):
     except(paramiko.AuthenticationException):
         pass
 
-    #try:
-    #    ssh.connect(server)
-    #    log.debug('msg="SSH Current User and Default Private Key mode successful" server="%s" username="%s"' % (server, getuser()))
-    #    return ssh
-    #except(paramiko.AuthenticationException):
-    #    pass
-        
+
     if prompt:
         log.warn('Warning: All authentication attempts failed, please specify a username and password for this plugin and server')
         user = getUserIn('Username')
