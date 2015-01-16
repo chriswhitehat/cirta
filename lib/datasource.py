@@ -42,7 +42,7 @@ class DailyLogSource(object):
         
         fileName = os.path.basename(logpath)
         
-        server = initSSH(server, user=self.event._analystUsername)
+        server = initSSH(server, event=self.event)
         
         tick = time()
         
@@ -176,7 +176,7 @@ class DailyLogSource(object):
         
         fileName = os.path.basename(logpath)
         
-        server = initSSH(server, user=self.event._analystUsername)
+        server = initSSH(server, event=self.event)
         
         tick = time()
         
@@ -251,7 +251,7 @@ class ISOLogSource(object):
         fileName = os.path.basename(logpath)
         dirName = os.path.dirname(logpath)
         
-        server = initSSH(server, user=self.event._analystUsername)
+        server = initSSH(server, event=self.event)
         
         tick = time()
         
@@ -389,7 +389,7 @@ class ISOLogSource(object):
         
         fileName = os.path.basename(logpath)
         
-        server = initSSH(server, user=self.event._analystUsername)
+        server = initSSH(server, event=self.event)
         
         tick = time()
         

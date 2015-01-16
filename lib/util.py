@@ -15,7 +15,7 @@ ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEAL
 
 from __future__ import division
 from itertools import izip_longest
-import smtplib, os, sys, warnings, getpass, pytz, readline, re, math, time
+import smtplib, os, sys, warnings, pytz, readline, re, math, time
 from subprocess import Popen, PIPE
 from email.MIMEText import MIMEText
 from email.MIMEMultipart import MIMEMultipart
@@ -150,6 +150,113 @@ def proceed():
         print("\nExiting.")
         exit()
         
+def initSSH(server, u=None, p=None, k=None, event=None):
+    if event:
+        module = event._playbook.getPlugin(event.currentPlugin)
+    
+    ssh = paramiko.SSHClient()
+    ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+    
+    user = None
+    if u:
+        user = u
+    if module and hasattr(module, 'sshUsername'):
+        if module.sshUsername:
+            user = module.sshUsername
+        
+    pwd = None
+    if p:
+        pwd = p
+    if module and hasattr(module, 'sshPassword'):
+        if module.sshPassword:
+            pwd = module.sshPassword
+        
+    priv = None   
+    if k:
+         priv = k
+    elif module and hasattr(module, 'sshPrivKey'):
+        if module.sshPrivKey and os.path.exists(module.sshPrivKey):
+            priv = paramiko.RSAKey.from_private_key_file(module.sshPrivKey)
+            
+    if user and pwd:
+        try:
+            ssh.connect(server, username=user, password=pwd)
+            log.debug('msg="SSH Username and Password mode successful" server="%s" username="%s" password="%s"' % (server, user, pwd))
+            return ssh
+        except(paramiko.AuthenticationException):
+            pass
+        
+    if user and priv:
+        try:
+            ssh.connect(server, username=user, pkey=priv)
+            log.debug('msg="SSH Username and Private Key mode successful" server="%s" username="%s" pkey="%s"' % (server, user, priv))
+            return ssh
+        except(paramiko.AuthenticationException):
+            pass
+        
+    if user:
+        try:
+            ssh.connect(server, username=user)
+            log.debug('msg="SSH Username mode successful" server="%s" username="%s"' % (server, user))
+            return ssh
+        except(paramiko.AuthenticationException):
+            pass
+        
+    if pwd:
+        try:
+            ssh.connect(server, username=event._analystUsername, password=pwd)
+            log.debug('msg="SSH Password mode successful" server="%s" username="%s"' % (server, event._analystUsername))
+            return ssh
+        except(paramiko.AuthenticationException):
+            pass
+        
+    if priv:
+        try:
+            ssh.connect(server, username=event._analystUsername, pkey=priv)
+            log.debug('msg="SSH Private Key mode successful" server="%s" username="%s" pkey="%s"' % (server, event._analystUsername, priv))
+            return ssh
+        except(paramiko.AuthenticationException):
+            pass
+        
+    try:
+        ssh.connect(server, username=event._analystUsername)
+        log.debug('msg="SSH Specified Analyst Username and Default Private Key mode successful" server="%s" username="%s"' % (server, user))
+        return ssh
+    except(paramiko.AuthenticationException):
+        pass
+
+    try:
+        ssh.connect(server)
+        log.debug('msg="SSH Current User and Default Private Key mode successful" server="%s" username="%s"' % (server, getuser()))
+        return ssh
+    except(paramiko.AuthenticationException):
+        pass
+        
+    log.warn('Warning: All authentication attempts failed, please specify a username and password for this plugin and server')
+    user = getUserIn('Username')
+    pwd = getpass()
+    
+    try:
+        ssh.connect(server, username=user, password=pwd)
+        if module:
+            module.sshUsername = getUserIn('Username')
+            module.sshPassword = getpass()
+        return ssh
+    except(paramiko.AuthenticationException):
+        log.error('Error: All authentication methods exhausted for this server, plugin features dependent on this ssh session will fail.')
+        return None
+    
+
+def establishSSHAuth(server, u=None, p=None, k=None, event=None):
+    ssh = initSSH(server, u, p, k, event)
+    
+    if ssh and ssh.exec_command('date').read():
+        return True
+    else:
+        return False
+    
+
+'''### Old SSH Code
 def initSSH(server, user=None, pwd=None, pubpriv=True):
     ssh = paramiko.SSHClient()
     ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
@@ -172,6 +279,7 @@ def initSSH(server, user=None, pwd=None, pubpriv=True):
             pwd = getpass()
         ssh.connect(server, username=user, password=pwd)
         return ssh  
+'''
 
 def stringDateToEpoch(dateInString):
     return datetimeToEpoch(datetime.strptime(dateInString, '%Y-%m-%dT%H:%M'))
