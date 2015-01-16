@@ -251,10 +251,12 @@ def initSSH(server, u=None, p=None, k=None, event=None):
     pwd = getpass()
     
     try:
+        log.debug('msg="SSH connection attempt" user_mode="prompt" username="%s" pwd_mode="prompt" server="%s" ' % (user, server))
         ssh.connect(server, username=user, password=pwd)
+        log.debug('msg="SSH connection successful" user_mode="prompt" username="%s" pwd_mode="prompt" server="%s" ' % (user, server))
         if module:
-            module.sshUsername = getUserIn('Username')
-            module.sshPassword = getpass()
+            module.sshUsername = user
+            module.sshPassword = pwd
         return ssh
     except(paramiko.AuthenticationException):
         log.error('Error: All authentication methods exhausted for this server, plugin features dependent on this ssh session will fail.')
