@@ -152,7 +152,7 @@ def proceed():
         print("\nExiting.")
         exit()
         
-def initSSH(server, u=None, p=None, k=None, event=None):
+def initSSH(server, u=None, p=None, k=None, event=None, prompt=False):
     if event:
         module = event._playbook.getPlugin(event.currentPlugin)
         defaultUser = event._analystUsername
@@ -246,19 +246,23 @@ def initSSH(server, u=None, p=None, k=None, event=None):
     #except(paramiko.AuthenticationException):
     #    pass
         
-    log.warn('Warning: All authentication attempts failed, please specify a username and password for this plugin and server')
-    user = getUserIn('Username')
-    pwd = getpass()
-    
-    try:
-        log.debug('msg="SSH connection attempt" user_mode="prompt" username="%s" pwd_mode="prompt" server="%s" ' % (user, server))
-        ssh.connect(server, username=user, password=pwd)
-        log.debug('msg="SSH connection successful" user_mode="prompt" username="%s" pwd_mode="prompt" server="%s" ' % (user, server))
-        if module:
-            module.sshUsername = user
-            module.sshPassword = pwd
-        return ssh
-    except(paramiko.AuthenticationException):
+    if prompt:
+        log.warn('Warning: All authentication attempts failed, please specify a username and password for this plugin and server')
+        user = getUserIn('Username')
+        pwd = getpass()
+        
+        try:
+            log.debug('msg="SSH connection attempt" user_mode="prompt" username="%s" pwd_mode="prompt" server="%s" ' % (user, server))
+            ssh.connect(server, username=user, password=pwd)
+            log.debug('msg="SSH connection successful" user_mode="prompt" username="%s" pwd_mode="prompt" server="%s" ' % (user, server))
+            if module:
+                module.sshUsername = user
+                module.sshPassword = pwd
+            return ssh
+        except(paramiko.AuthenticationException):
+            log.error('Error: All authentication methods exhausted for this server, plugin features dependent on this ssh session will fail.')
+            return None
+    else:
         log.error('Error: All authentication methods exhausted for this server, plugin features dependent on this ssh session will fail.')
         return None
     
