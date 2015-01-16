@@ -160,21 +160,21 @@ def initSSH(server, u=None, p=None, k=None, event=None):
     user = None
     if u:
         user = u
-    if module and hasattr(module, 'sshUsername'):
+    if event and module and hasattr(module, 'sshUsername'):
         if module.sshUsername:
             user = module.sshUsername
         
     pwd = None
     if p:
         pwd = p
-    if module and hasattr(module, 'sshPassword'):
+    if event and module and hasattr(module, 'sshPassword'):
         if module.sshPassword:
             pwd = module.sshPassword
         
     priv = None   
     if k:
          priv = k
-    elif module and hasattr(module, 'sshPrivKey'):
+    elif event and module and hasattr(module, 'sshPrivKey'):
         if module.sshPrivKey and os.path.exists(module.sshPrivKey):
             priv = paramiko.RSAKey.from_private_key_file(module.sshPrivKey)
             
