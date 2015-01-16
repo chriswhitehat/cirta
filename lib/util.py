@@ -153,6 +153,10 @@ def proceed():
 def initSSH(server, u=None, p=None, k=None, event=None):
     if event:
         module = event._playbook.getPlugin(event.currentPlugin)
+        defaultUser = event._analystUsername
+    else:
+        module = None
+        defaultUser = getuser()
     
     ssh = paramiko.SSHClient()
     ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
@@ -160,21 +164,21 @@ def initSSH(server, u=None, p=None, k=None, event=None):
     user = None
     if u:
         user = u
-    if event and module and hasattr(module, 'sshUsername'):
+    elif module and hasattr(module, 'sshUsername'):
         if module.sshUsername:
             user = module.sshUsername
         
     pwd = None
     if p:
         pwd = p
-    if event and module and hasattr(module, 'sshPassword'):
+    elif module and hasattr(module, 'sshPassword'):
         if module.sshPassword:
             pwd = module.sshPassword
         
     priv = None   
     if k:
          priv = k
-    elif event and module and hasattr(module, 'sshPrivKey'):
+    elif module and hasattr(module, 'sshPrivKey'):
         if module.sshPrivKey and os.path.exists(module.sshPrivKey):
             priv = paramiko.RSAKey.from_private_key_file(module.sshPrivKey)
             
@@ -207,36 +211,36 @@ def initSSH(server, u=None, p=None, k=None, event=None):
         
     if pwd:
         try:
-            log.debug('msg="SSH Password mode" server="%s" username="%s"' % (server, event._analystUsername))
-            ssh.connect(server, username=event._analystUsername, password=pwd)
-            log.debug('msg="SSH Password mode successful" server="%s" username="%s"' % (server, event._analystUsername))
+            log.debug('msg="SSH Password mode" server="%s" username="%s"' % (server, defaultUsername))
+            ssh.connect(server, username=defaultUsername, password=pwd)
+            log.debug('msg="SSH Password mode successful" server="%s" username="%s"' % (server, defaultUsername))
             return ssh
         except(paramiko.AuthenticationException):
             pass
         
     if priv:
         try:
-            log.debug('msg="SSH Private Key mode" server="%s" username="%s" pkey="%s"' % (server, event._analystUsername, priv))
-            ssh.connect(server, username=event._analystUsername, pkey=priv)
-            log.debug('msg="SSH Private Key mode successful" server="%s" username="%s" pkey="%s"' % (server, event._analystUsername, priv))
+            log.debug('msg="SSH Private Key mode" server="%s" username="%s" pkey="%s"' % (server, defaultUsername, priv))
+            ssh.connect(server, username=defaultUsername, pkey=priv)
+            log.debug('msg="SSH Private Key mode successful" server="%s" username="%s" pkey="%s"' % (server, defaultUsername, priv))
             return ssh
         except(paramiko.AuthenticationException):
             pass
         
     try:
-        log.debug('msg="SSH Specified Analyst Username and Default Private Key mode" server="%s" username="%s"' % (server, user))
-        ssh.connect(server, username=event._analystUsername)
-        log.debug('msg="SSH Specified Analyst Username and Default Private Key mode successful" server="%s" username="%s"' % (server, user))
+        log.debug('msg="SSH Specified Analyst Username and Default Private Key mode" server="%s" username="%s"' % (server, defaultUsername))
+        ssh.connect(server, username=defaultUsername)
+        log.debug('msg="SSH Specified Analyst Username and Default Private Key mode successful" server="%s" username="%s"' % (server, defaultUsername))
         return ssh
     except(paramiko.AuthenticationException):
         pass
 
-    try:
-        ssh.connect(server)
-        log.debug('msg="SSH Current User and Default Private Key mode successful" server="%s" username="%s"' % (server, getuser()))
-        return ssh
-    except(paramiko.AuthenticationException):
-        pass
+    #try:
+    #    ssh.connect(server)
+    #    log.debug('msg="SSH Current User and Default Private Key mode successful" server="%s" username="%s"' % (server, getuser()))
+    #    return ssh
+    #except(paramiko.AuthenticationException):
+    #    pass
         
     log.warn('Warning: All authentication attempts failed, please specify a username and password for this plugin and server')
     user = getUserIn('Username')
