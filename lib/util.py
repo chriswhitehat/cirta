@@ -156,7 +156,7 @@ def proceed():
 class SSHConnectionFailure(Exception):
     pass
         
-def initSSH(server, u=None, p=None, k=None, event=None, prompt=False):
+def initSSH(server, u=None, p=None, k=None, event=None, prompt=True):
     if event:
         module = event._playbook.getPlugin(event.currentPlugin)
         defaultUser = event._analystUsername
