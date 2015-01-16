@@ -15,7 +15,7 @@ ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEAL
 
 from __future__ import division
 from itertools import izip_longest
-import smtplib, os, sys, warnings, pytz, readline, re, math, time
+import smtplib, os, sys, warnings, pytz, readline, re, math, time, logging
 from subprocess import Popen, PIPE
 from email.MIMEText import MIMEText
 from email.MIMEMultipart import MIMEMultipart
