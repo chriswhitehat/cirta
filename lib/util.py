@@ -180,6 +180,7 @@ def initSSH(server, u=None, p=None, k=None, event=None):
             
     if user and pwd:
         try:
+            log.debug('msg="SSH Username and Password mode" server="%s" username="%s" password="%s"' % (server, user, pwd))
             ssh.connect(server, username=user, password=pwd)
             log.debug('msg="SSH Username and Password mode successful" server="%s" username="%s" password="%s"' % (server, user, pwd))
             return ssh
@@ -188,6 +189,7 @@ def initSSH(server, u=None, p=None, k=None, event=None):
         
     if user and priv:
         try:
+            log.debug('msg="SSH Username and Private Key mode" server="%s" username="%s" pkey="%s"' % (server, user, priv))
             ssh.connect(server, username=user, pkey=priv)
             log.debug('msg="SSH Username and Private Key mode successful" server="%s" username="%s" pkey="%s"' % (server, user, priv))
             return ssh
@@ -196,6 +198,7 @@ def initSSH(server, u=None, p=None, k=None, event=None):
         
     if user:
         try:
+            log.debug('msg="SSH Username mode" server="%s" username="%s"' % (server, user))
             ssh.connect(server, username=user)
             log.debug('msg="SSH Username mode successful" server="%s" username="%s"' % (server, user))
             return ssh
@@ -204,6 +207,7 @@ def initSSH(server, u=None, p=None, k=None, event=None):
         
     if pwd:
         try:
+            log.debug('msg="SSH Password mode" server="%s" username="%s"' % (server, event._analystUsername))
             ssh.connect(server, username=event._analystUsername, password=pwd)
             log.debug('msg="SSH Password mode successful" server="%s" username="%s"' % (server, event._analystUsername))
             return ssh
@@ -212,6 +216,7 @@ def initSSH(server, u=None, p=None, k=None, event=None):
         
     if priv:
         try:
+            log.debug('msg="SSH Private Key mode" server="%s" username="%s" pkey="%s"' % (server, event._analystUsername, priv))
             ssh.connect(server, username=event._analystUsername, pkey=priv)
             log.debug('msg="SSH Private Key mode successful" server="%s" username="%s" pkey="%s"' % (server, event._analystUsername, priv))
             return ssh
@@ -219,6 +224,7 @@ def initSSH(server, u=None, p=None, k=None, event=None):
             pass
         
     try:
+        log.debug('msg="SSH Specified Analyst Username and Default Private Key mode" server="%s" username="%s"' % (server, user))
         ssh.connect(server, username=event._analystUsername)
         log.debug('msg="SSH Specified Analyst Username and Default Private Key mode successful" server="%s" username="%s"' % (server, user))
         return ssh
