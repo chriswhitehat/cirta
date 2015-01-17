@@ -24,6 +24,8 @@ from datetime import datetime
 
 log = logging.getLogger(__name__)
 
+logging.getLogger("paramiko").setLevel(logging.WARNING)
+
 with warnings.catch_warnings():
     warnings.simplefilter("ignore")
     try:
