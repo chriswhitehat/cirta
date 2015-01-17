@@ -289,6 +289,8 @@ class Playbook(object):
             log.error('msg="Attempted to retrieve non-existent plugin" plugin="%s"' % plugin)
             exit()
         
+    def __str__(self):
+        return self.name
         
 
 def printModeHeader(playbook, event):
