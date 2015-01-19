@@ -496,16 +496,19 @@ def main():
         
     if hasattr(event, "_backgroundedDS"):
         launchBackgroundedSources(playbook, event)
-    
-    log.info('msg="cirta execution finished"')
-
+        
     checkStackTraces(event)
     
+    event.exitStatus = 'finished'
+    log.state(event.getAttrs())
+    log.info('msg="cirta execution finished"')
 
 if __name__ == '__main__':
     try:
         main()
     except (KeyboardInterrupt):
+        event._exitStatus = 'aborted'
+        log.state(event.getAttrs())
         log.info('msg="cirta execution aborted"')
         print("^C")
         exit()
