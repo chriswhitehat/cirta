@@ -129,6 +129,8 @@ def execute(event):
     
     printStatusMsg('IR Final Ticket', 22, '<', color=colors.HEADER2)
     
+    raw_input(colors.BOLDON + "Hit 'Enter' to continue..." + colors.BOLDOFF)
+    
     printStatusMsg('Email Final Ticket', 22, '-', color=colors.HEADER2)
     
     f = open(ticketFilePath, 'w')
