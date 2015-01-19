@@ -14,7 +14,7 @@ ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEAL
 '''
 
 from __future__ import division
-import re, subprocess, math
+import re, subprocess
 from lib.util import getUserInWithDef, getUserIn, YES, printStatusMsg, getUserMultiChoice
 from lib.mailserver import MailServer
 

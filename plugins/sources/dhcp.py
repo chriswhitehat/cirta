@@ -18,7 +18,7 @@ from lib.datasource import ISOLogSource
 from lib.util import getIPAddress, getMACAddress, uniq, getTimeBisect, ciscoTimeExtract
 
 
-def input(event):
+def playbookInput(event):
     inputHeader = '%s Query Options' % FORMAL_NAME
     event.setOutPath()
     event.setDateRange()
@@ -40,11 +40,11 @@ def execute(event):
         else:
             event._include = event.detectInputCases(ip_address, yes=True, trailingChar='\\b')
 
-    def dhcpFormatter(input):
+    def dhcpFormatter(inputText):
         remove = ['to ', 'for ', 'on ', 'from ']
         formatted = ['%-20s %-8s %s' % ('Date/Time', 'Type', 'Message')]
         formatted.append('-' * 80)
-        for line in uniq(input.splitlines()):
+        for line in uniq(inputText.splitlines()):
             sline = line.split(']:')
             time = datetime.datetime.strptime(sline[0][:15], '%b %d %H:%M:%S')
             msg =  sline[1].strip()
@@ -57,8 +57,8 @@ def execute(event):
             
         return '\n'.join(uniq(formatted))
        
-    def getHostName(input):
-        hostname = re.search(r"\([a-zA-Z0-9_\-]+\) via", input)
+    def getHostName(inputText):
+        hostname = re.search(r"\([a-zA-Z0-9_\-]+\) via", inputText)
         if hostname:
             return hostname.group().split()[0].strip('()').lower()
         else:

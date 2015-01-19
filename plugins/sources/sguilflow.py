@@ -17,7 +17,7 @@ import datetime
 from lib.sguilsql import getSguilSql
 
 
-def input(event):
+def playbookInput(event):
     event.setOutPath()
     event.setDateRange()
     event.setAttribute('_sqlLimit', '10000')

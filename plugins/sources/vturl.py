@@ -17,7 +17,7 @@ import shlex, os
 from lib import virustotal
 from lib.util import YES, getTimeBisect, ciscoTimeExtract
 
-def input(event):
+def playbookInput(event):
     '''Requires no input'''
     
     

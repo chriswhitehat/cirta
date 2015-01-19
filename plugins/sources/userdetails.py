@@ -14,19 +14,11 @@ ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEAL
 '''
 
 from lib import pydap
-from lib.util import getUserIn, printStatusMsg
-from getpass import getpass
 from collections import OrderedDict
 
-def input(event):
+def playbookInput(event):
     inputHeader = '%s Query Options' % FORMAL_NAME
-        
-    # Temporary while waiting for service account credentials to work.
-    #printStatusMsg(inputHeader)
-    #confVars.userDN = getUserIn("Username")
-    #confVars.password = getpass()
     
-    attempts = 0
     successful = False
     while not successful:
         successful = pydap.ldapConnect(confVars.ldapServer, confVars.userDN, confVars.password, confVars.baseDistinguishedName)
@@ -39,7 +31,7 @@ def input(event):
 def adhocInput(event):
     inputHeader = '%s Query Options' % FORMAL_NAME
     
-    input(event)
+    playbookInput(event)
     
     if hasattr(event, 'username'):
         event.setAttribute('username', prompt='LDAP Query')

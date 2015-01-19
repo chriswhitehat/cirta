@@ -14,11 +14,10 @@ COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER I
 ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 '''
 
-import datetime, pytz, logging, getpass, pytz, getpass, os, re, sys, pwd, grp, glob
+import datetime, pytz, logging, getpass, os, re, sys, grp, glob
 from collections import OrderedDict
 from socket import gethostname
-from logging.handlers import SysLogHandler
-from lib.util import datetimeToEpoch, printStatusMsg, getUserIn, getUserInWithDef, YES
+from lib.util import printStatusMsg, getUserIn, getUserInWithDef, YES
 from lib.splunkit import SplunkIt
 
 log = logging.getLogger(__name__)
@@ -276,26 +275,26 @@ class Event(object):
                         os.chown(os.path.join(root, momo), -1, grp.getgrnam(self._outDirGroup).gr_gid)
 
                  
-    def detectInputCases(self, input, yes=False, trailingChar='\\b'):
-        modified = input
-        pipeSplit = re.split('\|', input)
+    def detectInputCases(self, text, yes=False, trailingChar='\\b'):
+        modified = text
+        pipeSplit = re.split('\|', text)
         
-        matches = [re.match(r"\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}$", x) for x in re.split('\|', input)]
+        matches = [re.match(r"\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}$", x) for x in re.split('\|', text)]
         
         if all(matches):
             if len(matches) == 1:
-                modified = input.replace('.', '\.') + trailingChar
+                modified = text.replace('.', '\.') + trailingChar
             else:
-                modified = input.replace('.', '\.',).replace('|', trailingChar + '|') + trailingChar
+                modified = text.replace('.', '\.',).replace('|', trailingChar + '|') + trailingChar
             
             print('\nIP address(es) detected.\nModified: %s\n' % (modified))
             if yes or getUserInWithDef('Use modified', 'y') in YES:
-                log.debug('msg="replace input" original="%s" modified="%s"' % (input, modified))
+                log.debug('msg="replace text" original="%s" modified="%s"' % (text, modified))
                 return modified
             else:
-                return input
+                return text
         
-        return input
+        return text
     
     def getAttrs(self):
         attrs = ""

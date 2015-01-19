@@ -16,7 +16,7 @@ ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEAL
 import datetime, simplejson, urllib, urllib2, sys, formdata, itertools, logging
 from pprint import pprint
 from time import sleep
-from lib.util import printStatusMsg, colors
+from lib.util import colors
 
 log = logging.getLogger(__name__)
 
@@ -97,9 +97,9 @@ class VirusTotal(object):
         
     def uploadFiles(self, items, fileInfo):
         
-        for hash in items:
-            if hash in fileInfo:
-                realFileName, localFilePath = self.fileInfo[hash]
+        for hashsum in items:
+            if hashsum in fileInfo:
+                realFileName, localFilePath = self.fileInfo[hashsum]
         
                 fields = {'apikey': self.apiKey}
                 files = {'file': {'filename': realFileName, 'content': open(localFilePath, 'rb').read()}}
@@ -112,7 +112,7 @@ class VirusTotal(object):
                     self.queued(report)
             else:
                 if self.status:
-                    self.stdWriteFlush("\r%-70s [ %sNo File Info%s ]\n" % (hash, colors.FAIL, colors.ENDC))
+                    self.stdWriteFlush("\r%-70s [ %sNo File Info%s ]\n" % (hashsum, colors.FAIL, colors.ENDC))
                     
 
     def setItems(self, items, delim=None):
@@ -377,43 +377,43 @@ class VirusTotal(object):
                             
                 if 'detected_communicating_samples' in report:
                     msg += '    Detected Communications:\n'
-                    for hash in report['detected_communicating_samples']:
-                        if int(hash['positives']):
-                            msg += '        %-64s (%s%d/%d%s)\n' % (hash['sha256'], colors.FAIL, hash['positives'], hash['total'], colors.ENDC)
+                    for hashsum in report['detected_communicating_samples']:
+                        if int(hashsum['positives']):
+                            msg += '        %-64s (%s%d/%d%s)\n' % (hashsum['sha256'], colors.FAIL, hashsum['positives'], hashsum['total'], colors.ENDC)
                         else:
-                            msg += '        %-64s (%s%d/%d%s)\n' % (hash['sha256'], colors.OKGREEN, hash['positives'], hash['total'], colors.ENDC)
+                            msg += '        %-64s (%s%d/%d%s)\n' % (hashsum['sha256'], colors.OKGREEN, hashsum['positives'], hashsum['total'], colors.ENDC)
                             
                 if 'detected_downloaded_samples' in report:
                     msg += '    Detected Samples:\n'
-                    for hash in report['detected_downloaded_samples']:
-                        if int(hash['positives']):
-                            msg += '        %-64s (%s%d/%d%s)\n' % (hash['sha256'], colors.FAIL, hash['positives'], hash['total'], colors.ENDC)
+                    for hashsum in report['detected_downloaded_samples']:
+                        if int(hashsum['positives']):
+                            msg += '        %-64s (%s%d/%d%s)\n' % (hashsum['sha256'], colors.FAIL, hashsum['positives'], hashsum['total'], colors.ENDC)
                         else:
-                            msg += '        %-64s (%s%d/%d%s)\n' % (hash['sha256'], colors.OKGREEN, hash['positives'], hash['total'], colors.ENDC)
+                            msg += '        %-64s (%s%d/%d%s)\n' % (hashsum['sha256'], colors.OKGREEN, hashsum['positives'], hashsum['total'], colors.ENDC)
                             
                 if 'undetected_downloaded_samples' in report:
                     msg += '    Undetected Samples:\n'
-                    for hash in report['undetected_downloaded_samples']:
-                        if int(hash['positives']):
-                            msg += '        %-64s (%s%d/%d%s)\n' % (hash['sha256'], colors.FAIL, hash['positives'], hash['total'], colors.ENDC)
+                    for hashsum in report['undetected_downloaded_samples']:
+                        if int(hashsum['positives']):
+                            msg += '        %-64s (%s%d/%d%s)\n' % (hashsum['sha256'], colors.FAIL, hashsum['positives'], hashsum['total'], colors.ENDC)
                         else:
-                            msg += '        %-64s (%s%d/%d%s)\n' % (hash['sha256'], colors.OKGREEN, hash['positives'], hash['total'], colors.ENDC)
+                            msg += '        %-64s (%s%d/%d%s)\n' % (hashsum['sha256'], colors.OKGREEN, hashsum['positives'], hashsum['total'], colors.ENDC)
                 
                 if 'detected_referrer_samples' in report:
                     msg += '    Detected Referrer Samples:\n'
-                    for hash in report['detected_referrer_samples']:
-                        if int(hash['positives']):
-                            msg += '        %-64s (%s%d/%d%s)\n' % (hash['sha256'], colors.FAIL, hash['positives'], hash['total'], colors.ENDC)
+                    for hashsum in report['detected_referrer_samples']:
+                        if int(hashsum['positives']):
+                            msg += '        %-64s (%s%d/%d%s)\n' % (hashsum['sha256'], colors.FAIL, hashsum['positives'], hashsum['total'], colors.ENDC)
                         else:
-                            msg += '        %-64s (%s%d/%d%s)\n' % (hash['sha256'], colors.OKGREEN, hash['positives'], hash['total'], colors.ENDC)
+                            msg += '        %-64s (%s%d/%d%s)\n' % (hashsum['sha256'], colors.OKGREEN, hashsum['positives'], hashsum['total'], colors.ENDC)
                                         
                 if 'undetected_referrer_samples' in report:
                     msg += '    Undetected Referrer Samples:\n'
-                    for hash in report['undetected_referrer_samples']:
-                        if int(hash['positives']):
-                            msg += '        %-64s (%s%d/%d%s)\n' % (hash['sha256'], colors.FAIL, hash['positives'], hash['total'], colors.ENDC)
+                    for hashsum in report['undetected_referrer_samples']:
+                        if int(hashsum['positives']):
+                            msg += '        %-64s (%s%d/%d%s)\n' % (hashsum['sha256'], colors.FAIL, hashsum['positives'], hashsum['total'], colors.ENDC)
                         else:
-                            msg += '        %-64s (%s%d/%d%s)\n' % (hash['sha256'], colors.OKGREEN, hash['positives'], hash['total'], colors.ENDC)
+                            msg += '        %-64s (%s%d/%d%s)\n' % (hashsum['sha256'], colors.OKGREEN, hashsum['positives'], hashsum['total'], colors.ENDC)
             
             if len([x for x in report.keys() if x not in ['undetected_downloaded_samples', 'detected_downloaded_samples', 'detected_communicating_samples', 'detected_urls', 'resolutions', 'resource', 'response_code', 'verbose_msg']]) > 0:
                 print report.keys()
@@ -441,43 +441,43 @@ class VirusTotal(object):
                             
                 if 'detected_communicating_samples' in report:
                     msg += '    Detected Communications:\n'
-                    for hash in report['detected_communicating_samples']:
-                        if int(hash['positives']):
-                            msg += '        %-40s (%s%d/%d%s)\n' % (hash['sha256'], colors.FAIL, hash['positives'], hash['total'], colors.ENDC)
+                    for hashsum in report['detected_communicating_samples']:
+                        if int(hashsum['positives']):
+                            msg += '        %-40s (%s%d/%d%s)\n' % (hashsum['sha256'], colors.FAIL, hashsum['positives'], hashsum['total'], colors.ENDC)
                         else:
-                            msg += '        %-40s (%s%d/%d%s)\n' % (hash['sha256'], colors.OKGREEN, hash['positives'], hash['total'], colors.ENDC)
+                            msg += '        %-40s (%s%d/%d%s)\n' % (hashsum['sha256'], colors.OKGREEN, hashsum['positives'], hashsum['total'], colors.ENDC)
                             
                 if 'detected_downloaded_samples' in report:
                     msg += '    Detected Samples:\n'
-                    for hash in report['detected_downloaded_samples']:
-                        if int(hash['positives']):
-                            msg += '        %-40s (%s%d/%d%s)\n' % (hash['sha256'], colors.FAIL, hash['positives'], hash['total'], colors.ENDC)
+                    for hashsum in report['detected_downloaded_samples']:
+                        if int(hashsum['positives']):
+                            msg += '        %-40s (%s%d/%d%s)\n' % (hashsum['sha256'], colors.FAIL, hashsum['positives'], hashsum['total'], colors.ENDC)
                         else:
-                            msg += '        %-40s (%s%d/%d%s)\n' % (hash['sha256'], colors.OKGREEN, hash['positives'], hash['total'], colors.ENDC)
+                            msg += '        %-40s (%s%d/%d%s)\n' % (hashsum['sha256'], colors.OKGREEN, hashsum['positives'], hashsum['total'], colors.ENDC)
                             
                 if 'undetected_downloaded_samples' in report:
                     msg += '    Undetected Samples:\n'
-                    for hash in report['undetected_downloaded_samples']:
-                        if int(hash['positives']):
-                            msg += '        %-40s (%s%d/%d%s)\n' % (hash['sha256'], colors.FAIL, hash['positives'], hash['total'], colors.ENDC)
+                    for hashsum in report['undetected_downloaded_samples']:
+                        if int(hashsum['positives']):
+                            msg += '        %-40s (%s%d/%d%s)\n' % (hashsum['sha256'], colors.FAIL, hashsum['positives'], hashsum['total'], colors.ENDC)
                         else:
-                            msg += '        %-40s (%s%d/%d%s)\n' % (hash['sha256'], colors.OKGREEN, hash['positives'], hash['total'], colors.ENDC)
+                            msg += '        %-40s (%s%d/%d%s)\n' % (hashsum['sha256'], colors.OKGREEN, hashsum['positives'], hashsum['total'], colors.ENDC)
                 
                 if 'detected_referrer_samples' in report:
                     msg += '    Detected Referrer Samples:\n'
-                    for hash in report['detected_referrer_samples']:
-                        if int(hash['positives']):
-                            msg += '        %-40s (%s%d/%d%s)\n' % (hash['sha256'], colors.FAIL, hash['positives'], hash['total'], colors.ENDC)
+                    for hashsum in report['detected_referrer_samples']:
+                        if int(hashsum['positives']):
+                            msg += '        %-40s (%s%d/%d%s)\n' % (hashsum['sha256'], colors.FAIL, hashsum['positives'], hashsum['total'], colors.ENDC)
                         else:
-                            msg += '        %-40s (%s%d/%d%s)\n' % (hash['sha256'], colors.OKGREEN, hash['positives'], hash['total'], colors.ENDC)
+                            msg += '        %-40s (%s%d/%d%s)\n' % (hashsum['sha256'], colors.OKGREEN, hashsum['positives'], hashsum['total'], colors.ENDC)
                             
                 if 'undetected_referrer_samples' in report:
                     msg += '    Undetected Referrer Samples:\n'
-                    for hash in report['undetected_referrer_samples']:
-                        if int(hash['positives']):
-                            msg += '        %-40s (%s%d/%d%s)\n' % (hash['sha256'], colors.FAIL, hash['positives'], hash['total'], colors.ENDC)
+                    for hashsum in report['undetected_referrer_samples']:
+                        if int(hashsum['positives']):
+                            msg += '        %-40s (%s%d/%d%s)\n' % (hashsum['sha256'], colors.FAIL, hashsum['positives'], hashsum['total'], colors.ENDC)
                         else:
-                            msg += '        %-40s (%s%d/%d%s)\n' % (hash['sha256'], colors.OKGREEN, hash['positives'], hash['total'], colors.ENDC)
+                            msg += '        %-40s (%s%d/%d%s)\n' % (hashsum['sha256'], colors.OKGREEN, hashsum['positives'], hashsum['total'], colors.ENDC)
             
             if len([x for x in report.keys() if x not in ['undetected_downloaded_samples', 'detected_downloaded_samples', 'detected_communicating_samples', 'detected_urls', 'resolutions', 'resource', 'response_code', 'verbose_msg']]) > 0:
                 print report.keys()

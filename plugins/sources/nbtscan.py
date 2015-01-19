@@ -13,11 +13,11 @@ COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER I
 ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 '''
 
-import datetime, re
-from lib.util import runBash, printStatusMsg
+import re
+from lib.util import runBash
 
 
-def input(event):
+def playbookInput(event):
     '''Requires no input'''
     
     

@@ -12,7 +12,7 @@ WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEM
 COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, 
 ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 '''
-import traceback, re, sys, inspect
+import re, sys, inspect
 from collections import OrderedDict
 from util import printStatusMsg
 from pprint import pprint
@@ -135,9 +135,9 @@ class MessageParser(object):
          
     def parse(self, infile=None, mFilter=lambda x: x, formatter=lambda x: x.getBasics(), profile=False):
         if infile:
-            self.input = open(infile, 'r')
+            self.inputText = open(infile, 'r')
         else:
-            self.input = sys.stdin    
+            self.inputText = sys.stdin    
         
         attrs = {'transaction': set(),
                  'session': set(),
@@ -148,8 +148,8 @@ class MessageParser(object):
                  'message': set()}
         
         stuck = 0
-        uids = ''
-        for line in self.input:
+
+        for line in self.inputText:
             
             #Check for a line containing s= which indicates the correct log line with a uid
             #Ex: s=1d2tx2khxb
@@ -278,7 +278,6 @@ class Transaction(object):
                                                                  getattr(msg, 'env_from', '-'), 
                                                                  getattr(msg, 'env_rcpts', '-'), 
                                                                  getattr(msg, 'subject', '-'))
-                                                                 #';'.join(checkNull(getattr(self, 'attachments', ['-']))))
                                                                  
         return out
     
@@ -479,7 +478,6 @@ class AV(Module):
         
         if 'score' in kvPairs:
             self.transaction.currMsg.score = kvPairs['score']
-            e
         if 'file' in kvPairs and kvPairs['rule'] == 'notcleaned':
             if hasattr(self.transaction.currMsg, 'notcleaned'):
                 self.transaction.currMsg.notcleaned += '||' + kvPairs['file'].strip('"').replace(' ', '_')

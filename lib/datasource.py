@@ -217,11 +217,13 @@ class DailyLogSource(object):
             
             output += stdout.read()
 
+
+        if not toStdOut:
+            print('\n\nRetrieval time: %s\n' % (str(time() - tick)))
                 
         if retResults:
             return output
-        else:
-            return orf
+
 
 
 class ISOLogSource(object):
@@ -249,7 +251,6 @@ class ISOLogSource(object):
         oneDay = datetime.timedelta(days=1)
         
         fileName = os.path.basename(logpath)
-        dirName = os.path.dirname(logpath)
         
         server = initSSH(server, event=self.event)
         
@@ -430,8 +431,9 @@ class ISOLogSource(object):
             
             output += stdout.read()
 
+        if not toStdOut:
+            print('\n\nRetrieval time: %s\n' % (str(time() - tick)))
                 
         if retResults:
             return output
-        else:
-            return orf
+        

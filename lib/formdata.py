@@ -50,7 +50,7 @@ def encode_multipart(fields, files, boundary=None):
         return s.replace('"', '\\"')
 
     if boundary is None:
-        boundary = ''.join(random.choice(_BOUNDARY_CHARS) for i in range(30))
+        boundary = ''.join(random.choice(_BOUNDARY_CHARS) for _ in range(30))
     lines = []
 
     for name, value in fields.items():

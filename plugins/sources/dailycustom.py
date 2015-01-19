@@ -17,7 +17,7 @@ import datetime
 from lib.datasource import DailyLogSource
 
 
-def input(event):
+def playbookInput(event):
     global server, logpath, compressionDelay, compressionExtension, outputExtension
     inputHeader = '%s Query Options' % FORMAL_NAME
     event.setOutPath()
@@ -36,7 +36,7 @@ def input(event):
                        description='\nSpecify the custom piped command to run across the daily log files.\ne.g.\n\nInput:          egrep -v "<regex>" | egrep "<regex>" | cut -d " " -f 1\nTransformation: cat <logfile> | egrep -v "<regex>" | egrep "<regex>" | cut -d " " -f 1')
     
 def adhocInput(event):
-    input(event)
+    playbookInput(event)
 
 def execute(event):
     dls = DailyLogSource(event)

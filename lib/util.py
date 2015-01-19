@@ -14,11 +14,9 @@ ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEAL
 '''
 
 from __future__ import division
+import os, sys, warnings, pytz, readline, re, math, time, logging
 from itertools import izip_longest
-import smtplib, os, sys, warnings, pytz, readline, re, math, time, logging
 from subprocess import Popen, PIPE
-from email.MIMEText import MIMEText
-from email.MIMEMultipart import MIMEMultipart
 from getpass import getpass, getuser
 from datetime import datetime
 
@@ -57,8 +55,8 @@ class bcolors:
         self.WARNING = ''
         self.FAIL = ''
         self.ENDC = ''
-        BOLDON = ''
-        BOLDOFF = ''
+        self.BOLDON = ''
+        self.BOLDOFF = ''
 
 colors = bcolors()
 
@@ -84,26 +82,26 @@ def getUserInWithDef(msg, default):
         return getUserIn(msg)
     return var
 
-def getIPAddress(input):
-    ip = re.search(r"\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}", input)
+def getIPAddress(text):
+    ip = re.search(r"\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}", text)
     if ip:
         return ip.group()
     else:
         return None
     
-def getMACAddress(input):
-    mac = re.search(r'([0-9A-F]{2}[:-]){5}([0-9A-F]{2})', input, re.I)
+def getMACAddress(text):
+    mac = re.search(r'([0-9A-F]{2}[:-]){5}([0-9A-F]{2})', text, re.I)
     if mac:
         return mac.group()
     else:
         return None
 
 # Generalize the syslogTime piece to take a function
-def getTimeBisect(anchor, input, timeExtract):
+def getTimeBisect(anchor, text, timeExtract):
     before = []
     after = []
     i = 0
-    lines = input.splitlines()
+    lines = text.splitlines()
     for line in lines:
         time = timeExtract(line)
 
@@ -121,9 +119,9 @@ def uniq(seq):
     seen_add = seen.add
     return [ x for x in seq if x not in seen and not seen_add(x)]
 
-def fileInScriptPath(file, realScriptPath=os.path.realpath(__file__).split('/')):
+def fileInScriptPath(filename, realScriptPath=os.path.realpath(__file__).split('/')):
     realScriptPath.pop()
-    realScriptPath.append(file)
+    realScriptPath.append(filename)
     return "/".join(realScriptPath)
 
 
@@ -133,9 +131,9 @@ def runBash(cmd, lstdout=False, lstderr=True):
     err = p.stderr
     
     if lstdout and out:
-        logging.info(out.read().strip())
+        log.info(out.read().strip())
     if lstderr and err:
-        logging.error(err.read().strip())
+        log.error(err.read().strip())
         
     p.wait()
         
@@ -187,7 +185,7 @@ def initSSH(server, u=None, p=None, k=None, event=None, prompt=True):
         
     priv = None   
     if k:
-         priv = k
+        priv = k
     elif module and hasattr(module, 'sshPrivKey'):
         if module.sshPrivKey and os.path.exists(module.sshPrivKey):
             priv = paramiko.RSAKey.from_private_key_file(module.sshPrivKey)
@@ -310,8 +308,8 @@ def epochToDatetime(dateInEpochSeconds):
 def datetimeToEpoch(dateInDatetime):
     return time.mktime(dateInDatetime.timetuple())
 
-def syslogTimeToDatetime(input):
-    return datetime.strptime(input[:-6], '%Y-%m-%dT%H:%M:%S')
+def syslogTimeToDatetime(text):
+    return datetime.strptime(text[:-6], '%Y-%m-%dT%H:%M:%S')
 
 def ciscoTimeExtract(line):
     year = str(datetime.today().year) + ' '

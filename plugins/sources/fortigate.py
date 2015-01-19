@@ -17,7 +17,7 @@ import re, shlex
 from lib.datasource import ISOLogSource 
 from lib.util import uniq, getTimeBisect, ciscoTimeExtract
 
-def input(event):
+def playbookInput(event):
     inputHeader = '%s Query Options' % FORMAL_NAME
     event.setOutPath()
     event.setDateRange()

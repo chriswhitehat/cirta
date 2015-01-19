@@ -16,7 +16,7 @@ ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEAL
 # Dependency on tshark being installed on each sensor
 
 from __future__ import division
-import datetime, time, re, os
+import datetime, re, os
 from lib.util import getUserInWithDef, printStatusMsg, epochToDatetime, initSSH, stdWriteFlush, runBash, getUserMultiChoice
 from lib.sguilsql import getSguilSensorList
 
@@ -99,9 +99,6 @@ def getDailylogsInScope(event, ssh):
     
     stdin, stdout, stderr = ssh.exec_command('ls -1 -d /nsm/sensor_data/*/dailylogs/*')
     
-    scopeSensorDays = {}
-    
-    
     
     lastLogChecked = None
     logsFound = False
@@ -133,9 +130,9 @@ def getDailylogsInScope(event, ssh):
 
 def tcpdumpFiles(event, ssh, server, dailies):
     
-    def pcapNotEmpty(ssh, file):
+    def pcapNotEmpty(ssh, pcapFile):
        
-        stdin, stdout, stderr = ssh.exec_command('/usr/sbin/tcpdump -s 1515 -nn -c 1 -r %s' % (file))
+        stdin, stdout, stderr = ssh.exec_command('/usr/sbin/tcpdump -s 1515 -nn -c 1 -r %s' % (pcapFile))
         output = stdout.readlines()
         return len(output)
     
@@ -150,12 +147,12 @@ def tcpdumpFiles(event, ssh, server, dailies):
         absTempPaths = []
         tempFiles = []
         #stdWriteFlush()
-        for file in logs:
+        for pcapFile in logs:
             stdWriteFlush(precentComplete('Processing PCAPs on %s: ' % sensor, count, total))
             count += 1
             #stdWriteFlush('.')
             absTempPath = "%s%06d" % (tmpPath, i)
-            stdin, stdout, stderr = ssh.exec_command('/usr/sbin/tcpdump -s 1515 -nn -r %s -w %s %s' % (file, absTempPath, event._pcapBPF))
+            stdin, stdout, stderr = ssh.exec_command('/usr/sbin/tcpdump -s 1515 -nn -r %s -w %s %s' % (pcapFile, absTempPath, event._pcapBPF))
             error = stderr.read()
             stdout.read()
             
@@ -205,7 +202,7 @@ def concatPCAPs(ssh, tmpPath, sensor, files):
 
 
 
-def input(event):
+def playbookInput(event):
     inputHeader = '%s Query Options' % FORMAL_NAME
     event.setOutPath()
     setPCAPRange(event)

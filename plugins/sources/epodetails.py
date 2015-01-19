@@ -14,10 +14,10 @@ ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEAL
 '''
 
 import urllib2
-from lib.util import runBash, printStatusMsg
-from getpass import getuser, getpass
+from lib.util import printStatusMsg
+from getpass import getpass
 
-def input(event):
+def playbookInput(event):
     inputHeader = '%s Query Options' % FORMAL_NAME
     event.setOutPath()
     
@@ -30,7 +30,7 @@ def input(event):
     
     
 def adhocInput(event):
-    input(event)
+    playbookInput(event)
     
 def execute(event):
     

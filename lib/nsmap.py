@@ -52,9 +52,9 @@ def getForwardZone(fzPath, nameServer, domain, today=datetime.datetime.today(), 
             if len(sline) is not 5:
                 continue
             
-            rec, type, ans = sline[0].rstrip('.'), sline[3], sline[4]
+            rec, recType, ans = sline[0].rstrip('.'), sline[3], sline[4]
             
-            if type == 'CNAME':
+            if recType == 'CNAME':
                 rec, ans = ans.rstrip('.'), rec
                 
             if not recs.has_key(rec):
@@ -64,13 +64,13 @@ def getForwardZone(fzPath, nameServer, domain, today=datetime.datetime.today(), 
     
             recs[ans] = recs[rec]
             
-            if type == 'A':
+            if recType == 'A':
                 recs[rec].ips.append(ans)
     
-            if type == 'TXT':
+            if recType == 'TXT':
                 recs[rec].txt.append(ans)
     
-            if type == 'CNAME':
+            if recType == 'CNAME':
                 recs[rec].cnames.append(ans)
     
                 

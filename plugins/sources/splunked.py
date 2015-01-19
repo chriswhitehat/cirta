@@ -15,7 +15,7 @@ ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEAL
 
 from lib.util import printStatusMsg
 
-def input(event):
+def playbookInput(event):
     return
 
 

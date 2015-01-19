@@ -12,17 +12,16 @@ WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEM
 COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, 
 ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 '''
-import ConfigParser, sys, os, logging, getpass
+import ConfigParser, os, logging, getpass
 from copy import deepcopy
 from collections import OrderedDict
-from lib.util import colors
 
 log = logging.getLogger(__name__)
 
 def config(confBasePath):
     
-    def getConfigPaths(confBasePath):
-        confs = set()
+    #def getConfigPaths(confBasePath):
+    #    confs = set()
         
     
     configs = OrderedDict()
@@ -30,11 +29,11 @@ def config(confBasePath):
     confs = OrderedDict()
 
     for base, dirs, files in sorted([x for x in os.walk(confBasePath)]):
-        for file in sorted(files):
+        for filename in sorted(files):
             if 'etc/users' not in base or ('users' in base and getpass.getuser() in base):
-                if file not in confs:
-                    confs[file] = []
-                confs[file].append(os.path.join(base, file))
+                if filename not in confs:
+                    confs[filename] = []
+                confs[filename].append(os.path.join(base, filename))
             
     for confName, confPaths in confs.iteritems():
         configs[confName.split('.conf')[0]] = mergeConfigs(confPaths)
@@ -145,7 +144,6 @@ def processSources(configs):
                 errorDetected = True
                 log.error("Error: '%s' contract attribute '%s' not found in attributes.conf" % (name, opt))
                 log.debug('msg="missing contract attribute" plugin="%s" attribute="%s"' % (name, opt))
-                #sys.stderr.write("\n%sFatal Error. '%s' contract attribute '%s' not found in attributes.conf...%s\n" % (colors.FAIL, name, opt, colors.ENDC))
         
         if errorDetected:
             exit()

@@ -15,7 +15,6 @@ ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEAL
 
 from getpass import getpass
 import ldap
-from time import sleep
 from collections import OrderedDict
 
 
@@ -154,7 +153,7 @@ def ldapDomainAdmins():
     
 def ldapAdminCount():
     try:
-        return [x[0][1] for x in pydap.ldapSearch('adminCount=1')]
+        return [x[0][1] for x in ldapSearch('adminCount=1')]
     except:
         return None
     

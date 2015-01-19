@@ -15,13 +15,13 @@ COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER I
 ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 '''
 
-import os, sys, argparse, re, logging, traceback, socket
+import os, argparse, logging, traceback, socket
 from datetime import datetime
 from logging import Formatter, FileHandler
 from logging.handlers import SysLogHandler
 from lib.configure import config
 from lib.event import Event
-from lib.util import printStatusMsg, colors, getUserIn, bcolors, YES, getUserMultiChoice
+from lib.util import printStatusMsg, colors, getUserIn, YES, getUserMultiChoice
 
 log = logging.getLogger('cirta')
 errorFormatter = Formatter(colors.FAIL + '\n%(message)s\n' + colors.ENDC)
@@ -265,12 +265,12 @@ class Playbook(object):
                       (self.SOURCES, "plugins", "sources"),
                       (self.ACTIONS, "plugins", "actions")]
         
-        for plugins, base, type in pluginSets:
+        for plugins, base, pType in pluginSets:
             for plugin in plugins:
-                path = "%s.%s.%s" % (base, type, plugin)
-                log.debug('msg="load module" type="%s" plugin="%s" path="%s"' % (type, plugin, path))
-                self.pluginDict[plugin] = __import__(path, fromlist=[base, type])
-                self.applyConfig(self.pluginDict[plugin], self.configs[type][plugin])
+                path = "%s.%s.%s" % (base, pType, plugin)
+                log.debug('msg="load module" type="%s" plugin="%s" path="%s"' % (pType, plugin, path))
+                self.pluginDict[plugin] = __import__(path, fromlist=[base, pType])
+                self.applyConfig(self.pluginDict[plugin], self.configs[pType][plugin])
                 self.pluginDict[plugin].colors = self.colors
                 self.pluginDict[plugin].log = logging.getLogger(path)
             
@@ -341,7 +341,7 @@ def collectSourcesInput(playbook, event):
         if playbook.adHoc:
             playbook.getPlugin(source).adhocInput(event)
         else:
-            playbook.getPlugin(source).input(event)
+            playbook.getPlugin(source).playbookInput(event)
         log.state('msg="input" type="source" plugin="%s" stage="finish" %s' % (source, event.getAttrs()))
         event.currentPlugin = 'cirta'
         
