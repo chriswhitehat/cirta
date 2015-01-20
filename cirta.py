@@ -474,6 +474,9 @@ def main():
     
     if options.seed:
         seedAttributes(event)
+        
+    event.cirta_status = 'running'
+    log.state(event.getAttrs())
     
     launchInitializers(playbook, event)
     
@@ -499,7 +502,7 @@ def main():
         
     checkStackTraces(event)
     
-    event.exitStatus = 'finished'
+    event.cirta_status = 'finished'
     log.state(event.getAttrs())
     log.info('msg="cirta execution finished"')
 
@@ -507,8 +510,14 @@ if __name__ == '__main__':
     try:
         main()
     except (KeyboardInterrupt):
-        event._exitStatus = 'aborted'
+        event.cirta_status = 'aborted'
         log.state(event.getAttrs())
         log.info('msg="cirta execution aborted"')
         print("^C")
         exit()
+    except:
+        event.cirta_status = 'failure'
+        log.state(event.getAttrs())
+        log.info('msg="cirta execution failed"')
+        exit()
+        

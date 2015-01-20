@@ -117,10 +117,13 @@ class Event(object):
         object.__setattr__(self, 'attrDefaults', configs['attributes'])
         object.__setattr__(self, 'currentPlugin', 'cirta')
         self.cirta_id = cirta_id
+        self.cirta_status = 'input'
         self._configs = configs
         self._options = options
         self._playbook = playbook
-        self._testing = options.test
+        self._testing = configs['cirta']['settings']['TESTING']
+        if options.test:
+            self._testing = options.test
         self._cirtaHome = cirtaHome
         self._tracked = self._playbook.tracked
         self._adhoc = self._playbook.adHoc
