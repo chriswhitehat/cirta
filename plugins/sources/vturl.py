@@ -36,7 +36,7 @@ def execute(event):
     
     if event.adHoc:
 
-        vt = virustotal.VirusTotal(confVars.apiKey)
+        vt = virustotal.VirusTotal(confVars.apiKey, oldestHours=int(confVars.oldestHours))
         
         reports = vt.retrieveURL(event._include, maxIter=0, force=event._vtForce)
         
@@ -47,11 +47,11 @@ def execute(event):
     else:
         
         if hasattr(event, '__vtscans__'):
-            vt = virustotal.VirusTotal(confVars.apiKey)
-            reports = vt.retrieveURL(event.__vtscans__, maxIter=0)
+            vt = virustotal.VirusTotal(confVars.apiKey, oldestHours=int(confVars.oldestHours))
+            reports = vt.retrieveURL(event.__vtscans__, maxIter=20)
         else:
             
-            vt = virustotal.VirusTotal(confVars.apiKey)
+            vt = virustotal.VirusTotal(confVars.apiKey, oldestHours=int(confVars.oldestHours))
             
             proxyFile = event._baseFilePath + '.fg'
             
