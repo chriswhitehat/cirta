@@ -71,6 +71,10 @@ def getUserIn(msg, allowBlank=False):
     if var == "" and not allowBlank:
         print("No input given, try again.")
         return getUserIn(msg)
+    elif var.strip() == "" and not allowBlank:
+        print("Warning: you're input is all whitespace.")
+        if getUserInWithDef("Change Input (y/n)", 'y') in YES:
+            return getUserIn(msg)
     return var
 
 def getUserInWithDef(msg, default):
