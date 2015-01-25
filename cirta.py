@@ -506,6 +506,7 @@ def main():
     event.cirta_status = 'finished'
     log.state(event.getAttrs())
     log.info('msg="cirta execution finished"')
+    exit()
 
 if __name__ == '__main__':
     try:
