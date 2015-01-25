@@ -196,6 +196,7 @@ class Playbook(object):
             self.POST_SOURCES = []
             self.ACTIONS = []
             self.FORMAL_NAME = 'Ad-Hoc'
+            self.name = 'Ad-Hoc'
             return True
         else:
             return False
