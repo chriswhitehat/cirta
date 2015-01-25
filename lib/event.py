@@ -117,7 +117,7 @@ class Event(object):
         object.__setattr__(self, 'attrDefaults', configs['attributes'])
         object.__setattr__(self, 'currentPlugin', 'cirta')
         self.cirta_id = cirta_id
-        self.cirta_date = epochToDatetime(cirta_id).strftime("%Y-%m-%d %H:%M:%S")
+        self.cirta_date = epochToDatetime(cirta_id.split('.')[0]).strftime("%Y-%m-%d %H:%M:%S")
         self.cirta_status = 'input'
         self._configs = configs
         self._options = options
