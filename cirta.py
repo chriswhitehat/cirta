@@ -516,6 +516,7 @@ if __name__ == '__main__':
         print("^C")
         exit()
     except:
+        sys.stderr.write(traceback.format_exc())
         event.cirta_status = 'failure'
         log.state(event.getAttrs())
         log.info('msg="cirta execution failed"')
