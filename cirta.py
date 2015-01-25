@@ -23,6 +23,8 @@ from lib.configure import config
 from lib.event import Event
 from lib.util import printStatusMsg, colors, getUserIn, YES, getUserMultiChoice
 
+event = None
+
 log = logging.getLogger('cirta')
 errorFormatter = Formatter(colors.FAIL + '\n%(message)s\n' + colors.ENDC)
 errorHandler = logging.StreamHandler()
@@ -506,8 +508,7 @@ def main():
     event.cirta_status = 'finished'
     log.state(event.getAttrs())
     log.info('msg="cirta execution finished"')
-    exit()
-
+    
 if __name__ == '__main__':
     try:
         main()
@@ -517,6 +518,11 @@ if __name__ == '__main__':
         log.info('msg="cirta execution aborted"')
         print("^C")
         exit()
+    except(SystemExit):
+        if event:
+            event.cirta_status = 'finished'
+            log.state(event.getAttrs())
+        log.info('msg="cirta execution finished"')
     except:
         sys.stderr.write(traceback.format_exc())
         event.cirta_status = 'failure'
