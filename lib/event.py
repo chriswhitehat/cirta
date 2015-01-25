@@ -17,7 +17,7 @@ ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEAL
 import datetime, pytz, logging, getpass, os, re, sys, grp, glob
 from collections import OrderedDict
 from socket import gethostname
-from lib.util import printStatusMsg, getUserIn, getUserInWithDef, YES
+from lib.util import printStatusMsg, getUserIn, getUserInWithDef, YES, epochToDatetime
 from lib.splunkit import SplunkIt
 
 log = logging.getLogger(__name__)
@@ -117,6 +117,7 @@ class Event(object):
         object.__setattr__(self, 'attrDefaults', configs['attributes'])
         object.__setattr__(self, 'currentPlugin', 'cirta')
         self.cirta_id = cirta_id
+        self.cirta_date = epochToDatetime(cirta_id).strftime("%Y-%m-%d %H:%M:%S")
         self.cirta_status = 'input'
         self._configs = configs
         self._options = options
