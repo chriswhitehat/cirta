@@ -120,16 +120,13 @@ class Event(object):
         self.cirta_status = 'input'
         self._configs = configs
         self._options = options
-        self._adhoc = self._playbook.adHoc
-        if not self._adhoc:
-            self._playbook = playbook
-        else:
-            self._playbook = None
+        self._playbook = playbook
         self._testing = configs['cirta']['settings']['TESTING']
         if options.test:
             self._testing = options.test
         self._cirtaHome = cirtaHome
         self._tracked = self._playbook.tracked
+        self._adhoc = self._playbook.adHoc
         self.setEventDateTime(datetime.datetime.today())
         if configs['cirta']['settings']['ANALYST_USERNAME']:
             self._analystUsername = configs['cirta']['settings']['ANALYST_USERNAME']
