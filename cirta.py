@@ -15,7 +15,7 @@ COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER I
 ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 '''
 
-import os, argparse, logging, traceback, socket
+import sys, os, argparse, logging, traceback, socket
 from datetime import datetime
 from logging import Formatter, FileHandler
 from logging.handlers import SysLogHandler
