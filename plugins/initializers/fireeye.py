@@ -30,10 +30,10 @@ def execute(event):
     
     print('\nChecking Splunk...'),
     #try:
-    print query
+    #print query
         
     results = sp.search(query)
-    print results
+    #print results
     #except(error):
     #    print('Warning: Splunk query failed.\n')
     #    raise error
