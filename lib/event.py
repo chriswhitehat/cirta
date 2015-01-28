@@ -277,6 +277,9 @@ class Event(object):
                         os.chown(os.path.join(root, momo), -1, grp.getgrnam(self._outDirGroup).gr_gid)
                     for momo in files:
                         os.chown(os.path.join(root, momo), -1, grp.getgrnam(self._outDirGroup).gr_gid)
+                        
+        with open(self._baseFilePath + '.id') as outFile:
+            outFile.write(self.cirta_id + '\n')
 
                  
     def detectInputCases(self, text, yes=False, trailingChar='\\b'):
