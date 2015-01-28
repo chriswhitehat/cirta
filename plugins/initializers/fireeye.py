@@ -29,13 +29,14 @@ def execute(event):
     query = '''search index=fireeye alert.id="%s" | table alert.occured alert.src.ip alert.src.mac alert.dst.ip alert.dst.mac "alert.explanation.malware-detected.malware.name"''' % (event.fireID)        
     
     print('Checking Splunk...'),
-    try:
-        print query
-        print results
-        results = sp.search(query)
-    except(error):
-        print('Warning: Splunk query failed.\n')
-        raise error
+    #try:
+    print query
+        
+    results = sp.search(query)
+    print results
+    #except(error):
+    #    print('Warning: Splunk query failed.\n')
+    #    raise error
     
     print('Done\n')
     
