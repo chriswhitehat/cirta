@@ -26,7 +26,7 @@ def execute(event):
     else:
         event.setAttribute('fireID', prompt='FireEye ID', header="FireEye Initial Indicator")
         
-    query = '''search index=fireeye alert.id="%s" | table alert.occured alert.src.ip alert.src.mac alert.dst.ip alert.dst.mac "alert.explanation.malware-detected.malware.name"''' % (event.fireID)        
+    query = '''search index=fireeye alert.id="%s" | table alert.occurred alert.src.ip alert.src.mac alert.dst.ip alert.dst.mac alert.name "alert.explanation.malware-detected.malware.name"''' % (event.fireID)        
     
     print('Checking Splunk...'),
     #try:
