@@ -13,10 +13,35 @@ COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER I
 ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 '''
 
-import splunklib.client as client, random
-import logging, os, socket, re
+import splunklib.client as client 
+import splunklib.results as results
+import logging, os, socket, random
 
 log = logging.getLogger(__name__)
+
+
+class Splunk():
+    def __init__(self, host='', port=8089, username="", password="", scheme="https"):
+        self.service = client.connect(host=host, port=port, username=username, password=password, scheme=scheme)
+        self.jobs = self.service.jobs
+            
+    def search(self, search, searchArgs=None, resultFunc=None, blocking=True):
+
+        if blocking:
+            kwargs_blockingsearch = {"exec_mode": "blocking"}
+            
+            job = self.jobs.create(search, **kwargs_blockingsearch)
+        else:
+            job = self.jobs.create(search)
+            
+            
+        searchResults = results.ResultsReader(job.results())
+        
+        if resultFunc:
+            for result in searchResults:
+                resultFunc(result)
+        else:
+            return list(searchResults)
 
 class SplunkIt():
     def __init__(self, splunkEnabled, splunkIndexers, splunkPort, splunkSearchHead, splunkSearchHeadPort, splunkUser, splunkPassword, splunkIndex, host, cirta_id):
