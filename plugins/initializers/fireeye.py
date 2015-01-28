@@ -21,6 +21,9 @@ def execute(event):
     
     sp = Splunk()
     
+
+    client.connect(host=SPLUNK_SEARCH_HEAD, port=SPLUNK_SEARCH_HEAD_PORT, username=SPLUNK_SEARCH_HEAD_USERNAME, password=SPLUNK_SEARCH_HEAD_PASSWORD, scheme=SPLUNK_SEARCH_HEAD_SCHEME)
+    
     print('Checking Splunk...'),
     
     if hasattr(event, 'fireID'):
@@ -31,6 +34,8 @@ def execute(event):
     query = '''search index=fireeye alert.id="%s" | table alert.occured alert.src.ip alert.src.mac alert.dst.ip alert.dst.mac "alert.explanation.malware-detected.malware.name"''' % (event.fireID)        
     
     try:
+        print query
+        print results
         results = sp.search(query)
     except(error):
         print('Warning: Splunk query failed.\n')
