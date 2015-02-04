@@ -62,7 +62,7 @@ def execute(event):
     malwareNames = result['malware.names']
     
     if isinstance(malwareNames, list):
-        secondaryName = ', '.join(getUserMultiChoice('Secondary Alert Name', 'Selection', malwareNames, numCols=1, default=malwareNames[-1], allowMultiple=False))
+        secondaryName = ', '.join(getUserMultiChoice('Secondary Alert Name', 'Selection', malwareNames, numCols=1, default=[malwareNames[-1]], allowMultiple=False))
     else:
         secondaryName = malwareNames
     
