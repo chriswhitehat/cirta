@@ -211,7 +211,7 @@ def playbookInput(event):
 
     choices = ['All']
     choices.extend(existingSensors)
-    selected = getUserMultiChoice("Sensors to pull PCAPs from.", 'Sensors', choices, default=['All'])
+    selected = getUserMultiChoice("Sensors to pull PCAPs.", 'Sensors', choices, default=['All'])
     
     if 'All' in selected:
         event._selectedSensors = existingSensors
