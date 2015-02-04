@@ -39,7 +39,7 @@ def execute(event):
     #    print('Warning: Splunk query failed.\n')
     #    raise error
     
-    print('Done')
+    print('Done\n')
     
     if not results:
         log.error("Error: unable to pull FireEye ID event details from Splunk")
@@ -49,7 +49,8 @@ def execute(event):
     
     product = result['alert.product']
     sensor = result['alert.sensor']
-    printStatusMsg('%s - %s' % (product, sensor), length=30, char='-', color=colors.HEADER2)
+    
+    print('Alert Appliance: %s - %s' % (product, sensor))
     
     if 'T' in result['alert.occurred']:
         timestamp = datetime.datetime.strptime(result['alert.occurred'], '%Y-%m-%dT%H:%M:%SZ').strftime('%Y-%m-%d %H:%M:%S')
