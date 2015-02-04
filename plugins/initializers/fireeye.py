@@ -39,7 +39,7 @@ def execute(event):
     #    print('Warning: Splunk query failed.\n')
     #    raise error
     
-    print('Done\n')
+    print('Done')
     
     if not results:
         log.error("Error: unable to pull FireEye ID event details from Splunk")
@@ -49,16 +49,16 @@ def execute(event):
     
     product = result['alert.product']
     sensor = result['alert.sensor']
-    printStatusMsg('%s - %s' % (product, sensor), length=20, char='-', color=colors.HEADER2)
+    printStatusMsg('%s - %s' % (product, sensor), length=30, char='-', color=colors.HEADER2)
     
     if 'T' in result['alert.occurred']:
         timestamp = datetime.datetime.strptime(result['alert.occurred'], '%Y-%m-%dT%H:%M:%SZ').strftime('%Y-%m-%d %H:%M:%S')
     else:
         timestamp = result['alert.occurred'].split('+')[0]
-    srcIP = result['alert.src.ip']
-    srcMAC = result['alert.src.mac']
-    dstIP = result['alert.dst.ip']
-    dstMAC = result['alert.dst.mac']
+    srcIP = result.get('alert.src.ip', '')
+    srcMAC = result.get('alert.src.mac', '')
+    dstIP = result.get('alert.dst.ip', '')
+    dstMAC = result.get('alert.dst.mac', '')
     malwareNames = result['malware.names']
     
     if isinstance(malwareNames, list):
