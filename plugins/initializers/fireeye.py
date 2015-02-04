@@ -26,9 +26,8 @@ def execute(event):
     else:
         event.setAttribute('fireID', prompt='FireEye ID', header="FireEye Initial Indicator")
         
-    query = '''search index=fireeye alert.id="%s" | table alert.occurred alert.src.ip alert.src.mac alert.dst.ip alert.dst.mac alert.name "alert.explanation.malware-detected.malware.name"''' % (event.fireID)        
-    
     query = '''search index=fireeye earliest_time=-60d | spath alert.id | search alert.id="%s" | spath alert.product | spath alert.sensor | spath alert.occurred | spath alert.src.ip | spath alert.src.mac | spath alert.dst.ip | spath alert.dst.mac | spath alert.name | spath output="malware.names" "alert.explanation.malware-detected.malware{}.name" | table alert.occurred alert.product alert.sensor alert.id alert.src.ip alert.src.mac alert.dst.ip alert.dst.mac alert.name malware.names''' % (event.fireID)
+
     print('\nChecking Splunk...'),
     #try:
     #print query
@@ -95,14 +94,14 @@ def execute(event):
             if srcIP:
                 event.setAttribute('ip_address', srcIP)
             else:
-                event.setAttribute('ip_address', prompt="IP Address")
+                event.setAttribute('ip_address', prompt="\nIP Address")
             if srcMAC:
                 event.setAttribute('mac_address', srcMAC)
         elif 'd' in ans:
             if dstIP:
                 event.setAttribute('ip_address', dstIP)
             else:
-                event.setAttribute('ip_address', prompt="IP Address")
+                event.setAttribute('ip_address', prompt="\nIP Address")
             if dstMAC:
                 event.setAttribute('mac_address', dstMAC)
         else:
