@@ -28,7 +28,7 @@ def execute(event):
         
     query = '''search index=fireeye alert.id="%s" | table alert.occurred alert.src.ip alert.src.mac alert.dst.ip alert.dst.mac alert.name "alert.explanation.malware-detected.malware.name"''' % (event.fireID)        
     
-    query = '''search index=fireeye | spath alert.id | search alert.id="%s" | spath alert.product | spath alert.sensor | spath alert.occurred | spath alert.src.ip | spath alert.src.mac | spath alert.dst.ip | spath alert.dst.mac | spath alert.name | spath output="malware.names" "alert.explanation.malware-detected.malware{}.name" | table alert.occurred alert.product alert.sensor alert.id alert.src.ip alert.src.mac alert.dst.ip alert.dst.mac alert.name malware.names''' % (event.fireID)
+    query = '''search index=fireeye earliest_time=-60d | spath alert.id | search alert.id="%s" | spath alert.product | spath alert.sensor | spath alert.occurred | spath alert.src.ip | spath alert.src.mac | spath alert.dst.ip | spath alert.dst.mac | spath alert.name | spath output="malware.names" "alert.explanation.malware-detected.malware{}.name" | table alert.occurred alert.product alert.sensor alert.id alert.src.ip alert.src.mac alert.dst.ip alert.dst.mac alert.name malware.names''' % (event.fireID)
     print('\nChecking Splunk...'),
     #try:
     #print query
