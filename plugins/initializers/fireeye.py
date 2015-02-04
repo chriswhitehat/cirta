@@ -39,7 +39,7 @@ def execute(event):
     #    print('Warning: Splunk query failed.\n')
     #    raise error
     
-    print('Done\n')
+    print('Done')
     
     if not results:
         log.error("Error: unable to pull FireEye ID event details from Splunk")
@@ -92,11 +92,19 @@ def execute(event):
     else:
         ans = getUserInWithDef('Track source or destination (s/d)', 's')
         if 's' in ans:
-            event.setAttribute('ip_address', srcIP)
-            event.setAttribute('mac_address', srcMAC)
+            if srcIP:
+                event.setAttribute('ip_address', srcIP)
+            else:
+                event.setAttribute('ip_address', prompt="IP Address")
+            if srcMAC:
+                event.setAttribute('mac_address', srcMAC)
         elif 'd' in ans:
-            event.setAttribute('ip_address', dstIP)
-            event.setAttribute('mac_address', dstMAC)
+            if dstIP:
+                event.setAttribute('ip_address', dstIP)
+            else:
+                event.setAttribute('ip_address', prompt="IP Address")
+            if dstMAC:
+                event.setAttribute('mac_address', dstMAC)
         else:
             event.setAttribute('ip_address', prompt='IP Address', default=ans, description='Neither the source or destination was chosen, please confirm.')
     
