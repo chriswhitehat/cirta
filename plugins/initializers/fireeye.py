@@ -45,12 +45,15 @@ def execute(event):
         log.error("Error: unable to pull FireEye ID event details from Splunk")
         exit()
         
+    event.setOutPath(event.fireID)
+    
+    
     result = results[0]
     
     product = result['alert.product']
     sensor = result['alert.sensor']
     
-    print('Alert Appliance: %s - %s' % (product, sensor))
+    printStatusMsg('%s - %s' % (product, sensor))
     
     if 'T' in result['alert.occurred']:
         timestamp = datetime.datetime.strptime(result['alert.occurred'], '%Y-%m-%dT%H:%M:%SZ').strftime('%Y-%m-%d %H:%M:%S')
@@ -69,7 +72,6 @@ def execute(event):
     
     signature = '%s - %s' % (result['alert.name'], secondaryName)
 
-    event.setOutPath(event.fireID)
     
     # Note the utc offset for the US will always be -x so by adding the offset you are adding a negative, i.e. subtracting
     # This is very important for accurate time conversion.  You should always add the offset if the time is in UTC and
