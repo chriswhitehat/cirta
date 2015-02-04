@@ -15,7 +15,7 @@ ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEAL
 
 import datetime
 from lib.splunkit import Splunk
-from lib.util import getUserInWithDef
+from lib.util import getUserInWithDef, printStatusMsg, getUserMultiChoice
 
 def execute(event):
     
@@ -28,6 +28,7 @@ def execute(event):
         
     query = '''search index=fireeye alert.id="%s" | table alert.occurred alert.src.ip alert.src.mac alert.dst.ip alert.dst.mac alert.name "alert.explanation.malware-detected.malware.name"''' % (event.fireID)        
     
+    query = '''search index=fireeye | spath alert.id | search alert.id="%s" | spath alert.product | spath alert.sensor | spath alert.occurred | spath alert.src.ip | spath alert.src.mac | spath alert.dst.ip | spath alert.dst.mac | spath alert.name | spath output="malware.names" "alert.explanation.malware-detected.malware{}.name" | table alert.occurred alert.product alert.sensor alert.id alert.src.ip alert.src.mac alert.dst.ip alert.dst.mac alert.name malware.names''' % (event.fireID)
     print('\nChecking Splunk...'),
     #try:
     #print query
@@ -43,12 +44,29 @@ def execute(event):
     if not results:
         log.error("Error: unable to pull FireEye ID event details from Splunk")
         exit()
-    timestamp = results[0]['alert.occurred'].split('+')[0]
-    srcIP = results[0]['alert.src.ip']
-    srcMAC = results[0]['alert.src.mac']
-    dstIP = results[0]['alert.dst.ip']
-    dstMAC = results[0]['alert.dst.mac']
-    signature = '%s - %s' % (results[0]['alert.name'], results[0]['alert.explanation.malware-detected.malware.name'])
+        
+    result = results[0]
+    
+    product = result['alert.product']
+    sensor = result['alert.sensor']
+    printStatusMsg('%s - %s' % (product, sensor), length=20, char='-', color=colors.HEADER2)
+    
+    if 'T' in result['alert.occurred']:
+        timestamp = datetime.datetime.strptime(result['alert.occurred'], '%Y-%m-%dT%H:%M:%SZ').strftime('%Y-%m-%d %H:%M:%S')
+    else:
+        timestamp = result['alert.occurred'].split('+')[0]
+    srcIP = result['alert.src.ip']
+    srcMAC = result['alert.src.mac']
+    dstIP = result['alert.dst.ip']
+    dstMAC = result['alert.dst.mac']
+    malwareNames = result['malware.names']
+    
+    if isinstance(malwareNames, list):
+        secondaryName = ', '.join(getUserMultiChoice('Secondary Alert Name', 'Selection', malwareNames, numCols=1, default=malwareNames[-1], allowMultiple=False))
+    else:
+        secondaryName = malwareNames
+    
+    signature = '%s - %s' % (result['alert.name'], secondaryName)
 
     event.setOutPath(event.fireID)
     
@@ -66,15 +84,18 @@ def execute(event):
     
     event.setAttribute('Event_Date/Time', event._DT.strftime('%Y-%m-%d %H:%M:%S'))
     
-    ans = getUserInWithDef('Track source or destination (s/d)', 's')
-    if 's' in ans:
-        event.setAttribute('ip_address', srcIP)
-        event.setAttribute('mac_address', srcMAC)
-    elif 'd' in ans:
-        event.setAttribute('ip_address', dstIP)
-        event.setAttribute('mac_address', dstMAC)
+    if 'CMS' in product:
+        event.setAttribute('ip_address', prompt='IP Address')
     else:
-        event.setAttribute('ip_address', prompt='IP Address', default=ans, description='Neither the source or destination was chosen, please confirm.')
+        ans = getUserInWithDef('Track source or destination (s/d)', 's')
+        if 's' in ans:
+            event.setAttribute('ip_address', srcIP)
+            event.setAttribute('mac_address', srcMAC)
+        elif 'd' in ans:
+            event.setAttribute('ip_address', dstIP)
+            event.setAttribute('mac_address', dstMAC)
+        else:
+            event.setAttribute('ip_address', prompt='IP Address', default=ans, description='Neither the source or destination was chosen, please confirm.')
     
     print('')
     
