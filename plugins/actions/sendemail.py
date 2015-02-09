@@ -44,9 +44,9 @@ def execute(event):
     mailServer = MailServer(confVars.fromAddr, toAddress, server=confVars.mailServerName)
     
     if event.hostname:
-        subjectAdd = event.hostname
+        subjectAdd = "%s - %s" % (event.hostname, event.description) 
     else:
-        subjectAdd = event.ip_address
+        subjectAdd = "%s - %s" % (event.ip_address, event.description)
         
     subject = getUserInWithDef('Subject', '%s - %s' % (confVars.subject, subjectAdd))
     
@@ -59,7 +59,7 @@ def execute(event):
     
     containmentActions = splitAndStrip( confVars.containmentActions)
     containmentPreferred = splitAndStrip( confVars.containmentPreferred)
-    containmentAlternative = splitAndStrip( confVars.containmentAlternative)
+    ##containmentAlternative = splitAndStrip( confVars.containmentAlternative)
     containmentTimeline = splitAndStrip( confVars.containmentTimeline)
     containmentDefaultTimeline = splitAndStrip( confVars.containmentDefaultTimeline)
     
@@ -72,11 +72,11 @@ def execute(event):
     event.eventStage = ', '.join(getUserMultiChoice('Current Event Stage', 'Selection', eventStage, numCols=1, default=eventDefaultStage, allowMultiple=False))
     
     event.containmentPreferred = ', '.join(getUserMultiChoice('Preferred Containment', 'Selection', containmentActions, numCols=2, default=containmentPreferred, allowMultiple=True, other=True))
-    event.containmentAlternative = ', '.join(getUserMultiChoice('Alternative Containment', 'Selection', containmentActions, numCols=2, default=containmentAlternative, allowMultiple=True, other=True))
+    ##event.containmentAlternative = ', '.join(getUserMultiChoice('Alternative Containment', 'Selection', containmentActions, numCols=2, default=containmentAlternative, allowMultiple=True, other=True))
     event.containmentTimeline = ', '.join(getUserMultiChoice('Containment Timeline', 'Selection', containmentTimeline, numCols=2, default=containmentDefaultTimeline, allowMultiple=False, other=True))
     
-    event.eradicationActions = ', '.join(getUserMultiChoice('Eradication Actions', 'Selection', eradicationActions, numCols=1, default=eradicationDefaultActions, allowMultiple=True, other=True))
-    event.eradicationTimeline = ', '.join(getUserMultiChoice('Eradication Timeline', 'Selection', eradicationTimeline, numCols=2, default=eradicationDefaultTimeline, allowMultiple=False, other=True)) 
+    event.eradicationActions = ', '.join(getUserMultiChoice('Mitigation Actions', 'Selection', eradicationActions, numCols=1, default=eradicationDefaultActions, allowMultiple=True, other=True))
+    event.eradicationTimeline = ', '.join(getUserMultiChoice('Mitigation Timeline', 'Selection', eradicationTimeline, numCols=2, default=eradicationDefaultTimeline, allowMultiple=False, other=True)) 
         
     
     msg += 'Incident Response Details\n'
@@ -85,10 +85,10 @@ def execute(event):
     
     msg += 'Containment Timeline -- %s\n' % event.containmentTimeline
     msg += 'Containment Preference -- %s\n' % event.containmentPreferred
-    msg += 'Containment Alternatives -- %s\n\n' % event.containmentAlternative
+    ##msg += 'Containment Alternatives -- %s\n\n' % event.containmentAlternative
     
-    msg += 'Eradication Timeline -- %s\n' % event.eradicationTimeline
-    msg += 'Eradication Action -- %s\n' % event.eradicationActions
+    msg += 'Mitigation Timeline -- %s\n' % event.eradicationTimeline
+    msg += 'Mitigation Action -- %s\n' % event.eradicationActions
     
     emailSections = splitAndStrip(confVars.emailSections)
     
