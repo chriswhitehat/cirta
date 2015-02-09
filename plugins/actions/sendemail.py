@@ -44,11 +44,11 @@ def execute(event):
     mailServer = MailServer(confVars.fromAddr, toAddress, server=confVars.mailServerName)
     
     if event.hostname:
-        subjectAdd = "%s - %s" % (event.hostname, event.description) 
+        subjectAdd = "%s :: %s" % (event.hostname, event.description) 
     else:
-        subjectAdd = "%s - %s" % (event.ip_address, event.description)
+        subjectAdd = "%s :: %s" % (event.ip_address, event.description)
         
-    subject = getUserInWithDef('Subject', '%s - %s' % (confVars.subject, subjectAdd))
+    subject = getUserInWithDef('Subject', '%s: %s' % (confVars.subject, subjectAdd))
     
     print('')
 
