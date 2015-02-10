@@ -72,6 +72,8 @@ def execute(event):
     
     with open("%s.%s" % (event._baseFilePath, 'fef'), 'w') as orf:
         orf.write("%s\t\t%s" % (headers[0], '\t'.join(headers[1:]) + '\n'))
+        print("\n%s\t\t%s" % (headers[0], '\t'.join(headers[1:])))
+        print('-'*120)
         for log in results:
             entry = []
             for header in headers:
@@ -86,6 +88,7 @@ def execute(event):
                 else:
                     entry.append('')
             orf.write('\t'.join(entry) + '\n')
+            print('\t'.join(entry))
 
     mac = ''                
     if event.ip_address == results[0].get('alert.src.ip', ''):
