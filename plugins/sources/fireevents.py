@@ -46,7 +46,7 @@ def execute(event):
     
     with open("%s.%s" % (event._baseFilePath, 'fe'), 'w') as orf:
         for log in results:
-            orf.write(log['_raw'] + '\n')
+            orf.write(log['_raw'])
     
     query = '''search index=fireeye | spath alert.id | spath alert.product | spath alert.sensor | spath alert.occurred | spath alert.src.ip | spath alert.src.mac | spath alert.dst.ip | spath alert.dst.mac | spath alert.name | spath output="malware.names" "alert.explanation.malware-detected.malware{}.name" | search alert.src.ip="%s" OR alert.dst.ip="%s" | sort _time | table alert.occurred alert.product alert.sensor alert.id alert.src.ip alert.src.mac alert.dst.ip alert.dst.mac alert.name malware.names''' % (event.ip_address, event.ip_address)
 
