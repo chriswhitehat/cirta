@@ -69,7 +69,7 @@ def execute(event):
     else:
         secondaryName = malwareNames
     
-    signature = '%s - %s' % (result['alert.name'], secondaryName)
+    signature = '%s %s' % (result['alert.name'], secondaryName)
 
     
     # Note the utc offset for the US will always be -x so by adding the offset you are adding a negative, i.e. subtracting
