@@ -77,12 +77,15 @@ def execute(event):
             for header in headers:
                 if header in log:
                     if 'malware.names' in header:
-                        entry.append('|'.join(log[header]))
+                        if isinstance(log[header], list):
+                            entry.append('|'.join(log[header]))
+                        else:
+                            entry.append(log[header])
                     else:
                         entry.append(log[header])
                 else:
                     entry.append('')
-                orf.write(','.join(entry))
+                orf.write(','.join(entry) + '\n')
 
     mac = ''                
     if event.ip_address == results[0].get('alert.src.ip', ''):
