@@ -95,15 +95,15 @@ def execute(event):
                 event.setAttribute('ip_address', srcIP)
             else:
                 event.setAttribute('ip_address', prompt="\nIP Address")
-            if srcMAC:
-                event.setAttribute('mac_address', srcMAC)
+            #if srcMAC:
+            #    event.setAttribute('mac_address', srcMAC)
         elif 'd' in ans:
             if dstIP:
                 event.setAttribute('ip_address', dstIP)
             else:
                 event.setAttribute('ip_address', prompt="\nIP Address")
-            if dstMAC:
-                event.setAttribute('mac_address', dstMAC)
+            #if dstMAC:
+            #    event.setAttribute('mac_address', dstMAC)
         else:
             event.setAttribute('ip_address', prompt='IP Address', default=ans, description='Neither the source or destination was chosen, please confirm.')
     
