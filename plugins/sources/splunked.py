@@ -25,8 +25,10 @@ def adhocInput(event):
 
 def execute(event):
     if event._splunk.splunkEnabled:
-        printStatusMsg('Splunk CIRTA Incident Details', length=20, char='-', color=colors.HEADER2)
+        printStatusMsg('Splunk CIRTA App', length=20, char='-', color=colors.HEADER2)
         print(event._splunk.splunkCirtaAppURL)
+        printStatusMsg('Splunk Incident Details', length=20, char='-', color=colors.HEADER2)
+        print(event._splunkCirtaIncidentURL)
         printStatusMsg('Splunk Raw Search', length=20, char='-', color=colors.HEADER2)
         print(event._splunk.splunkCirtaSearchURL)
     else:
