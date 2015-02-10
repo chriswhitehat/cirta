@@ -84,7 +84,7 @@ def execute(event):
     msg += 'Response Stage -- %s\n\n' % event.eventStage
     
     msg += 'Containment Timeline -- %s\n' % event.containmentTimeline
-    msg += 'Containment Preference -- %s\n' % event.containmentPreferred
+    msg += 'Containment Preference -- %s\n\n' % event.containmentPreferred
     ##msg += 'Containment Alternatives -- %s\n\n' % event.containmentAlternative
     
     msg += 'Mitigation Timeline -- %s\n' % event.eradicationTimeline
