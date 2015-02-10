@@ -28,7 +28,7 @@ def execute(event):
     
     sp = Splunk(host=SPLUNK_SEARCH_HEAD, port=SPLUNK_SEARCH_HEAD_PORT, username=SPLUNK_SEARCH_HEAD_USERNAME, password=SPLUNK_SEARCH_HEAD_PASSWORD, scheme=SPLUNK_SEARCH_HEAD_SCHEME)
     
-    rawQuery = '''search index=fireeye | spath alert.src.ip | spath alert.dst.ip | search alert.src.ip="%s" OR alert.dst.ip="%s" | sort -_time | table _raw''' % (event.ip_address, event.ip_address)
+    rawQuery = '''search index=fireeye | spath alert.src.ip | spath alert.dst.ip | search alert.src.ip="%s" OR alert.dst.ip="%s" | sort _time | table _raw''' % (event.ip_address, event.ip_address)
 
     print('\nChecking Splunk Raw...'),
     
@@ -48,7 +48,7 @@ def execute(event):
         for log in results:
             orf.write(log['_raw'] + '\n')
     
-    query = '''search index=fireeye | spath alert.id | spath alert.product | spath alert.sensor | spath alert.occurred | spath alert.src.ip | spath alert.src.mac | spath alert.dst.ip | spath alert.dst.mac | spath alert.name | spath output="malware.names" "alert.explanation.malware-detected.malware{}.name" | search alert.src.ip="%s" OR alert.dst.ip="%s" | sort -_time | table alert.occurred alert.product alert.sensor alert.id alert.src.ip alert.src.mac alert.dst.ip alert.dst.mac alert.name malware.names''' % (event.ip_address, event.ip_address)
+    query = '''search index=fireeye | spath alert.id | spath alert.product | spath alert.sensor | spath alert.occurred | spath alert.src.ip | spath alert.src.mac | spath alert.dst.ip | spath alert.dst.mac | spath alert.name | spath output="malware.names" "alert.explanation.malware-detected.malware{}.name" | search alert.src.ip="%s" OR alert.dst.ip="%s" | sort _time | table alert.occurred alert.product alert.sensor alert.id alert.src.ip alert.src.mac alert.dst.ip alert.dst.mac alert.name malware.names''' % (event.ip_address, event.ip_address)
 
     print('\nChecking Splunk...'),
     #try:
@@ -71,7 +71,7 @@ def execute(event):
                'alert.name', 'malware.names']
     
     with open("%s.%s" % (event._baseFilePath, 'fef'), 'w') as orf:
-        orf.write('\t'.join(headers) + '\n')
+        orf.write("%s\t\t%s" % (headers[0], '\t'.join(headers[1:]) + '\n'))
         for log in results:
             entry = []
             for header in headers:
