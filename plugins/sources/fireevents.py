@@ -85,7 +85,7 @@ def execute(event):
                         entry.append(log[header])
                 else:
                     entry.append('')
-                orf.write(','.join(entry) + '\n')
+            orf.write(','.join(entry) + '\n')
 
     mac = ''                
     if event.ip_address == results[0].get('alert.src.ip', ''):
