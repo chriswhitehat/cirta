@@ -100,7 +100,7 @@ class FireEye():
 
         def unseen(md5):
             alert = self.alertMD5(md5)
-            return alert['alertsCount'] > 0
+            return alert['alertsCount'] == 0
 
         fileDict = {}        
         for filepath in fileList:
