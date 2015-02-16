@@ -28,15 +28,18 @@ class FireEye():
         
         
     def authenticate(self, username, password):
+        print('Authenticating...'),
         authURL = self.baseURL + 'auth/login?'
         
         r = requests.post(authURL, auth=HTTPBasicAuth(username, password), verify=False)
 
         if r.status_code == 200:
+            print('success.')
             self.authenticated = True
             self.token = r.headers['x-feapi-token']
             self.headers['x-feapi-token'] = self.token
         else:
+            print('fail.')
             self.authenticated = False
         
         
@@ -75,17 +78,21 @@ class FireEye():
                 
                 
     def configInfo(self):
+        print('Pulling configurations...'),
         configURL = self.baseURL + 'config'
         
         if self.authenticated:
             r = requests.get(configURL, headers=self.headers, verify=False)
             if r.status_code == 200:
+                print('success.')
                 self.config = r.json()
                 # Ridiculous list comprehension to unwrap json response in the case of multiple sensors to provide
                 # all possible profiles
                 self.profiles = [profile['name'] for profile in sum([sensor['profiles'] for sensor in self.config['entity']['sensors']], [])]
                 
                 return self.config
+            else:
+                print("fail.")
         
         
     def submit(self, fileList, profiles, analysisType='1', priority="0", 
