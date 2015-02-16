@@ -99,9 +99,8 @@ class FireEye():
                application="0", prefetch="0", timeout="5000", force="false"):
 
         def unseen(md5):
-            r = self.alertMD5(md5)
-            j = r.json()
-            return j['alertsCount'] > 0
+            alert = self.alertMD5(md5)
+            return alert['alertsCount'] > 0
 
         fileDict = {}        
         for filepath in fileList:
