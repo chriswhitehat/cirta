@@ -100,11 +100,14 @@ class FireEye():
 
         def unseen(md5):
             r = self.alertMD5(md5)
-            '''Return some boolean result based on previously seen md5'''
+            j = r.json()
+            return j['alertsCount'] > 0
+
         fileDict = {}        
         for filepath in fileList:
             md5 = hashlib.md5(open(filepath, 'r').read()).hexdigest()
             if md5 not in fileDict and unseen(md5):
+                print('Queing up %s' % filepath)
                 fileDict[md5] = filepath
 
         for md5, filepath in fileDict.iteritems():
