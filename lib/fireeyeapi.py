@@ -120,4 +120,5 @@ class FireEye():
     def retrieve(self):
         ''''''
         
-    
+    def __exit__(self):
+        self.logout()
