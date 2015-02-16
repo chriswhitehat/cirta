@@ -18,6 +18,7 @@ from requests.auth import HTTPBasicAuth
 
 class FireEye():
     def __init__(self, hostname=None, username=None, password=None):
+        requests.packages.urllib3.disable_warnings()
         self.pending = {}
         self.complete = {}
         self.baseURL = 'https://%s/wsapis/v1.0.0/' % hostname
