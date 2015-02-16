@@ -47,7 +47,7 @@ class FireEye():
         logoutURL = self.baseURL + 'auth/logout'
 
         if self.authenticated:
-            r = requests.get(logoutURL, headers=self.headers, verify=False)
+            r = requests.post(logoutURL, headers=self.headers, verify=False)
             if r.status_code == 200:
                 self.authenticated = False
             else:
