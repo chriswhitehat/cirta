@@ -13,7 +13,7 @@ COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER I
 ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 '''
 
-import requests, base64, hashlib
+import requests, base64, hashlib, os
 from requests.auth import HTTPBasicAuth
 
 class FireEye():
@@ -95,22 +95,44 @@ class FireEye():
                 print("fail.")
         
         
+    def queueFile(self, filename, filepath, submissionSettings):
+        submitURL = self.baseURL + 'submissions'
+        
+        r = requests.post(submitURL, headers=self.headers, 
+                          json=submissionSettings, files=(filename, filepath), verify=False)
+        
+        if r.status_code == 200:
+            print r.json()
+            return r.json()
+        else:
+            print r.status_code
+        
     def submit(self, fileList, profiles, analysisType='1', priority="0", 
                application="0", prefetch="0", timeout="5000", force="false"):
-
-        def unseen(md5):
-            alert = self.alertMD5(md5)
-            return alert['alertsCount'] == 0
-
-        fileDict = {}        
+        
+        submissionSettings = {"analysistype": analysisType, "profiles": profiles, 
+                              "application": application, "priority": priority,
+                              "force": force,"prefetch": prefetch,
+                              "timeout": timeout}
+      
         for filepath in fileList:
+            filename = os.path.basename(filepath)
             md5 = hashlib.md5(open(filepath, 'r').read()).hexdigest()
-            if md5 not in fileDict and unseen(md5):
-                print('Queing up %s' % filepath)
-                fileDict[md5] = filepath
-
-        for md5, filepath in fileDict.iteritems():
-            ''''''
+            if md5 not in self.pending:
+                alert = self.alertMD5(md5)
+                
+                if force or alert['alertsCount'] == 0:
+                    print('Queing up "%s"' % filename)
+                    self.pending[md5] = {'filepath': filepath, 'filename': filename}
+                    self.pending[md5]['scanID'] = self.queueFile(filename, filepath, submissionSettings)
+                else:
+                    self.complete[md5] = {'filepath': filepath, 'filename': filename}
+                    self.complete[md5]['alertURLs'] = [a['alertUrl'] for a in alert['alert']]
+                    print('Previously analyzed "%s"' % filename)
+                    print('\n'.join(['\t' + url for url in self.complete[md5]['alertURLs']]))
+            else:
+                print('Duplicate hash "%s"' % filename)     
+        
             
         
     def poll(self):
