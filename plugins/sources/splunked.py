@@ -28,7 +28,7 @@ def execute(event):
         printStatusMsg('Splunk CIRTA App', length=20, char='-', color=colors.HEADER2)
         print(event._splunk.splunkCirtaAppURL)
         printStatusMsg('Splunk Incident Details', length=20, char='-', color=colors.HEADER2)
-        print(event._splunk._splunkCirtaIncidentURLL)
+        print(event._splunk._splunkCirtaIncidentURL)
         printStatusMsg('Splunk Raw Search', length=20, char='-', color=colors.HEADER2)
         print(event._splunk.splunkCirtaSearchURL)
     else:
