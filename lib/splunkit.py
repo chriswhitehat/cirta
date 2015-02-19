@@ -46,7 +46,7 @@ class Splunk():
 class SplunkIt():
     def __init__(self, splunkEnabled, splunkIndexers, splunkPort, splunkSearchHead, splunkSearchHeadPort, splunkUser, splunkPassword, splunkIndex, host, cirta_id):
         self.splunkEnabled = splunkEnabled
-        self.splunkCirtaSearchURL = 'https://%s:%s/en-US/app/search/search?q=search%%20index%%3D%s%%20source%%3D%%22%s%%22' % (splunkSearchHead,
+        self.splunkCirtaSearchURL = 'https://%s:%s/en-US/app/cirta/search?q=search%%20index%%3D%s%%20source%%3D%%22%s%%22' % (splunkSearchHead,
                                                                                                                          splunkSearchHeadPort,
                                                                                                                          splunkIndex,
                                                                                                                          cirta_id)
