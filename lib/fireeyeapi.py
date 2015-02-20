@@ -98,6 +98,7 @@ class FireEye():
                 print("fail.")
         
         
+        
     def queueFile(self, filename, filepath, submissionSettings):
         submitURL = self.baseURL + 'submissions'
         
@@ -108,6 +109,15 @@ class FireEye():
         if response:
             return simplejson.loads(response)[0]['ID']
 
+
+    def finished(self, scanID):
+        statusURL = self.baseURL + 'submissions/status/' + scanID
+        if self.authenticated:
+            r = requests.get(statusURL, headers=self.headers, verify=False)
+            if r.status_code == 200:
+                return r.content == 'Done'
+            else:
+                print("Something went wrong during the status check in 'finished'.")
         
     def submit(self, fileList, profiles, analysisType='1', priority="0", 
                application="0", prefetch="0", timeout="5000", force="false"):
@@ -135,14 +145,35 @@ class FireEye():
                     print('\n'.join(['\t' + url for url in self.complete[md5]['alertURLs']]))
             else:
                 print('Duplicate hash "%s"' % filename)     
+                
         
-            
+    def submitResults(self, scanID):
+        submitResultsURL = self.baseURL + 'submissions/results/' + scanID
+        
+        if self.authenticated:
+            r = requests.get(submitResultsURL, headers=self.headers, verify=False)
+            if r.status_code == 200:
+                return r.json()
+            else:
+                print("Something went wrong during the submit results query.")
         
     def test(self, fileList):
         self.submit(fileList, 'win7x64-sp1')
         
     def poll(self):
-        ''''''
+        
+        while(self.pending):
+            for md5, submission in self.pending.iteritems():
+                print('Checking status of "%s"' % submission['filename'])
+                if self.finished(submission['scanID']):
+                    print('Its done.')
+                    self.complete[md5] = submission
+                    self.complete['results'] = self.submitResults(submission['scanID'])
+                    del self.pending[md5]
+                else:
+                    print("Pending")
+            print('sleeping 10 seconds')
+            sleep(10)
         
     def retrieve(self):
         ''''''
