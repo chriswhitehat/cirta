@@ -99,7 +99,7 @@ class FireEye():
         submitURL = self.baseURL + 'submissions'
         
         r = requests.post(submitURL, headers=self.headers, 
-                          data=submissionSettings, files={'submission': (filename, open(filepath, 'rb'))}, verify=False)
+                          data={'options': submissionSettings}, files={'file': (filename, open(filepath, 'rb'))}, verify=False)
         
         if r.status_code == 200:
             self.r = r
