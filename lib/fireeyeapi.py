@@ -13,7 +13,7 @@ COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER I
 ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 '''
 
-import requests, base64, hashlib, os
+import requests, base64, hashlib, os, simplejson
 from requests.auth import HTTPBasicAuth
 
 class FireEye():
@@ -99,7 +99,8 @@ class FireEye():
         submitURL = self.baseURL + 'submissions'
         
         r = requests.post(submitURL, headers=self.headers, 
-                          data={'options': submissionSettings}, files={'file': (filename, open(filepath, 'rb'))}, verify=False)
+                          data={'options': submissionSettings}, files={'options': ('options', simplejson.dumps(submissionSettings)),
+                                                                       'filename': (filename, open(filepath, 'rb'))}, verify=False)
         
         if r.status_code == 200:
             self.r = r
