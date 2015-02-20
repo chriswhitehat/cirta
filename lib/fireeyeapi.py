@@ -167,6 +167,7 @@ class FireEye():
                 print('Checking status of "%s"' % submission['filename'])
                 if self.finished(submission['scanID']):
                     print('Its done.')
+                    sleep(2)
                     self.complete[md5] = submission
                     self.complete['results'] = self.submitResults(submission['scanID'])
                     del self.pending[md5]
