@@ -15,6 +15,7 @@ ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEAL
 
 import requests, base64, hashlib, os, simplejson
 from lib.util import runBash
+from time import sleep
 from requests.auth import HTTPBasicAuth
 
 class FireEye():
@@ -25,6 +26,7 @@ class FireEye():
         self.baseURL = 'https://%s/wsapis/v1.0.0/' % hostname
         self.headers = {'Accept': 'application/json'}
         self.authenticate(username, password)
+        sleep(2)
         self.configInfo()
         
         
