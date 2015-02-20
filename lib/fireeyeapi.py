@@ -14,6 +14,7 @@ ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEAL
 '''
 
 import requests, base64, hashlib, os, simplejson
+from lib.util import runBash
 from requests.auth import HTTPBasicAuth
 
 class FireEye():
@@ -98,10 +99,14 @@ class FireEye():
     def queueFile(self, filename, filepath, submissionSettings):
         submitURL = self.baseURL + 'submissions'
         
-        r = requests.post(submitURL, headers=self.headers, 
-                          files={'options': ('options', simplejson.dumps(submissionSettings), 'application/json'),
-                                 'filename': (filename, open(filepath, 'rb'))}, verify=False)
-        
+        #r = requests.post(submitURL, headers=self.headers, 
+        #                  files={'options': ('options', simplejson.dumps(submissionSettings), 'application/json'),
+        #                         'filename': (filename, open(filepath, 'rb'))}, verify=False)
+
+        curlCmd = '''curl -qgsSkH "Content-Type: multipart/form-data" --no-progress-bar --header "X-FEApi-Token: %s" -F "filename=@%s" -F "options=%s" %s''' % (self.token, filepath, simplejson.dumps(submissionSettings).replace('"', '\\"'), submitURL)
+
+        self.ans = runBash(curlCmd)
+        '''
         if r.status_code == 200:
             self.r = r
             print r.json()
@@ -109,7 +114,7 @@ class FireEye():
         else:
             self.r = r
             print r.status_code
-        
+        '''
     def submit(self, fileList, profiles, analysisType='1', priority="0", 
                application="0", prefetch="0", timeout="5000", force="false"):
         
