@@ -99,7 +99,7 @@ class FireEye():
         submitURL = self.baseURL + 'submissions'
         
         r = requests.post(submitURL, headers=self.headers, 
-                          json=submissionSettings, files=(filename, filepath), verify=False)
+                          json=submissionSettings, files=(filename, (open(filepath).read(), 'application/exe')), verify=False)
         
         if r.status_code == 200:
             print r.json()
@@ -134,6 +134,9 @@ class FireEye():
                 print('Duplicate hash "%s"' % filename)     
         
             
+        
+    def test(self, fileList):
+        self.submit(fileList, 'win7x64-sp1')
         
     def poll(self):
         ''''''
