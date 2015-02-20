@@ -102,9 +102,11 @@ class FireEye():
                           data=submissionSettings, files={'submission': (filename, open(filepath, 'rb'))}, verify=False)
         
         if r.status_code == 200:
+            self.r = r
             print r.json()
             return r.json()
         else:
+            self.r = r
             print r.status_code
         
     def submit(self, fileList, profiles, analysisType='1', priority="0", 
