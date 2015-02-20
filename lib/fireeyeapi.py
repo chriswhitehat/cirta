@@ -99,22 +99,14 @@ class FireEye():
     def queueFile(self, filename, filepath, submissionSettings):
         submitURL = self.baseURL + 'submissions'
         
-        #r = requests.post(submitURL, headers=self.headers, 
-        #                  files={'options': ('options', simplejson.dumps(submissionSettings), 'application/json'),
-        #                         'filename': (filename, open(filepath, 'rb'))}, verify=False)
-
         curlCmd = '''curl -qgsSkH "Content-Type: multipart/form-data" --no-progress-bar --header "X-FEApi-Token: %s" -F "filename=@%s" -F "options=%s" %s''' % (self.token, filepath, simplejson.dumps(submissionSettings).replace('"', '\\"'), submitURL)
 
-        self.ans = runBash(curlCmd)
-        '''
-        if r.status_code == 200:
-            self.r = r
-            print r.json()
-            return r.json()
-        else:
-            self.r = r
-            print r.status_code
-        '''
+        response = runBash(curlCmd).read()
+        
+        if response:
+            return simplejson.loads(response)[0]['ID']
+
+        
     def submit(self, fileList, profiles, analysisType='1', priority="0", 
                application="0", prefetch="0", timeout="5000", force="false"):
         
@@ -130,9 +122,10 @@ class FireEye():
                 alert = self.alertMD5(md5)
                 
                 if force or alert['alertsCount'] == 0:
-                    print('Queing up "%s"' % filename)
+                    print('Queing up "%s"...' % filename),
                     self.pending[md5] = {'filepath': filepath, 'filename': filename}
                     self.pending[md5]['scanID'] = self.queueFile(filename, filepath, submissionSettings)
+                    print('done.')
                 else:
                     self.complete[md5] = {'filepath': filepath, 'filename': filename}
                     self.complete[md5]['alertURLs'] = [a['alertUrl'] for a in alert['alert']]
