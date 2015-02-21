@@ -75,6 +75,15 @@ class MailServer():
             print("Error: unable to send email")
         return
     
+    def sendText(self, subject, msg, fromAddr=None, toAddr=[]):
+        try:
+            smtpObj = smtplib.SMTP(self.server)
+            smtpObj.sendmail(fromAddr, toAddr, msg)
+            smtpObj.quit()
+        except IOError:
+            print("Error: unable to send email")
+        return
+    
     def convertPriority(self, pri):
         
         priorities = {'High': ('High', '1'), 

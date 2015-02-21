@@ -326,10 +326,15 @@ def touch(fname, times = None):
     with file(fname, 'a'):
         os.utime(fname, times)
         
-def getUserMultiChoice(msg, prompt, choices, numCols=2, default=[], allowMultiple=True, other=False):
+def getUserMultiChoice(msg, prompt, choices, numCols=2, default=[], allowMultiple=True, other=False, all=False):
     printStatusMsg(msg, 22, '-', color=colors.HEADER2)
     #print(msg + '\n')
     
+    if all and 'all' not in choices and 'All' not in choices:
+        tempChoices = ['All']
+        tempChoices.extend(choices)
+        choices = tempChoices
+        
     if other and 'other' not in choices and 'Other' not in choices:
         choices.append('Other')
     
@@ -366,6 +371,8 @@ def getUserMultiChoice(msg, prompt, choices, numCols=2, default=[], allowMultipl
         elif len(result) > 1 and not allowMultiple:
             print("Single selection only, try again.")
             result = []
+        elif 'All' in result:
+            return choices
         elif 'Other' in result:
             return [getUserIn('Other')]
         else:
