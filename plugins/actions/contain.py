@@ -31,6 +31,7 @@ def execute(event):
         
 
         if verifyContainment:
+            print('')
             verification = getUserInWithDef('Wait for verification (Yes/No)', 'Yes')
         else:
             verification = 'No'
@@ -42,9 +43,13 @@ IP Address: %s
 Hostname: %s
 Verification: %s''' % (event._analystUsername, event.ip_address, event.hostname, verification)
 
+        printStatusMsg('Final Request', 22, '>', color=colors.HEADER2)
+    
         print(subject)
         print(msg)
-        print('')
+        
+        printStatusMsg('Final Request', 22, '<', color=colors.HEADER2)
+    
         if getUserIn('Send Request (Yes/No)') in YES:
             m = MailServer(fromAddr=fromAddr, server=mailServerName)
             m.sendMail(subject, msg, fromAddr, toAddr=[v['email'] for k,v in analysts.items() if k in selectedAnalysts])
