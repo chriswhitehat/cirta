@@ -326,11 +326,11 @@ def touch(fname, times = None):
     with file(fname, 'a'):
         os.utime(fname, times)
         
-def getUserMultiChoice(msg, prompt, choices, numCols=2, default=[], allowMultiple=True, other=False, all=False):
+def getUserMultiChoice(msg, prompt, choices, numCols=2, default=[], allowMultiple=True, other=False, allChoice=False):
     printStatusMsg(msg, 22, '-', color=colors.HEADER2)
     #print(msg + '\n')
     
-    if all and 'all' not in choices and 'All' not in choices:
+    if allChoice and 'all' not in choices and 'All' not in choices:
         tempChoices = ['All']
         tempChoices.extend(choices)
         choices = tempChoices

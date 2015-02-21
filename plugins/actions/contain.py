@@ -27,7 +27,7 @@ def execute(event):
     
     if perimeterBlock and (notifyContainmentAnalysts or event._analystUsername not in analysts):
         
-        selectedAnalysts = getUserMultiChoice('Choose Containment Analysts', 'Analysts', analysts.keys(), numCols=1, default=['All'])
+        selectedAnalysts = getUserMultiChoice('Choose Containment Analysts', 'Analysts', analysts.keys(), numCols=1, default=['All'], allChoice=True)
         
 
         if verifyContainment:
