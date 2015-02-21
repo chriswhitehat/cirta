@@ -45,7 +45,7 @@ Verification: %s''' % (event._analystUsername, event.ip_address, event.hostname,
         if getUserIn('Send Request (Yes/No)') in YES:
             m = MailServer(fromAddr=fromAddr, server=mailServerName)
             m.sendMail(subject, msg, fromAddr, toAddr=[v['email'] for k,v in analysts.items() if k in selectedAnalysts])
-            m.sendText(subject, msg, fromAddr, toAddr=[v['txt'] for k,v in analysts.items() if k in selectedAnalysts])
+            m.sendText(subject + msg, fromAddr, toAddr=[v['txt'] for k,v in analysts.items() if k in selectedAnalysts])
             
             if verification in YES:
                 event.setAttribute('containment_verified', getUserIn('Containment Verified (Yes/No)') in YES)

@@ -75,7 +75,7 @@ class MailServer():
             print("Error: unable to send email")
         return
     
-    def sendText(self, subject, msg, fromAddr=None, toAddr=[]):
+    def sendText(self, msg, fromAddr=None, toAddr=[]):
         try:
             smtpObj = smtplib.SMTP(self.server)
             smtpObj.sendmail(fromAddr, toAddr, msg)
