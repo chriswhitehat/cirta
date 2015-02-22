@@ -163,13 +163,13 @@ class FireEye():
     def poll(self):
         
         while(self.pending):
-            for md5, submission in self.pending.iteritems():
+            for md5, submission in self.pending.items():
                 print('Checking status of "%s"' % submission['filename'])
                 if self.finished(submission['scanID']):
                     print('Its done.')
                     sleep(2)
                     self.complete[md5] = submission
-                    self.complete['results'] = self.submitResults(submission['scanID'])
+                    self.complete[md5]['results'] = self.submitResults(submission['scanID'])
                     del self.pending[md5]
                 else:
                     print("Pending")

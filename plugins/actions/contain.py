@@ -39,9 +39,11 @@ def execute(event):
         subject = 'CIRTA Perimeter Block Request'
         msg = '''
 Requestor: %s
+CIRTA ID: %s
 IP Address: %s
 Hostname: %s
-Verification: %s''' % (event._analystUsername, event.ip_address, event.hostname, verification)
+MAC Address: %s
+Verification: %s''' % (event._analystUsername, event.cirta_id, event.ip_address, event.hostname, event.mac_address, verification)
 
         printStatusMsg('Final Request', 22, '>', color=colors.HEADER2)
     
