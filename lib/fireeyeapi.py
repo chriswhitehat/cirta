@@ -122,7 +122,7 @@ class FireEye():
                 print("Something went wrong during the status check in 'finished'.")
         
     def submit(self, fileList, profiles, analysisType='0', priority="0", 
-               application="0", prefetch="0", timeout="5000", force="0"):
+               application="0", prefetch="0", timeout="5000", force="false"):
         
         submissionSettings = OrderedDict([("analysistype", analysisType), ("profiles", profiles), 
                               ("application", application), ("priority", priority),
@@ -136,7 +136,7 @@ class FireEye():
             if md5 not in self.pending:
                 alert = self.alertMD5(md5)
                 
-                if int(force) or alert['alertsCount'] == 0:
+                if force == "true" or alert['alertsCount'] == 0:
                     print('Queing up "%s"...' % filename),
                     self.pending[md5] = {'filepath': filepath, 'filename': filename}
                     self.pending[md5]['scanID'] = self.queueFile(filename, filepath, submissionSettings)
