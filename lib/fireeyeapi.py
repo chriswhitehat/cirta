@@ -108,6 +108,7 @@ class FireEye():
         response = runBash(curlCmd).read()
         
         if response:
+            print response.content
             return simplejson.loads(response)[0]['ID']
 
 
