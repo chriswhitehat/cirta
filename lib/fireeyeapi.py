@@ -17,6 +17,7 @@ import requests, base64, hashlib, os, simplejson
 from lib.util import runBash
 from time import sleep
 from requests.auth import HTTPBasicAuth
+from collections import OrderedDict
 
 class FireEye():
     def __init__(self, hostname=None, username=None, password=None):
@@ -122,10 +123,11 @@ class FireEye():
     def submit(self, fileList, profiles, analysisType='1', priority="0", 
                application="0", prefetch="0", timeout="5000", force="false"):
         
-        submissionSettings = {"analysistype": analysisType, "profiles": profiles, 
-                              "application": application, "priority": priority,
-                              "force": force,"prefetch": prefetch,
-                              "timeout": timeout}
+        submissionSettings = OrderedDict([("analysistype", analysisType), ("profiles", profiles), 
+                              ("application", application), ("priority", priority),
+                              ("force", force), ("prefetch", prefetch),
+                              ("timeout", timeout)])
+        print submissionSettings
       
         for filepath in fileList:
             filename = os.path.basename(filepath)
