@@ -33,11 +33,12 @@ def execute(event):
                                 
         subject = 'CIRTA Perimeter Block'
         msg = '''
-Requestor: %s
+
 CIRTA ID: %s
+Requestor: %s
 IP Address: %s
 Hostname: %s
-MAC Address: %s''' % (event._analystUsername, event.cirta_id, event.ip_address, event.hostname, event.mac_address)
+MAC Addr: %s''' % (event._analystUsername, event.cirta_id, event.ip_address, event.hostname, event.mac_address)
 
         smsFilePath = event._baseFilePath + '.sms'
         f = open(smsFilePath, 'w')
@@ -50,7 +51,6 @@ MAC Address: %s''' % (event._analystUsername, event.cirta_id, event.ip_address, 
         
         printStatusMsg('Final Request', 22, '>', color=colors.HEADER2)
     
-        print(subject)
         print(msg)
         
         printStatusMsg('Final Request', 22, '<', color=colors.HEADER2)
