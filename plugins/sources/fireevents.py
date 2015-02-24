@@ -96,6 +96,6 @@ def execute(event):
     elif event.ip_address == results[0].get('alert.dst.ip', ''):
         mac = results[0].get('alert.dst.mac', '')
         
-    if mac:
+    if mac and '84:78:ac' not in mac:
         event.setAttribute('mac_address', mac)
         

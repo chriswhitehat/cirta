@@ -14,7 +14,8 @@ ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEAL
 '''
 
 from lib.mailserver import MailServer
-from lib.util import getUserIn, YES, getUserMultiChoice, printStatusMsg
+from lib.util import getUserIn, YES, getUserMultiChoice, printStatusMsg,\
+    getUserInWithDef
 import subprocess
 
 def execute(event):
@@ -36,12 +37,11 @@ Requestor: %s
 CIRTA ID: %s
 IP Address: %s
 Hostname: %s
-MAC Address: %s
-''' % (event._analystUsername, event.cirta_id, event.ip_address, event.hostname, event.mac_address)
+MAC Address: %s''' % (event._analystUsername, event.cirta_id, event.ip_address, event.hostname, event.mac_address)
 
         smsFilePath = event._baseFilePath + '.sms'
         f = open(smsFilePath, 'w')
-        f.write(msg)
+        f.write(subject + msg)
         f.close()
         subprocess.call(['nano', smsFilePath])
         f = open(smsFilePath, 'r')
@@ -58,6 +58,6 @@ MAC Address: %s
         if getUserIn('Send Request (Yes/No)') in YES:
             m = MailServer(fromAddr=fromAddr, server=mailServerName)
             m.sendMail(subject + ' - %s' % event.cirta_id, msg, fromAddr, toAddr=[v['email'] for k,v in analysts.items() if k in selectedAnalysts])
-            m.sendText(subject + msg, fromAddr, toAddr=[v['txt'] for k,v in analysts.items() if k in selectedAnalysts])
+            m.sendText(msg, fromAddr, toAddr=[v['txt'] for k,v in analysts.items() if k in selectedAnalysts])
             
 
