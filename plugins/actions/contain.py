@@ -14,7 +14,8 @@ ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEAL
 '''
 
 from lib.mailserver import MailServer
-from lib.util import getUserIn, getUserInWithDef, YES, getUserMultiChoice, printStatusMsg
+from lib.util import getUserIn, YES, getUserMultiChoice, printStatusMsg
+import subprocess
 
 def execute(event):
     
@@ -22,29 +23,31 @@ def execute(event):
     for analyst, email, txt in [x.split(',') for x in containmentAnalystsEmails.split('|')]:
         analysts[analyst] = {'email': email, 'txt': txt}
     
-    perimeterBlock = getUserIn("Perform Perimeter Block (Yes/No)") in YES
+    perimeterBlock = getUserIn("Request Perimeter Block (Yes/No)") in YES
     event.setAttribute('perimeter_block', perimeterBlock)
     
     if perimeterBlock and (notifyContainmentAnalysts or event._analystUsername not in analysts):
         
         selectedAnalysts = getUserMultiChoice('Choose Containment Analysts', 'Analysts', analysts.keys(), numCols=1, default=['All'], allChoice=True)
-        
-
-        if verifyContainment:
-            print('')
-            verification = getUserInWithDef('Wait for verification (Yes/No)', 'Yes')
-        else:
-            verification = 'No'
-                        
-        subject = 'CIRTA Perimeter Block Request'
+                                
+        subject = 'CIRTA Perimeter Block'
         msg = '''
 Requestor: %s
 CIRTA ID: %s
 IP Address: %s
 Hostname: %s
 MAC Address: %s
-Verification: %s''' % (event._analystUsername, event.cirta_id, event.ip_address, event.hostname, event.mac_address, verification)
+''' % (event._analystUsername, event.cirta_id, event.ip_address, event.hostname, event.mac_address)
 
+        smsFilePath = event._baseFilePath + '.sms'
+        f = open(smsFilePath, 'w')
+        f.write(msg)
+        f.close()
+        subprocess.call(['nano', smsFilePath])
+        f = open(smsFilePath, 'r')
+        msg = f.read()
+        f.close()
+        
         printStatusMsg('Final Request', 22, '>', color=colors.HEADER2)
     
         print(subject)
@@ -54,11 +57,7 @@ Verification: %s''' % (event._analystUsername, event.cirta_id, event.ip_address,
     
         if getUserIn('Send Request (Yes/No)') in YES:
             m = MailServer(fromAddr=fromAddr, server=mailServerName)
-            m.sendMail(subject, msg, fromAddr, toAddr=[v['email'] for k,v in analysts.items() if k in selectedAnalysts])
+            m.sendMail(subject + ' - %s' % event.cirta_id, msg, fromAddr, toAddr=[v['email'] for k,v in analysts.items() if k in selectedAnalysts])
             m.sendText(subject + msg, fromAddr, toAddr=[v['txt'] for k,v in analysts.items() if k in selectedAnalysts])
-            
-            if verification in YES:
-                print('')
-                event.setAttribute('containment_verified', getUserIn('Containment Verified (Yes/No)') in YES)
             
 

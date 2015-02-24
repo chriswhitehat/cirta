@@ -363,20 +363,24 @@ def getUserMultiChoice(msg, prompt, choices, numCols=2, default=[], allowMultipl
         else:
             ans = getUserIn(prompt)
             
-        result = [choiceDict[int(x.strip())] for x in ans.split(',') if int(x) <= len(choices)]
-    
-        if len(result) < 1:
-            print("Invalid input given, try again.")
+        if re.search('[a-zA-Z]', ans):
+            print("Invalid input given, please provide the number(s) for you selection.")
             result = []
-        elif len(result) > 1 and not allowMultiple:
-            print("Single selection only, try again.")
-            result = []
-        elif 'All' in result:
-            return choices
-        elif 'Other' in result:
-            return [getUserIn('Other')]
         else:
-            return result
+            result = [choiceDict[int(x.strip())] for x in ans.split(',') if int(x) <= len(choices)]
+            
+            if len(result) < 1:
+                print("Invalid input given, try again.")
+                result = []
+            elif len(result) > 1 and not allowMultiple:
+                print("Single selection only, try again.")
+                result = []
+            elif 'All' in result:
+                return choices
+            elif 'Other' in result:
+                return [getUserIn('Other')]
+            else:
+                return result
 
 
 
