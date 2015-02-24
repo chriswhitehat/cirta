@@ -34,11 +34,11 @@ def execute(event):
         subject = 'CIRTA Perimeter Block'
         msg = '''
 
-CIRTA ID: %s
-Requestor: %s
-IP Address: %s
-Hostname: %s
-MAC Addr: %s''' % (event._analystUsername, event.cirta_id, event.ip_address, event.hostname, event.mac_address)
+CIRTA ID -- %s
+Analyst -- %s
+IP -- %s
+Host -- %s
+MAC-- %s''' % (event.cirta_id, event._analystUsername, event.ip_address, event.hostname, event.mac_address)
 
         smsFilePath = event._baseFilePath + '.sms'
         f = open(smsFilePath, 'w')
