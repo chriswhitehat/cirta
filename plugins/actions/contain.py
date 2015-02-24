@@ -14,8 +14,7 @@ ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEAL
 '''
 
 from lib.mailserver import MailServer
-from lib.util import getUserIn, YES, getUserMultiChoice, printStatusMsg,\
-    getUserInWithDef
+from lib.util import getUserIn, YES, getUserMultiChoice, printStatusMsg
 import subprocess
 
 def execute(event):
