@@ -79,6 +79,8 @@ end
 end''' % (event.fw_object_name, msg.replace('"', '').rstrip(), event.ip_address, event.subnet_mask)
     
         printStatusMsg('Final Firewall Object', 22, '>', color=colors.HEADER2)
+        
+        print firewallObject
 
         printStatusMsg('Final Firewall Object', 22, '<', color=colors.HEADER2)
         
@@ -103,9 +105,9 @@ end''' % (event.fw_object_name, msg.replace('"', '').rstrip(), event.ip_address,
         print('Done\n')
         
         if not results:
-            log.error("Error: unable to pull CIRTA ID state from Splunk")
-            exit()
-            
+            print("Unable to retrieve pervious quarantine hosts from Splunk")
+
+                    
         '''config vdom
 edit vd-inet
 config firewall addrgrp
