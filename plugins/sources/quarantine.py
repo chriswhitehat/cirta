@@ -48,7 +48,7 @@ def execute(event):
     
     product = result['alert.product']
     sensor = result['alert.sensor']
-  
+'''  
 class fortigate():
     def __init__(self):
         self.setCurrentState()
@@ -72,3 +72,4 @@ set subnet 172.21.192.165 255.255.255.255
 next
 end
 end
+'''
