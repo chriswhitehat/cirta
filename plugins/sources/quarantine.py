@@ -84,17 +84,11 @@ end''' % (event.fw_object_name, msg.replace('"', '').rstrip(), event.ip_address,
 
         printStatusMsg('Final Firewall Object', 22, '<', color=colors.HEADER2)
         
-        return firewallObject
+        return event.fw_object_name, firewallObject
     
-    fwObjects = []
     
-    fwObjects.append(createFWObject())
-    
-    while(getUserIn('Quarantine another device? (y/n)') in YES):
-        fwObjects.append(createFWObject())
         
-        
-    def getCurrentQuarantineObjects():
+    def getCurrentQuarantineObjects(fwObjects):
         
         query = '''search index=cirta level=INFO msg="quarantine hosts" | head 1 | table _time hosts'''
     
@@ -104,19 +98,40 @@ end''' % (event.fw_object_name, msg.replace('"', '').rstrip(), event.ip_address,
     
         print('Done\n')
         
+         
         if not results:
-            print("Unable to retrieve pervious quarantine hosts from Splunk")
-
-                    
-        '''config vdom
+            log.warn("Unable to retrieve pervious quarantine hosts from Splunk")
+            hosts = fwObjects.keys()
+        else:
+            hosts = [x.strip() for x in results[0]['hosts'].split(',')]
+            hosts.extend(fwObjects.keys())
+        
+        event.setAttribute('quarantine_hosts', prompt="Quarantine Host Objects", default=' '.join(['"%s"' % x for x in hosts]))
+                        
+        groupChange = '''config vdom
 edit vd-inet
 config firewall addrgrp
 edit "grp-infosec-blacklist-hosts"
-set member "cmpd-host-l7eis-contr008" "ip-172.21.131.9" "cmpd-host-w7ew01099cal451" "cmpd-host-l7eis-ict020"
+set member %s
 next
 end
-end'''
+end''' % (event.quarantine_hosts)
 
-    currentQuarantineObjects = getCurrentQuarantineObjects()
+        printStatusMsg('Final Group Modification', 22, '>', color=colors.HEADER2)
+        print groupChange
+        printStatusMsg('Final Group Modification', 22, '<', color=colors.HEADER2)
+        
+        return groupChange
+        
+    fwObjects = {}
+    
+    name, obj = createFWObject()
+    fwObjects[name] = obj
+    
+    while(getUserIn('Quarantine another device? (y/n)') in YES):
+        name, obj = createFWObject()
+        fwObjects[name] = obj        
+        
+    currentQuarantineObjects = getCurrentQuarantineObjects(fwObjects)
     
     
