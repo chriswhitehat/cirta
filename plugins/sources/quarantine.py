@@ -45,9 +45,9 @@ def execute(event):
         else:
             defaultName = 'cmpd-host-' + results[0].get('ip_address')
         
-        event.setAttribute('fw_object_name', default=defaultName, prompt="Firewall Object Name")
-        event.setAttribute('ip_address', default=results[0]['ip_address'], prompt="IP to Quarantine")
-        event.setAttribute('subnet_mask', default='255.255.255.255', prompt="Subnet Mask")
+        event.setAttribute('fw_object_name', default=defaultName, prompt="Firewall Object Name", force=True)
+        event.setAttribute('ip_address', default=results[0]['ip_address'], prompt="IP to Quarantine", force=True)
+        event.setAttribute('subnet_mask', default='255.255.255.255', prompt="Subnet Mask", force=True)
         
         msg = ''
         for qAttr in [x.strip() for x in quarantineAttrs.split(',') if x if x.strip()]:
