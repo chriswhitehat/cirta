@@ -21,9 +21,9 @@ def adhocInput(event):
     
     sp = Splunk(host=SPLUNK_SEARCH_HEAD, port=SPLUNK_SEARCH_HEAD_PORT, username=SPLUNK_SEARCH_HEAD_USERNAME, password=SPLUNK_SEARCH_HEAD_PASSWORD, scheme=SPLUNK_SEARCH_HEAD_SCHEME)
     
-    event.setAttribute('cirta_id', prompt='CIRTA ID', header='Quarantine')
+    event.setAttribute('cirtaID', prompt='CIRTA ID', header='Quarantine')
         
-    query = '''search index=cirta cirta_id=%s level=STATE | head 1''' % (event.cirta_id)
+    query = '''search index=cirta cirta_id=%s level=STATE | head 1''' % (event.cirtaID)
 
     print('\nChecking Splunk...'),
         
