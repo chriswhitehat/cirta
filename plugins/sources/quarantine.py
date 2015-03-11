@@ -29,13 +29,22 @@ def adhocInput(event):
         
     results = sp.search(query)
 
-    print('Done')
+    print('Done\n')
     
     if not results:
         log.error("Error: unable to pull CIRTA ID state from Splunk")
         exit()
-     
+    
+    if results[0].get('hostname'):
+        defaultName = 'cmpd-host-' + results[0].get('hostname')
+    else:
+        defaultName = 'cmpd-host-' + results[0].get('ip_address')
+    
+    event.setAttribute('fw_object_name', default=defaultName, prompt="Firewall Object Name")
     event.setAttribute('ip_address', default=results[0]['ip_address'], prompt="IP to Quarantine")
+    event.setAttribute('subnet_mask', default='255.255.255.255', prompt="Subnet Mask")
+    
+    
     
     msg = ''
     for qAttr in [x.strip() for x in quarantineAttrs.split(',') if x if x.strip()]:
