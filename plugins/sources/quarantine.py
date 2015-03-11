@@ -78,17 +78,17 @@ next
 end
 end''' % (event.fw_object_name, msg.replace('"', '').rstrip(), event.ip_address, event.subnet_mask)
     
-        printStatusMsg('Final Firewall Object', 22, '>', color=colors.HEADER2)
+        printStatusMsg('Firewall Object(s)', 22, '>', color=colors.HEADER2)
         
         print firewallObject
 
-        printStatusMsg('Final Firewall Object', 22, '<', color=colors.HEADER2)
+        printStatusMsg('Firewall Object(s)', 22, '<', color=colors.HEADER2)
         
         return event.fw_object_name, firewallObject
     
     
         
-    def getCurrentQuarantineObjects(fwObjects):
+    def getGroupModifications(fwObjects):
         
         query = '''search index=cirta level=INFO msg="quarantine hosts" | head 1 | table _time hosts'''
     
@@ -108,7 +108,7 @@ end''' % (event.fw_object_name, msg.replace('"', '').rstrip(), event.ip_address,
         
         event.setAttribute('quarantine_hosts', prompt="Quarantine Host Objects", default=' '.join(['"%s"' % x for x in hosts]))
                         
-        groupChange = '''config vdom
+        groupMods = '''config vdom
 edit vd-inet
 config firewall addrgrp
 edit "grp-infosec-blacklist-hosts"
@@ -117,11 +117,11 @@ next
 end
 end''' % (event.quarantine_hosts)
 
-        printStatusMsg('Final Group Modification', 22, '>', color=colors.HEADER2)
-        print groupChange
-        printStatusMsg('Final Group Modification', 22, '<', color=colors.HEADER2)
+        printStatusMsg('Group Modifications', 22, '>', color=colors.HEADER2)
+        print groupMods
+        printStatusMsg('Group Modifications', 22, '<', color=colors.HEADER2)
         
-        return groupChange
+        return groupMods
         
     fwObjects = {}
     
@@ -132,6 +132,16 @@ end''' % (event.quarantine_hosts)
         name, obj = createFWObject()
         fwObjects[name] = obj        
         
-    currentQuarantineObjects = getCurrentQuarantineObjects(fwObjects)
+    groupModifications = getGroupModifications(fwObjects)
     
+    final = '\n'.join(fwObjects.values())
+    final += groupModifications
+    
+    printStatusMsg('Final FW Change', 22, '>', color=colors.HEADER2)
+    print final
+    printStatusMsg('Final FW Change', 22, '<', color=colors.HEADER2)
+    
+    if getUserIn('Commit final changes to quarantine state? (y/n)') in YES:
+        print '''msg="quarantine hosts" hosts="%s"''' % (','.join(event.quarantine_hosts.strip('"').split('" "')))
+        #log.info('''msg="quarantine hosts" hosts="%s"''' % (','.join(event.quarantine_hosts.strip('"').split('" "'))))
     
