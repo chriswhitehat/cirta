@@ -15,58 +15,59 @@ ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEAL
 
 import subprocess
 from lib.splunkit import Splunk
-from lib.util import getUserInWithDef, printStatusMsg, getUserMultiChoice
+from lib.util import getUserIn, YES
 
 def adhocInput(event):
     
+    ''''''
+    
+def execute(event):
+    
     sp = Splunk(host=SPLUNK_SEARCH_HEAD, port=SPLUNK_SEARCH_HEAD_PORT, username=SPLUNK_SEARCH_HEAD_USERNAME, password=SPLUNK_SEARCH_HEAD_PASSWORD, scheme=SPLUNK_SEARCH_HEAD_SCHEME)
     
-    event.setAttribute('cirtaID', prompt='CIRTA ID', header='Quarantine')
+    def createFWObject():
+        event.setAttribute('cirtaID', prompt='CIRTA ID', header='Quarantine', force=True)
+            
+        query = '''search index=cirta cirta_id=%s level=STATE | head 1 | fields - _raw | table *''' % (event.cirtaID)
+    
+        print('\nChecking Splunk...'),
+            
+        results = sp.search(query)
+    
+        print('Done\n')
         
-    query = '''search index=cirta cirta_id=%s level=STATE | head 1 | fields - _raw | table *''' % (event.cirtaID)
-
-    print('\nChecking Splunk...'),
+        if not results:
+            log.error("Error: unable to pull CIRTA ID state from Splunk")
+            exit()
         
-    results = sp.search(query)
-
-    print('Done\n')
-    
-    if not results:
-        log.error("Error: unable to pull CIRTA ID state from Splunk")
-        exit()
-    
-    if results[0].get('hostname'):
-        defaultName = 'cmpd-host-' + results[0].get('hostname')
-    else:
-        defaultName = 'cmpd-host-' + results[0].get('ip_address')
-    
-    event.setAttribute('fw_object_name', default=defaultName, prompt="Firewall Object Name")
-    event.setAttribute('ip_address', default=results[0]['ip_address'], prompt="IP to Quarantine")
-    event.setAttribute('subnet_mask', default='255.255.255.255', prompt="Subnet Mask")
-    
-    
-    
-    msg = ''
-    for qAttr in [x.strip() for x in quarantineAttrs.split(',') if x if x.strip()]:
-        value = results[0].get(qAttr.lstrip('_'))
-
-        if value:                
-            event.setAttribute(qAttr, results[0].get(qAttr.lstrip('_')), force=True)
-            msg += '%s -- %s\n' % (event._fifoAttrs[qAttr].formalName, event._fifoAttrs[qAttr].value)
- 
-    outfilePath = results[0]['baseFilePath'] + '.eventd'
-    
-    with open(outfilePath, 'w') as outfile:
-        outfile.write(msg)
+        if results[0].get('hostname'):
+            defaultName = 'cmpd-host-' + results[0].get('hostname')
+        else:
+            defaultName = 'cmpd-host-' + results[0].get('ip_address')
         
-    subprocess.call(['nano', outfilePath])
+        event.setAttribute('fw_object_name', default=defaultName, prompt="Firewall Object Name")
+        event.setAttribute('ip_address', default=results[0]['ip_address'], prompt="IP to Quarantine")
+        event.setAttribute('subnet_mask', default='255.255.255.255', prompt="Subnet Mask")
+        
+        msg = ''
+        for qAttr in [x.strip() for x in quarantineAttrs.split(',') if x if x.strip()]:
+            value = results[0].get(qAttr.lstrip('_'))
     
-    with open(outfilePath, 'r') as infile:
-        msg = infile.read()
-
-    print msg
+            if value:                
+                event.setAttribute(qAttr, results[0].get(qAttr.lstrip('_')), force=True)
+                msg += '%s -- %s\n' % (event._fifoAttrs[qAttr].formalName, event._fifoAttrs[qAttr].value)
+     
+        outfilePath = results[0]['baseFilePath'] + '.eventd'
+        
+        with open(outfilePath, 'w') as outfile:
+            outfile.write(msg)
+            
+        subprocess.call(['nano', outfilePath])
+        
+        with open(outfilePath, 'r') as infile:
+            msg = infile.read()
     
-    firewallObject = '''config vdom
+        firewallObject = '''config vdom
 edit vd-inet
 config firewall address
 edit "%s"
@@ -75,39 +76,14 @@ set color 13
 set subnet %s %s
 next
 end
-end''' % (event.fw_object_name, msg, event.ip_address, event.subnet_mask)
-
-    print firewallObject
-    exit()
-    result = results[0]
+end''' % (event.fw_object_name, msg.replace('"', '').rstrip(), event.ip_address, event.subnet_mask)
     
-    product = result['alert.product']
-    sensor = result['alert.sensor']
+        return firewallObject
     
-def execute(event):
-    ''''''
-'''  
-class fortigate():
-    def __init__(self):
-        self.setCurrentState()
+    fwObjects = []
+    
+    fwObjects.append(createFWObject())
+    
+    while(getUserIn('Quarantine another device? (y/n)') in YES):
+        fwObjects.append(createFWObject())
         
-    def addAddress(self, objectname, comment, ipAddress, subnet='255.255.255.255'):
-        
-    
-    config vdom
-edit vd-inet
-config firewall address
-edit "cmpd-host-l7eis-ict020"
-set comment "CIRTA ID -- 1424359233.30
-CIRTA Date/Time -- 2015-02-19 07:20:33
-Event Date/Time -- 2015-02-18 10:33:14
-IR Analyst -- jroot
-Alert ID -- 55.19792154
-Description -- Malvertising Redirect Java, SpamBlockerUtility, Alexa, Zango, Hotbar
-IR Ticket -- 20150219"
-set color 13
-set subnet 172.21.192.165 255.255.255.255
-next
-end
-end
-'''
