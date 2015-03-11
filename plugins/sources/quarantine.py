@@ -37,7 +37,7 @@ def adhocInput(event):
      
     print results
     
-    for qAttr in quarantineAttrs:
+    for qAttr in [x.strip() for x in quarantineAttrs.split(',') if x if x.strip()]:
         print qAttr
     exit()  
     with open(results[0]['_baseFilePath'] + '.eventd', 'w') as filePath:
