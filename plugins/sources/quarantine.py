@@ -35,6 +35,7 @@ def adhocInput(event):
         log.error("Error: unable to pull CIRTA ID state from Splunk")
         exit()
      
+    event.setAttribute('ip_address', default=results[0]['ip_address'], prompt="IP to Quarantine")
     
     msg = ''
     for qAttr in [x.strip() for x in quarantineAttrs.split(',') if x if x.strip()]:
