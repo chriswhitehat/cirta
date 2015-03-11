@@ -15,7 +15,7 @@ ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEAL
 
 import subprocess
 from lib.splunkit import Splunk
-from lib.util import getUserIn, YES
+from lib.util import getUserIn, YES, printStatusMsg
 
 def adhocInput(event):
     
@@ -78,6 +78,10 @@ next
 end
 end''' % (event.fw_object_name, msg.replace('"', '').rstrip(), event.ip_address, event.subnet_mask)
     
+        printStatusMsg('Final Firewall Object', 22, '>', color=colors.HEADER2)
+
+        printStatusMsg('Final Firewall Object', 22, '<', color=colors.HEADER2)
+        
         return firewallObject
     
     fwObjects = []
@@ -87,3 +91,30 @@ end''' % (event.fw_object_name, msg.replace('"', '').rstrip(), event.ip_address,
     while(getUserIn('Quarantine another device? (y/n)') in YES):
         fwObjects.append(createFWObject())
         
+        
+    def getCurrentQuarantineObjects():
+        
+        query = '''search index=cirta level=INFO msg="quarantine hosts" | head 1 | table _time hosts'''
+    
+        print('\nChecking Splunk...'),
+            
+        results = sp.search(query)
+    
+        print('Done\n')
+        
+        if not results:
+            log.error("Error: unable to pull CIRTA ID state from Splunk")
+            exit()
+            
+        '''config vdom
+edit vd-inet
+config firewall addrgrp
+edit "grp-infosec-blacklist-hosts"
+set member "cmpd-host-l7eis-contr008" "ip-172.21.131.9" "cmpd-host-w7ew01099cal451" "cmpd-host-l7eis-ict020"
+next
+end
+end'''
+
+    currentQuarantineObjects = getCurrentQuarantineObjects()
+    
+    
