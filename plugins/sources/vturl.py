@@ -88,6 +88,9 @@ def execute(event):
             
             print('')
             vt.prettyPrint(reports)
+        elif hasattr(event, "__vtscans__"):
+            log.warn('Background run failed after too many polling attempts, giving up.')
+            return
         else:
             log.warn('\nThis is taking too long, backgrounding.')
             event.addToBackground(__name__)
