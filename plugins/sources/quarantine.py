@@ -13,7 +13,7 @@ COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER I
 ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 '''
 
-import datetime
+import subprocess
 from lib.splunkit import Splunk
 from lib.util import getUserInWithDef, printStatusMsg, getUserMultiChoice
 
@@ -35,7 +35,6 @@ def adhocInput(event):
         log.error("Error: unable to pull CIRTA ID state from Splunk")
         exit()
      
-    print results
     
     msg = ''
     for qAttr in [x.strip() for x in quarantineAttrs.split(',') if x if x.strip()]:
@@ -44,21 +43,19 @@ def adhocInput(event):
         if value:                
             event.setAttribute(qAttr, results[0].get(qAttr.lstrip('_')), force=True)
             msg += '%s -- %s\n' % (event._fifoAttrs[qAttr].formalName, event._fifoAttrs[qAttr].value)
+ 
+    outfilePath = results[0]['baseFilePath'] + '.eventd'
+    
+    with open(outfilePath, 'w') as outfile:
+        outfile.write(msg)
+        
+    subprocess.call(['nano', outfilePath])
+    
+    with open(outfilePath, 'r') as infile:
+        msg = infile.read()
 
     print msg
-    exit()  
-    with open(results[0]['_baseFilePath'] + '.eventd', 'w') as filePath:
-        filePath.write
-        
-    ticketFilePath = event._baseFilePath + '.ticket'
-    f = open(ticketFilePath, 'w')
-    f.write(msg)
-    f.close()
-    subprocess.call(['nano', ticketFilePath])
-    f = open(ticketFilePath, 'r')
-    msg = f.read()
-    f.close() 
-    
+    exit()
     result = results[0]
     
     product = result['alert.product']
