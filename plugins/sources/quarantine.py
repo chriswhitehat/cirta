@@ -23,7 +23,7 @@ def adhocInput(event):
     
     event.setAttribute('cirtaID', prompt='CIRTA ID', header='Quarantine')
         
-    query = '''search index=cirta cirta_id=%s level=STATE | head 1 | table *''' % (event.cirtaID)
+    query = '''search index=cirta cirta_id=%s level=STATE | head 1 | fields - _raw | table *''' % (event.cirtaID)
 
     print('\nChecking Splunk...'),
         
