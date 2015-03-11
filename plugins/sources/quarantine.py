@@ -65,6 +65,19 @@ def adhocInput(event):
         msg = infile.read()
 
     print msg
+    
+    firewallObject = '''config vdom
+edit vd-inet
+config firewall address
+edit "%s"
+set comment "%s"
+set color 13
+set subnet %s %s
+next
+end
+end''' % (event.fw_object_name, msg, event.ip_address, event.subnet_mask)
+
+    print firewallObject
     exit()
     result = results[0]
     
