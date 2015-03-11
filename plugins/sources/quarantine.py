@@ -36,13 +36,21 @@ def adhocInput(event):
         exit()
      
     print results
-    exit()   
+    
+    for qAttr in quarantineAttrs:
+        print qAttr
+    exit()  
+    with open(results[0]['_baseFilePath'] + '.eventd', 'w') as filePath:
+        filePath.write
+        
     ticketFilePath = event._baseFilePath + '.ticket'
     f = open(ticketFilePath, 'w')
     f.write(msg)
     f.close()
-    event.setOutPath(event.fireID)
-    
+    subprocess.call(['nano', ticketFilePath])
+    f = open(ticketFilePath, 'r')
+    msg = f.read()
+    f.close() 
     
     result = results[0]
     
