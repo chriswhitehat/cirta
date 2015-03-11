@@ -39,9 +39,11 @@ def adhocInput(event):
     
     msg = ''
     for qAttr in [x.strip() for x in quarantineAttrs.split(',') if x if x.strip()]:
-        event.setAttribute(qAttr, results[0].get(qAttr.lstrip('_')), force=True)
-        
-        msg += '%s -- %s\n' % (event._fifoAttrs[qAttr].formalName, event._fifoAttrs[qAttr].value)
+        value = results[0].get(qAttr.lstrip('_'))
+
+        if value:                
+            event.setAttribute(qAttr, results[0].get(qAttr.lstrip('_')), force=True)
+            msg += '%s -- %s\n' % (event._fifoAttrs[qAttr].formalName, event._fifoAttrs[qAttr].value)
 
     print msg
     exit()  
