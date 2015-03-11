@@ -134,8 +134,8 @@ end''' % (event.quarantine_hosts)
         
     groupModifications = getGroupModifications(fwObjects)
     
-    final = '\n'.join(fwObjects.values())
-    final += groupModifications
+    final = '\n'.join([x.strip() for x in fwObjects.values()])
+    final += '\n' + groupModifications
     
     printStatusMsg('Final FW Change', 22, '>', color=colors.HEADER2)
     print final
