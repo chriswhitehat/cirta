@@ -37,9 +37,13 @@ def adhocInput(event):
      
     print results
     
+    msg = ''
     for qAttr in [x.strip() for x in quarantineAttrs.split(',') if x if x.strip()]:
         event.setAttribute(qAttr, results[0].get(qAttr.lstrip('_')))
-        print qAttr, getattr(event, qAttr)
+        
+        msg += '%s -- %s\n' % (event._fifoAttrs[qAttr].formalName, event._fifoAttrs[qAttr].value)
+
+    print msg
     exit()  
     with open(results[0]['_baseFilePath'] + '.eventd', 'w') as filePath:
         filePath.write
