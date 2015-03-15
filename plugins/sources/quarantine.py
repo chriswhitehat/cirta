@@ -135,13 +135,15 @@ end''' % (event.quarantine_hosts)
         
     if getUserInWithDef("Reset current quarantine state? (y/n)", "n") in YES:
         reset = True
-        print('''This option should be used sparingly. 
+        print('''
+This option should be used sparingly. 
 Intended use is to take the command preview 
 output from the Fortigate and paste the existing
 address object names including quotes. Please
 note that little, if any, validation is done
 with this input.
-(Ctrl+D to end input)\n''')
+
+(Ctrl+D on empty line to end input)\n''')
         
         event.quarantine_hosts = sys.stdin.read().strip()
         
