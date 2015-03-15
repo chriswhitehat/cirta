@@ -119,7 +119,7 @@ end''' % (event.fw_object_name, msg.replace('"', '').rstrip(), event.ip_address,
         print(colors.BOLDON + "Hosts to remove:  " + colors.BOLDOFF + ' '.join(['"%s"' % x for x in toRemove]))
         print(colors.BOLDON + "Hosts after:      " + colors.BOLDOFF + ' '.join(['"%s"' % x for x in remainingHosts]))        
     
-        event.setAttribute('quarantine_hosts', prompt="Quarantine Host Objects", default=' '.join(['"%s"' % x for x in set(remainingHosts)]))
+        event.setAttribute('quarantine_hosts', ' '.join(['"%s"' % x for x in set(remainingHosts)]))
 
         groupMods = '''config vdom
 edit vd-inet
