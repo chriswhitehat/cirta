@@ -129,10 +129,6 @@ set member %s
 next
 end
 end''' % (event.quarantine_hosts)
-
-        printStatusMsg('Group Modifications', 22, '>', color=colors.HEADER2)
-        print groupMods
-        printStatusMsg('Group Modifications', 22, '<', color=colors.HEADER2)
         
         return groupMods
         
