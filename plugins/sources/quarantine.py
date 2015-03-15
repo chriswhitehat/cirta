@@ -107,6 +107,7 @@ end''' % (event.fw_object_name, msg.replace('"', '').rstrip(), event.ip_address,
             originalHosts = [x.strip() for x in results[0]['hosts'].split(',')]
             hosts = originalHosts[:]
             hosts.extend(fwObjects.keys())
+            hosts = set(hosts)
 
         toRemove = getUserMultiChoice("Unquarantine Hosts", "Hosts to Unquarantine", hosts, 2, default=['None'], noneChoice=True)     
         
