@@ -40,7 +40,7 @@ def execute(event):
     else:
         hosts = set([x.strip() for x in results[0]['hosts'].split(',')])
 
-    toRemove = getUserMultiChoice("Unquarantine Hosts", "Hosts to Unquarantine", hosts, 2)     
+    toRemove = getUserMultiChoice("Quarantine Hosts", "Hosts to Unquarantine", hosts, 2)     
     
     remainingHosts = [host for host in hosts if host not in toRemove]
     
