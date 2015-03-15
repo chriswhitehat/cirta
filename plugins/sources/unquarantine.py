@@ -70,11 +70,6 @@ end''' % (event.unquarantine_hosts)
         
     groupModifications = getGroupModifications()
     
-    final = '\n' + groupModifications
-    
-    printStatusMsg('Final FW Change', 22, '>', color=colors.HEADER2)
-    print final
-    printStatusMsg('Final FW Change', 22, '<', color=colors.HEADER2)
     
     if getUserIn('Commit final changes to quarantine state? (y/n)') in YES:
         #print '''msg="quarantine hosts" hosts="%s"''' % (','.join(event.quarantine_hosts.strip('"').split('" "')))
