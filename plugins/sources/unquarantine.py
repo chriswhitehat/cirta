@@ -25,35 +25,33 @@ def execute(event):
     
     sp = Splunk(host=SPLUNK_SEARCH_HEAD, port=SPLUNK_SEARCH_HEAD_PORT, username=SPLUNK_SEARCH_HEAD_USERNAME, password=SPLUNK_SEARCH_HEAD_PASSWORD, scheme=SPLUNK_SEARCH_HEAD_SCHEME)
         
-    def getGroupModifications():
-        
-        query = '''search index=cirta level=INFO msg="quarantine hosts" | head 1 | table _time hosts'''
-    
-        print('\nChecking Splunk...'),
-            
-        results = sp.search(query)
-    
-        print('Done\n')
-        
-         
-        if not results:
-            log.warn("Unable to retrieve previous quarantine hosts from Splunk")
-            exit()
-        else:
-            hosts = set([x.strip() for x in results[0]['hosts'].split(',')])
+    query = '''search index=cirta level=INFO msg="quarantine hosts" | head 1 | table _time hosts'''
 
-        toRemove = getUserMultiChoice("Unquarantine Hosts", "Hosts to Unquarantine", hosts, 2)     
+    print('\nChecking Splunk...'),
         
-        remainingHosts = [host for host in hosts if host not in toRemove]
-        
-        print('')
-        print(colors.BOLDON + "Hosts before: " + colors.BOLDOFF + ' '.join(['"%s"' % x for x in hosts]))
-        print(colors.BOLDON + "Hosts to remove:  " + colors.BOLDOFF + ' '.join(['"%s"' % x for x in toRemove]))
-        print(colors.BOLDON + "Hosts after:      " + colors.BOLDOFF + ' '.join(['"%s"' % x for x in remainingHosts]))
-           
-        event.setAttribute('unquarantine_hosts', ' '.join(['"%s"' % x for x in remainingHosts]))
-                                
-        groupMods = '''config vdom
+    results = sp.search(query)
+
+    print('Done\n')
+    
+     
+    if not results:
+        log.warn("Unable to retrieve previous quarantine hosts from Splunk")
+        exit()
+    else:
+        hosts = set([x.strip() for x in results[0]['hosts'].split(',')])
+
+    toRemove = getUserMultiChoice("Unquarantine Hosts", "Hosts to Unquarantine", hosts, 2)     
+    
+    remainingHosts = [host for host in hosts if host not in toRemove]
+    
+    print('')
+    print(colors.BOLDON + "Hosts before:     " + colors.BOLDOFF + ' '.join(['"%s"' % x for x in hosts]))
+    print(colors.BOLDON + "Hosts to remove:  " + colors.BOLDOFF + ' '.join(['"%s"' % x for x in toRemove]))
+    print(colors.BOLDON + "Hosts after:      " + colors.BOLDOFF + ' '.join(['"%s"' % x for x in remainingHosts]))
+       
+    event.setAttribute('unquarantine_hosts', ' '.join(['"%s"' % x for x in remainingHosts]))
+                            
+    groupMods = '''config vdom
 edit vd-inet
 config firewall addrgrp
 edit "grp-infosec-blacklist-hosts"
@@ -62,14 +60,12 @@ next
 end
 end''' % (event.unquarantine_hosts)
 
-        printStatusMsg('Group Modifications', 22, '>', color=colors.HEADER2)
-        print groupMods
-        printStatusMsg('Group Modifications', 22, '<', color=colors.HEADER2)
-        
-        return groupMods
-        
-    groupModifications = getGroupModifications()
+    printStatusMsg('Final FW Change', 22, '>', color=colors.HEADER2)
+    print groupMods
+    printStatusMsg('Final FW Change', 22, '<', color=colors.HEADER2)
     
+    return groupMods
+        
     
     if getUserIn('Commit final changes to quarantine state? (y/n)') in YES:
         #print '''msg="quarantine hosts" hosts="%s"''' % (','.join(event.quarantine_hosts.strip('"').split('" "')))
