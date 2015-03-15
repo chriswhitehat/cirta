@@ -45,10 +45,11 @@ def execute(event):
         toRemove = getUserMultiChoice("Unquarantine Hosts", "Hosts to Unquarantine", hosts, 2)     
         
         remainingHosts = [host for host in hosts if host not in toRemove]
-
-        print("Hosts before:     %s" % ' '.join(['"%s"' % x for x in hosts]))
-        print("Hosts to remove:  %s" % ' '.join(['"%s"' % x for x in toRemove]))
-        print("Hosts after:      %s" % ' '.join(['"%s"' % x for x in remainingHosts]))
+        
+        print('')
+        print(colors.BOLDON + "Hosts before: " + colors.BOLDOFF + ' '.join(['"%s"' % x for x in hosts]))
+        print(colors.BOLDON + "Hosts to remove:  " + colors.BOLDOFF + ' '.join(['"%s"' % x for x in toRemove]))
+        print(colors.BOLDON + "Hosts after:      " + colors.BOLDOFF + ' '.join(['"%s"' % x for x in remainingHosts]))
            
         event.setAttribute('unquarantine_hosts', ' '.join(['"%s"' % x for x in remainingHosts]))
                                 
