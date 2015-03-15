@@ -13,9 +13,10 @@ COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER I
 ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 '''
 
-import subprocess
+import subprocess, sys
 from lib.splunkit import Splunk
-from lib.util import getUserIn, YES, printStatusMsg, getUserMultiChoice
+from lib.util import getUserIn, YES, printStatusMsg, getUserMultiChoice,\
+    getUserInWithDef
 
 def adhocInput(event):
     
@@ -132,20 +133,43 @@ end''' % (event.quarantine_hosts)
         
         return groupMods
         
-    fwObjects = {}
-    
-    name, obj = createFWObject()
-    fwObjects[name] = obj
-    
-    while(getUserIn('Quarantine another device? (y/n)') in YES):
-        name, obj = createFWObject()
-        fwObjects[name] = obj        
+    if getUserInWithDef("Reset current quarantine state? (y/n)", "n") in YES:
+        print('''This option should be used sparingly. 
+Intended use is to take the command preview 
+output from the Fortigate and paste the existing
+address object names including quotes. Please
+note that little, if any, validation is done
+with this input.
+(Ctrl+D to end input)\n''')
         
-    groupModifications = getGroupModifications(fwObjects)
+        event.quarantine_hosts = sys.stdin.read().strip()
+        
+        groupModifications = '''config vdom
+edit vd-inet
+config firewall addrgrp
+edit "grp-infosec-blacklist-hosts"
+set member %s
+next
+end
+end''' % (event.quarantine_hosts)
+
+        final = '\n' + groupModifications 
+        
+    else:        
+        fwObjects = {}
+        
+        name, obj = createFWObject()
+        fwObjects[name] = obj
+        
+        while(getUserIn('Quarantine another device? (y/n)') in YES):
+            name, obj = createFWObject()
+            fwObjects[name] = obj        
+            
+        groupModifications = getGroupModifications(fwObjects)
     
-    final = '\n'.join([x.strip() for x in fwObjects.values()])
-    final += '\n' + groupModifications
-    
+        final = '\n'.join([x.strip() for x in fwObjects.values()])
+        final += '\n' + groupModifications
+        
     printStatusMsg('Final FW Change', 22, '>', color=colors.HEADER2)
     print final
     printStatusMsg('Final FW Change', 22, '<', color=colors.HEADER2)
