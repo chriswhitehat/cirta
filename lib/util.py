@@ -330,7 +330,7 @@ def getUserMultiChoice(msg, prompt, choices, numCols=2, default=[], allowMultipl
     printStatusMsg(msg, 22, '-', color=colors.HEADER2)
     #print(msg + '\n')
     
-    if allChoice and 'none' not in choices and 'None' not in choices:
+    if noneChoice and 'none' not in choices and 'None' not in choices:
         tempChoices = ['None']
         tempChoices.extend(choices)
         choices = tempChoices
