@@ -134,6 +134,7 @@ end''' % (event.quarantine_hosts)
         return groupMods
         
     if getUserInWithDef("Reset current quarantine state? (y/n)", "n") in YES:
+        reset = True
         print('''This option should be used sparingly. 
 Intended use is to take the command preview 
 output from the Fortigate and paste the existing
@@ -156,6 +157,7 @@ end''' % (event.quarantine_hosts)
         final = '\n' + groupModifications 
         
     else:        
+        reset = False
         fwObjects = {}
         
         name, obj = createFWObject()
@@ -177,6 +179,7 @@ end''' % (event.quarantine_hosts)
     if getUserIn('Commit final changes to quarantine state? (y/n)') in YES:
         #print '''msg="quarantine hosts" hosts="%s"''' % (','.join(event.quarantine_hosts.strip('"').split('" "')))
         log.info('''msg="quarantine hosts" hosts="%s"''' % (','.join(event.quarantine_hosts.strip('"').split('" "'))))
-        with open(event._baseFilePath + '.fgblock', 'w') as outFile:
-            outFile.write(final)
+        if not reset:
+            with open(event._baseFilePath + '.fgblock', 'w') as outFile:
+                outFile.write(final)
     
