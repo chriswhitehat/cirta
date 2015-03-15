@@ -15,7 +15,7 @@ ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEAL
 
 import subprocess
 from lib.splunkit import Splunk
-from lib.util import getUserIn, YES, printStatusMsg
+from lib.util import getUserIn, YES, printStatusMsg, getUserMultiChoice
 
 def adhocInput(event):
     
@@ -101,13 +101,24 @@ end''' % (event.fw_object_name, msg.replace('"', '').rstrip(), event.ip_address,
         
          
         if not results:
-            log.warn("Unable to retrieve pervious quarantine hosts from Splunk")
+            log.warn("Unable to retrieve previous quarantine hosts from Splunk")
             hosts = fwObjects.keys()
         else:
-            hosts = [x.strip() for x in results[0]['hosts'].split(',')]
+            originalHosts = [x.strip() for x in results[0]['hosts'].split(',')]
+            hosts = originalHosts[:]
             hosts.extend(fwObjects.keys())
-        
-        event.setAttribute('quarantine_hosts', prompt="Quarantine Host Objects", default=' '.join(['"%s"' % x for x in set(hosts)]))
+
+        toRemove = getUserMultiChoice("Unquarantine Hosts", "Hosts to Unquarantine", hosts, 2)     
+    
+        remainingHosts = [host for host in hosts if host not in toRemove]
+    
+        print('')
+        print(colors.BOLDON + "Hosts before:     " + colors.BOLDOFF + ' '.join(['"%s"' % x for x in originalHosts]))
+        print(colors.BOLDON + "Hosts to add:     " + colors.BOLDOFF + ' '.join(['"%s"' % x for x in fwObjects.keys()]))
+        print(colors.BOLDON + "Hosts to remove:  " + colors.BOLDOFF + ' '.join(['"%s"' % x for x in toRemove]))
+        print(colors.BOLDON + "Hosts after:      " + colors.BOLDOFF + ' '.join(['"%s"' % x for x in remainingHosts]))        
+    
+        event.setAttribute('quarantine_hosts', prompt="Quarantine Host Objects", default=' '.join(['"%s"' % x for x in set(remainingHosts)]))
 
         groupMods = '''config vdom
 edit vd-inet
