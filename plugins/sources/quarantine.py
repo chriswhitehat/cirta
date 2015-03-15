@@ -57,7 +57,8 @@ def execute(event):
                 event.setAttribute(qAttr, results[0].get(qAttr.lstrip('_')), force=True)
                 msg += '%s -- %s\n' % (event._fifoAttrs[qAttr].formalName, event._fifoAttrs[qAttr].value)
      
-        outfilePath = results[0]['baseFilePath'] + '.eventd'
+        event._baseFilePath = results[0]['baseFilePath']
+        outfilePath = event._baseFilePath + '.eventd'
         
         with open(outfilePath, 'w') as outfile:
             outfile.write(msg)
@@ -106,8 +107,8 @@ end''' % (event.fw_object_name, msg.replace('"', '').rstrip(), event.ip_address,
             hosts = [x.strip() for x in results[0]['hosts'].split(',')]
             hosts.extend(fwObjects.keys())
         
-        event.setAttribute('quarantine_hosts', prompt="Quarantine Host Objects", default=' '.join(['"%s"' % x for x in hosts]))
-                        
+        event.setAttribute('quarantine_hosts', prompt="Quarantine Host Objects", default=' '.join(['"%s"' % x for x in set(hosts)]))
+
         groupMods = '''config vdom
 edit vd-inet
 config firewall addrgrp
@@ -144,4 +145,6 @@ end''' % (event.quarantine_hosts)
     if getUserIn('Commit final changes to quarantine state? (y/n)') in YES:
         #print '''msg="quarantine hosts" hosts="%s"''' % (','.join(event.quarantine_hosts.strip('"').split('" "')))
         log.info('''msg="quarantine hosts" hosts="%s"''' % (','.join(event.quarantine_hosts.strip('"').split('" "'))))
+        with open(event._baseFilePath['baseFilePath'] + '.fgblock', 'w') as outFile:
+            outFile.write(final)
     
