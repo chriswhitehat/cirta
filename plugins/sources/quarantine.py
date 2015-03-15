@@ -145,6 +145,6 @@ end''' % (event.quarantine_hosts)
     if getUserIn('Commit final changes to quarantine state? (y/n)') in YES:
         #print '''msg="quarantine hosts" hosts="%s"''' % (','.join(event.quarantine_hosts.strip('"').split('" "')))
         log.info('''msg="quarantine hosts" hosts="%s"''' % (','.join(event.quarantine_hosts.strip('"').split('" "'))))
-        with open(event._baseFilePath['baseFilePath'] + '.fgblock', 'w') as outFile:
+        with open(event._baseFilePath + '.fgblock', 'w') as outFile:
             outFile.write(final)
     
