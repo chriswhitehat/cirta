@@ -15,6 +15,8 @@ ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEAL
 
 from lib import pydap
 from collections import OrderedDict
+from lib import getUserIn
+from getpass import getpass
 
 def playbookInput(event):
     inputHeader = '%s Query Options' % FORMAL_NAME
