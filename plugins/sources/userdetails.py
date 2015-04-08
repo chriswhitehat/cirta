@@ -14,12 +14,21 @@ ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEAL
 '''
 
 from lib import pydap
+from getpass import getpass
 from collections import OrderedDict
+from lib.pydap import getUserIn
 
 def playbookInput(event):
     inputHeader = '%s Query Options' % FORMAL_NAME
     
     successful = False
+    
+    if not confVars.userDN:
+        confVars.userDN = getUserIn('User Distinguished Name')
+    
+    if not confVars.password:
+        confVars.password = getpass("Password")
+        
     while not successful:
         successful = pydap.ldapConnect(confVars.ldapServer, confVars.userDN, confVars.password, confVars.baseDistinguishedName)
         

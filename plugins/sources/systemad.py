@@ -19,6 +19,12 @@ from collections import OrderedDict
 def playbookInput(event):
     inputHeader = '%s Query Options' % FORMAL_NAME
     
+    if not confVars.userDN:
+        confVars.userDN = getUserIn('User Distinguished Name')
+    
+    if not confVars.password:
+        confVars.password = getpass("Password")
+
     successful = False
     while not successful:
         successful = pydap.ldapConnect(confVars.ldapServer, confVars.userDN, confVars.password, confVars.baseDistinguishedName)
