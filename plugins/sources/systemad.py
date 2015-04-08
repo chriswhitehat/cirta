@@ -28,7 +28,7 @@ def playbookInput(event):
         confVars.userDN = getUserIn('User Distinguished Name')
     
     if not confVars.password:
-        confVars.password = getpass("Password")
+        confVars.password = getpass("Password: ")
 
     successful = False
     while not successful:
