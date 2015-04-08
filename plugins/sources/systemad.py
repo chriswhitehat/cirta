@@ -15,11 +15,14 @@ ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEAL
 
 from lib import pydap
 from collections import OrderedDict
-from lib.util import getUserIn
+from lib.util import getUserIn, printStatusMsg
 from getpass import getpass
 
 def playbookInput(event):
     inputHeader = '%s Query Options' % FORMAL_NAME
+    
+    if not confVars.userDN or not confVars.password:
+        printStatusMsg(inputHeader)
     
     if not confVars.userDN:
         confVars.userDN = getUserIn('User Distinguished Name')
