@@ -75,7 +75,7 @@ def execute(event):
         
     if sresult:
         resDict = {}
-        for r in sresult[1:]:
+        for r in sresult:
             if len(r.split(':', 1)) == 2:
                 key, val = r.split(':', 1)
                 resDict[key] = val.lstrip()
