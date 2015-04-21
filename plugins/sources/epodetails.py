@@ -21,6 +21,8 @@ def playbookInput(event):
     inputHeader = '%s Query Options' % FORMAL_NAME
     event.setOutPath()
     
+    event.setAttribute('ip_address', prompt="IP Address", header=inputHeader)
+    
     if confVars.epoPassword:
         event.setAttribute('epoUser', confVars.epoUser)
         event.setAttribute('epoPassword', confVars.epoPassword)
@@ -28,7 +30,7 @@ def playbookInput(event):
         event.setAttribute('epoUser', prompt="ePO Username", header=inputHeader)
         event.setAttribute('epoPassword', getpass())
         
-    event.setAttribute('ip_address', prompt="IP Address")
+    
     
     
 def adhocInput(event):
@@ -63,6 +65,7 @@ def execute(event):
         if result:
             rawResult = result.read()
             if re.match("OK:", rawResult) and len(rawResult.splitlines()) > 3:
+                print rawResult
                 entries = rawResult.split('\n\n')
                 for entry in entries:
                     if re.search(event.ip_address.replace('.', '\.') + '\s', entry):
