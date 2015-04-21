@@ -67,7 +67,7 @@ def execute(event):
                         sresult = entry.splitlines()
                         break
                         
-                            
+    print sresult                        
         
     if sresult:
         resDict = {}
