@@ -27,6 +27,8 @@ def playbookInput(event):
     else:
         event.setAttribute('epoUser', prompt="ePO Username", header=inputHeader)
         event.setAttribute('epoPassword', getpass())
+        
+    event.setAttribute('ip_address', prompt="IP Address")
     
     
 def adhocInput(event):
