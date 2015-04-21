@@ -13,7 +13,7 @@ COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER I
 ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 '''
 
-import urllib2
+import urllib2, re
 from lib.util import printStatusMsg
 from getpass import getpass
 
@@ -57,12 +57,17 @@ def execute(event):
 
         #print('curl -k -u %s:%s https://%s/remote/system.find?searchText=%s' % (event.epoUser, event.epoPassword, server, event.ip_address))
         #result = runBash('curl -k -u %s:%s https://%s/remote/system.find?searchText=%s' % (event.epoUser, event.epoPassword, server, event.ip_address))
+        sresult = None
         if result:
-            sresult = result.read().splitlines()
-            if sresult and sresult[0] == "OK:" and len(sresult) > 3:
-                break
-            else:
-                sresult = None
+            rawResult = result.read()
+            if re.match("OK:", rawResult) and len(rawResult.splitlines()) > 3:
+                entries = rawResult.split('\n\n')
+                for entry in entries:
+                    if re.search(event.ip_address.replace('.', '\.') + '\s', entry):
+                        sresult = entry.splitlines()
+                        break
+                        
+                            
         
     if sresult:
         resDict = {}
