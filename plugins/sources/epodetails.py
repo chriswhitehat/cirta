@@ -65,14 +65,14 @@ def execute(event):
         if result:
             rawResult = result.read()
             if re.match("OK:", rawResult) and len(rawResult.splitlines()) > 3:
-                print rawResult.__repr__()
-                entries = rawResult.split('\n\n')
+                #print rawResult.__repr__()
+                entries = rawResult.split('\r\n\r\n')
                 for entry in entries:
                     if re.search(event.ip_address.replace('.', '\.') + '\s', entry):
                         sresult = entry.splitlines()
                         break
                         
-        print sresult                        
+        #print sresult                        
         
     if sresult:
         resDict = {}
