@@ -31,6 +31,8 @@ def playbookInput(event):
     event.setAttribute('_logCompExt', prompt='Log file compression extension', default='bz2')
     compressionExtension = event._logCompExt
     event.setAttribute('_custExtension', prompt='Results file extension')
+    if event._splunk:
+        event.setAttribute('_dcSourcetype', prompt="Splunk Sourcetype")
     outputExtension = event._custExtension
     event.setAttribute('_customDailyCmd', prompt='Custom command', 
                        description='\nSpecify the custom piped command to run across the daily log files.\ne.g.\n\nInput:          egrep -v "<regex>" | egrep "<regex>" | cut -d " " -f 1\nTransformation: cat <logfile> | egrep -v "<regex>" | egrep "<regex>" | cut -d " " -f 1')
@@ -55,3 +57,5 @@ def execute(event):
                   collect=False, 
                   formatter=None,
                   customCmd=event._customDailyCmd)
+    
+    event._splunk.push(sourcetype=event._dcSourcetype, filename='%s.%s' % (event._baseFilePath, outputExtension))
