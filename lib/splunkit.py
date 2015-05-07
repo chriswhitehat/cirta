@@ -22,7 +22,7 @@ log = logging.getLogger(__name__)
 
 class Splunk():
     def __init__(self, host='', port=8089, username="", password="", scheme="https"):
-        self.service = client.connect(host=host, port=port, username=username, password=password, scheme=scheme)
+        self.service = client.connect(host=host, port=port, username=username, password=password, scheme=scheme, autologin=True)
         self.jobs = self.service.jobs
             
     def search(self, search, searchArgs=None, resultFunc=None, blocking=True):
