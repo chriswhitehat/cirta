@@ -15,7 +15,7 @@ ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEAL
 
 from securitycenter import SecurityCenter
 from getpass import getpass
-from lib.util import epochToDatetime
+from lib.util import epochToDatetime, printStatusMsg
 
 
 def playbookInput(event):
@@ -62,6 +62,7 @@ def execute(event):
         if vuln['pluginID'] == '38689':
             event.setAttribute('username', vuln['pluginText'].split('Last Successful logon : ')[-1].split('<')[0])
             
+    localAdmins = []
     for vuln in vulns:
         if vuln['pluginID'] == '10902':
             localAdmins = [x.split('  - ')[-1] for x in vuln['pluginText'].split("'Administrators' group :<br/><br/>")[-1].split('</plugin_output')[0].split('<br/>') if x]
@@ -72,9 +73,18 @@ def execute(event):
                 else:
                     event.setAttribute('local_admin', False)
 
+    vulnerabilities = []
     for vuln in sorted(vulns, key=lambda v: int(v['severity']), reverse=True):
                 
         if int(vuln['severity']) > int(event.scSeverity):
-            print('%(ip)-16s%(riskFactor)-12s%(port)-6s%(pluginName)s' % vuln)
+            vulnerabilities.append('%(ip)-16s%(riskFactor)-12s%(port)-6s%(pluginName)s' % vuln)
+            
+    printStatusMsg('Scan Details', 22, '-', color=colors.HEADER2)
+    print('Last Scan: %s' % event.sc_lastScan.isoformat())
+    print('Compliant: %s' % event.sc_compliant)
+    printStatusMsg('Local Admins', 22, '-', color=colors.HEADER2)
+    print('\n'.join(localAdmins))
+    printStatusMsg('Vulnerabilities', 22, '-', color=colors.HEADER2)
+    print('\n'.join(vulnerabilities))
             
             
