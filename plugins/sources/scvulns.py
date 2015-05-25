@@ -74,7 +74,11 @@ def execute(event):
                     event.setAttribute('local_admin', False)
 
     vulnerabilities = []
+    splunkVulnerabilities = []
+    excluded = ['pluginText', 'description', 'solution', 'synopsis']
     for vuln in sorted(vulns, key=lambda v: int(v['severity']), reverse=True):
+        
+        splunkVulnerabilities.append(' '.join([k + '="' + v + '"' for k,v in sorted(vuln.iteritems()) if k not in excluded]))
                 
         if int(vuln['severity']) > int(event.scSeverity):
             vulnerabilities.append('%(ip)-16s%(riskFactor)-12s%(port)-6s%(pluginName)s' % vuln)
@@ -86,5 +90,8 @@ def execute(event):
     print('\n'.join(sorted(localAdmins)))
     printStatusMsg('Vulnerabilities', 22, '-', color=colors.HEADER2)
     print('\n'.join(vulnerabilities))
+    
+    if vulnerabilities:
+        event._splunk.push(sourcetype=confVars.splunkSourcetype, eventList=splunkVulnerabilities)
             
             
