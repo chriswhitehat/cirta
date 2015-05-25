@@ -83,7 +83,7 @@ def execute(event):
     print('Last Scan: %s' % event.sc_lastScan.isoformat())
     print('Compliant: %s' % event.sc_compliant)
     printStatusMsg('Local Admins', 22, '-', color=colors.HEADER2)
-    print('\n'.join(localAdmins))
+    print('\n'.join(sorted(localAdmins)))
     printStatusMsg('Vulnerabilities', 22, '-', color=colors.HEADER2)
     print('\n'.join(vulnerabilities))
             
