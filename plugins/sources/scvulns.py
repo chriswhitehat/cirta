@@ -49,7 +49,7 @@ def execute(event):
     if ipInfo:
         event.setAttribute('operating_system', ipInfo.get('os'))
         event.setAttribute('fqdn', ipInfo.get('dnsName'))
-        event.setAttribute('netbios_name', ipInfo.get('netbiosName').split('\\\\')[-1])
+        event.setAttribute('netbios_name', ipInfo.get('netbiosName').split('\\')[-1])
         event.setAttribute('mac_address', ipInfo.get('macAddress'))
         event.setAttribute('hostname', ipInfo.get('dnsName').split('.')[0])
         event.setAttribute('domain_name', ipInfo.get('dnsName').split('.', 1)[-1])
@@ -81,7 +81,7 @@ def execute(event):
             
     printStatusMsg('Scan Details', 22, '-', color=colors.HEADER2)
     print('Last Scan: %s' % event.sc_lastScan.isoformat())
-    print('Compliant: %s' % event.sc_compliant)
+    print('SC Compliant: %s' % event.sc_compliant)
     printStatusMsg('Local Admins', 22, '-', color=colors.HEADER2)
     print('\n'.join(sorted(localAdmins)))
     printStatusMsg('Vulnerabilities', 22, '-', color=colors.HEADER2)
