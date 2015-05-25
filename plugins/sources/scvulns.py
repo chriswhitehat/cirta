@@ -57,18 +57,22 @@ def execute(event):
         event.setAttribute('sc_lastScan', epochToDatetime(ipInfo.get('lastScan')))
     
     vulns = sc.query('vulndetails', ip=event.ip_address)
-
-    for vuln in sorted(vulns, key=lambda v: int(v['severity']), reverse=True):
+    
+    for vuln in vulns:
         if vuln['pluginID'] == '38689':
             event.setAttribute('username', vuln['pluginText'].split('Last Successful logon : ')[-1].split('<')[0])
             
+    for vuln in vulns:
         if vuln['pluginID'] == '10902':
             localAdmins = [x.split('  - ')[-1] for x in vuln['pluginText'].split("'Administrators' group :<br/><br/>")[-1].split('</plugin_output')[0].split('<br/>') if x]
             
-            if event.username.lower() in '\n'.join(localAdmins).lower():
-                event.setAttribute('local_admin', True, exceptional=True)
-            else:
-                event.setAttribute('local_admin', False)
+            if hasattr(event, 'username'):
+                if event.username.lower() in '\n'.join(localAdmins).lower():
+                    event.setAttribute('local_admin', True, exceptional=True)
+                else:
+                    event.setAttribute('local_admin', False)
+
+    for vuln in sorted(vulns, key=lambda v: int(v['severity']), reverse=True):
                 
         if int(vuln['severity']) > int(event.scSeverity):
             print('%(ip)-16s%(riskFactor)-12s%(port)-6s%(pluginName)s' % vuln)
