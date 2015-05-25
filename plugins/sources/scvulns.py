@@ -34,6 +34,8 @@ def playbookInput(event):
         
     if event._adhoc:
         event.setAttribute('scSeverity', prompt="Severity", default=confVars.scSeverity)
+    else:
+        event.setAttribute('scSeverity', confVars.scSeverity)
     
 def adhocInput(event):
     playbookInput(event)
