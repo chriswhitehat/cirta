@@ -23,6 +23,7 @@ def playbookInput(event):
     event.setOutPath()
     
     event.setAttribute('ip_address', prompt="IP Address", header=inputHeader)
+    event.setAttribute('scHostname', confVars.scHostname)
     
     if confVars.scPassword:
         event.setAttribute('scUser', confVars.scUser)
