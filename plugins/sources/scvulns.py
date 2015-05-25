@@ -69,7 +69,7 @@ def execute(event):
         if vuln['pluginID'] == '10902':
             localAdmins = [x.split('  - ')[-1] for x in vuln['pluginText'].split("'Administrators' group :<br/><br/>")[-1].split('</plugin_output')[0].split('<br/>') if x]
             
-            if hasattr(event, 'username'):
+            if hasattr(event, 'username') and event.username:
                 if event.username.lower() in '\n'.join(localAdmins).lower():
                     event.setAttribute('local_admin', True, exceptional=True)
                 else:
