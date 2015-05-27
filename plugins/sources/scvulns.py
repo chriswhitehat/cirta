@@ -62,42 +62,43 @@ def execute(event):
         
     vulns = sc.query('vulndetails', ip=event.ip_address)
     
-    for vuln in vulns:
-        if vuln['pluginID'] == '38689':
-            event.setAttribute('username', vuln['pluginText'].split('Last Successful logon : ')[-1].split('<')[0])
-            
-    localAdmins = []
-    for vuln in vulns:
-        if vuln['pluginID'] == '10902':
-            localAdmins = [x.split('  - ')[-1] for x in vuln['pluginText'].split("'Administrators' group :<br/><br/>")[-1].split('</plugin_output')[0].split('<br/>') if x]
-            
-            if hasattr(event, 'username') and event.username:
-                if event.username.lower() in '\n'.join(localAdmins).lower():
-                    event.setAttribute('local_admin', True, exceptional=True)
-                else:
-                    event.setAttribute('local_admin', False)
-
-    vulnerabilities = []
-    splunkVulnerabilities = []
-    excluded = ['pluginText', 'description', 'solution', 'synopsis']
-    for vuln in sorted(vulns, key=lambda v: int(v['severity']), reverse=True):
-        
-        splunkVulnerabilities.append(' '.join([event.sc_lastScan.isoformat() + ' ' + k + '="' + v + '"' for k,v in sorted(vuln.iteritems()) if k not in excluded]))
+    if vulns:
+        for vuln in vulns:
+            if vuln['pluginID'] == '38689':
+                event.setAttribute('username', vuln['pluginText'].split('Last Successful logon : ')[-1].split('<')[0])
                 
-        if int(vuln['severity']) > int(event.scSeverity):
-            vulnerabilities.append('%(ip)-16s%(riskFactor)-12s%(port)-6s%(pluginName)s' % vuln)
-            
-    printStatusMsg('Scan Details', 22, '-', color=colors.HEADER2)
-    print('Last Scan: %s' % event.sc_lastScan.isoformat())
-    print('SC Compliant: %s' % event.sc_compliant)
-    printStatusMsg('Local Admins', 22, '-', color=colors.HEADER2)
-    print('\n'.join(sorted(localAdmins)))
-    printStatusMsg('Vulnerabilities', 22, '-', color=colors.HEADER2)
-    print('\n'.join(vulnerabilities))
+        localAdmins = []
+        for vuln in vulns:
+            if vuln['pluginID'] == '10902':
+                localAdmins = [x.split('  - ')[-1] for x in vuln['pluginText'].split("'Administrators' group :<br/><br/>")[-1].split('</plugin_output')[0].split('<br/>') if x]
+                
+                if hasattr(event, 'username') and event.username:
+                    if event.username.lower() in '\n'.join(localAdmins).lower():
+                        event.setAttribute('local_admin', True, exceptional=True)
+                    else:
+                        event.setAttribute('local_admin', False)
     
-    if vulnerabilities:
-        event._splunk.push(sourcetype=confVars.splunkSourcetype, eventList=splunkVulnerabilities)
-        with open('%s.%s' % (event._baseFilePath, confVars.outputExtension), 'w') as outFile:
-            outFile.writelines([x + '\n' for x in splunkVulnerabilities])
+        vulnerabilities = []
+        splunkVulnerabilities = []
+        excluded = ['pluginText', 'description', 'solution', 'synopsis']
+        for vuln in sorted(vulns, key=lambda v: int(v['severity']), reverse=True):
             
-            
+            splunkVulnerabilities.append(' '.join([event.sc_lastScan.isoformat() + ' ' + k + '="' + v + '"' for k,v in sorted(vuln.iteritems()) if k not in excluded]))
+                    
+            if int(vuln['severity']) > int(event.scSeverity):
+                vulnerabilities.append('%(ip)-16s%(riskFactor)-12s%(port)-6s%(pluginName)s' % vuln)
+                
+        printStatusMsg('Scan Details', 22, '-', color=colors.HEADER2)
+        print('Last Scan: %s' % event.sc_lastScan.isoformat())
+        print('SC Compliant: %s' % event.sc_compliant)
+        printStatusMsg('Local Admins', 22, '-', color=colors.HEADER2)
+        print('\n'.join(sorted(localAdmins)))
+        printStatusMsg('Vulnerabilities', 22, '-', color=colors.HEADER2)
+        print('\n'.join(vulnerabilities))
+        
+        if vulnerabilities:
+            event._splunk.push(sourcetype=confVars.splunkSourcetype, eventList=splunkVulnerabilities)
+            with open('%s.%s' % (event._baseFilePath, confVars.outputExtension), 'w') as outFile:
+                outFile.writelines([x + '\n' for x in splunkVulnerabilities])
+                
+                
