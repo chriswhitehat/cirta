@@ -13,9 +13,11 @@ COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER I
 ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 '''
 
+import socket
 from securitycenter import SecurityCenter
 from getpass import getpass
 from lib.util import epochToDatetime, printStatusMsg
+
 
 
 def playbookInput(event):
@@ -55,7 +57,10 @@ def execute(event):
             event.setAttribute('fqdn', ipInfo.get('dnsName'))
             event.setAttribute('netbios_name', ipInfo.get('netbiosName').split('\\')[-1])
             event.setAttribute('mac_address', ipInfo.get('macAddress'))
-            event.setAttribute('hostname', ipInfo.get('dnsName').split('.')[0])
+            try:
+                socket.inet_aton(ipInfo.get('dnsName'))
+            except socket.error:
+                event.setAttribute('hostname', ipInfo.get('dnsName').split('.')[0])
             event.setAttribute('domain_name', ipInfo.get('dnsName').split('.', 1)[-1])
             event.setAttribute('sc_compliant', ipInfo.get('hasCompliance'))
             event.setAttribute('sc_lastScan', epochToDatetime(ipInfo.get('lastScan')))
