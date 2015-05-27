@@ -47,17 +47,19 @@ def execute(event):
 
     ipInfo = sc.ip_info(event.ip_address)['records']
     
-    ipInfo = ipInfo[0]
-    if ipInfo:
-        event.setAttribute('operating_system', ipInfo.get('os'))
-        event.setAttribute('fqdn', ipInfo.get('dnsName'))
-        event.setAttribute('netbios_name', ipInfo.get('netbiosName').split('\\')[-1])
-        event.setAttribute('mac_address', ipInfo.get('macAddress'))
-        event.setAttribute('hostname', ipInfo.get('dnsName').split('.')[0])
-        event.setAttribute('domain_name', ipInfo.get('dnsName').split('.', 1)[-1])
-        event.setAttribute('sc_compliant', ipInfo.get('hasCompliance'))
-        event.setAttribute('sc_lastScan', epochToDatetime(ipInfo.get('lastScan')))
     
+    if ipInfo:
+        ipInfo = ipInfo[0]
+        if ipInfo:
+            event.setAttribute('operating_system', ipInfo.get('os'))
+            event.setAttribute('fqdn', ipInfo.get('dnsName'))
+            event.setAttribute('netbios_name', ipInfo.get('netbiosName').split('\\')[-1])
+            event.setAttribute('mac_address', ipInfo.get('macAddress'))
+            event.setAttribute('hostname', ipInfo.get('dnsName').split('.')[0])
+            event.setAttribute('domain_name', ipInfo.get('dnsName').split('.', 1)[-1])
+            event.setAttribute('sc_compliant', ipInfo.get('hasCompliance'))
+            event.setAttribute('sc_lastScan', epochToDatetime(ipInfo.get('lastScan')))
+        
     vulns = sc.query('vulndetails', ip=event.ip_address)
     
     for vuln in vulns:
