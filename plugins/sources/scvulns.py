@@ -100,5 +100,6 @@ def execute(event):
             event._splunk.push(sourcetype=confVars.splunkSourcetype, eventList=splunkVulnerabilities)
             with open('%s.%s' % (event._baseFilePath, confVars.outputExtension), 'w') as outFile:
                 outFile.writelines([x + '\n' for x in splunkVulnerabilities])
-                
+    else:
+        print('Asset not found.')
                 
