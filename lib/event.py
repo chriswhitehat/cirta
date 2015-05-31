@@ -316,11 +316,19 @@ class Event(object):
     def logState(self):
         log.state('msg="logging state" plugin="%s" stage="snapshot" %s' % (self.currentPlugin, self.getAttrs()))
     
-    def addToBackground(self, name):
+    def addToBackgroundSource(self, name):
         log.info('msg="backgrounding plugin" source="%s"' % (name))
         if hasattr(self, '_backgroundedDS'):
             self._backgroundedDS.append(name)
         else:
             self._backgroundedDS = [name]
             
+    def addToBackgroundAction(self, name):
+        log.info('msg="backgrounding plugin" action="%s"' % (name))
+        if hasattr(self, '_backgroundedActions'):
+            self._backgroundedActions.append(name)
+        else:
+            self._backgroundedActions = [name]
+            
+                
             

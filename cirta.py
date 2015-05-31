@@ -456,6 +456,18 @@ def launchActions(playbook, event):
         event.currentPlugin = 'cirta'
         
         
+def launchBackgroundedActions(playbook, event):
+    log.info('msg="launching backgrounded actions"')
+    for action in event._backgroundedActions:
+        actionPlugin = playbook.getPlugin(action)
+        printStatusMsg('%s Action' % actionPlugin.FORMAL_NAME)
+        event.currentPlugin = action
+        log.state('msg="execute" type="action" plugin="%s" stage="background_start" %s' % (action, event.getAttrs()))
+        actionPlugin.execute(event)
+        log.state('msg="execute" type="action" plugin="%s" stage="background_finish" %s' % (action, event.getAttrs()))
+        event.currentPlugin = 'cirta'
+        
+        
 def main():
     global event, playbook
     
@@ -502,6 +514,9 @@ def main():
         
     if hasattr(event, "_backgroundedDS"):
         launchBackgroundedSources(playbook, event)
+        
+    if hasattr(event, "_backgroundedActions"):
+        launchBackgroundedActions(playbook, event)
         
     checkStackTraces(event)
     

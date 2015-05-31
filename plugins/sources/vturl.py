@@ -82,7 +82,7 @@ def execute(event):
                                                                                      vt.getPrintResource(report), 
                                                                                      report['positives'], 
                                                                                      report['total'], 
-                                                                                     ' '.join(['%s="%s"' % (vendor,result['result']) for vendor, result in sorted(report['scans'].iteritems()) if result['detected']])))
+                                                                                     ' '.join(['%s="%s"' % (vendor.replace(' ', '_'),result['result']) for vendor, result in sorted(report['scans'].iteritems()) if result['detected']])))
             
             event._splunk.push(sourcetype=splunkSourcetype, eventList=splunkReports)
             
@@ -93,7 +93,7 @@ def execute(event):
             return
         else:
             log.warn('\nThis is taking too long, backgrounding.')
-            event.addToBackground(__name__)
+            event.addToBackgroundSource(__name__)
             event.__vtscans__ = urls
             
             
