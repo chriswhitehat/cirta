@@ -25,7 +25,7 @@ def execute(event):
     sp = Splunk(host=SPLUNK_SEARCH_HEAD, port=SPLUNK_SEARCH_HEAD_PORT, username=SPLUNK_SEARCH_HEAD_USERNAME, password=SPLUNK_SEARCH_HEAD_PASSWORD, scheme=SPLUNK_SEARCH_HEAD_SCHEME)
     
     #query='index=cirta_data source="%s" sourcetype="virustotal_url" positives!=0 | where isnull(Fortinet) | fields _raw' % event.cirtaID
-    query='index=cirta_data source="1432905825.93" sourcetype="virustotal_url" positives!=0 | where isnull(Fortinet) | fields _raw'
+    query='search index=cirta_data source="1432905825.93" sourcetype="virustotal_url" positives!=0 | where isnull(Fortinet) | fields _raw'
     
     print('\nChecking Splunk...'),
             
