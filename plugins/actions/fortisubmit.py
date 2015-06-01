@@ -94,6 +94,6 @@ def execute(event):
     print(msg + '\n')
     
     if getUserIn('Send Email?') in YES:
-        if not event._testing:
-            mailServer.sendMail(subject, msg, ccAddr=cc, bccAddr=bcc, prior=priority)
+        #if not event._testing:
+        mailServer.sendMail(subject, msg, ccAddr=cc, bccAddr=bcc, prior=priority)
     
