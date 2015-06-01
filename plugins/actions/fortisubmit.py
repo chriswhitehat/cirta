@@ -13,10 +13,16 @@ COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER I
 ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 '''
 
+import subprocess
 from lib.splunkit import Splunk
+from lib.util import getUserInWithDef, printStatusMsg, getUserIn, YES
+from lib.mailserver import MailServer
 
 def execute(event):
-    
+
+    def splitAndStrip(raw):
+        return [x.strip() for x in raw.split(',')]
+          
     if hasattr(event, "_backgroundedDS"):
         if not hasattr(event, "_backgroundedActions") or __name__ not in event._backgroundedActions:
             event.addToBackgroundAction(__name__)
@@ -34,7 +40,60 @@ def execute(event):
     print('Done\n')
     
     if not results:
-        print("No virustotal hits that don't include Fortinet")
+        print("There were no VirusTotal hits without Fortinet matches.")
         return
+       
+    toAddress = splitAndStrip(getUserInWithDef('Recipient(s)', confVars.toAddr))
     
-    print('\n'.join([x.get('_raw') for x in results]))
+    if confVars.cc:
+        cc = [confVars.cc]
+    else:
+        cc = []
+        
+    if confVars.bcc:
+        bcc = [confVars.bcc]
+    else:
+        bcc = []
+        
+    mailServer = MailServer(confVars.fromAddr, toAddress, server=confVars.mailServerName)
+        
+    subject = getUserInWithDef('Subject', 'Suspicious URLs - %s' % (event.cirta_id))
+    
+    print('')
+
+    msg = confVars.header
+    "The following URLs/Domains were determined to be suspicious/malicious during the course of an incident response:\n\n"
+    
+    msg += '\n'.join([x.get('_raw') for x in results])
+    
+    msg += confVars.footer
+    "\nIf you have questions/comments/concerns please feel free to contact us at <<<>>>"
+     
+    submissionFilePath = event._baseFilePath + '.fortisubmit'
+    f = open(submissionFilePath, 'w')
+    f.write(msg)
+    f.close()
+    subprocess.call(['nano', submissionFilePath])
+    f = open(submissionFilePath, 'r')
+    msg = f.read()
+    f.close()
+    
+    printStatusMsg('Final Fortigate Submission', 22, '-', color=colors.HEADER2)
+    
+    f = open(submissionFilePath, 'w')
+    f.write(msg)
+    f.close()
+    
+    print('From: %s' % confVars.fromAddr)
+    print('To:   %s' % ', '.join(toAddress))
+    if cc:
+        print('CC:   %s' % ', '.join(cc))
+    if bcc:
+        print('BCC:   %s' % ', '.join(bcc))
+    print('Subject: %s\n' % subject)
+    print(msg + '\n')
+    
+    if getUserIn('Send Email?') in YES:
+        if not event._testing:
+            mailServer.sendMail(subject, msg, ccAddr=cc, bccAddr=bcc, prior=priority)
+    
