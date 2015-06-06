@@ -33,7 +33,7 @@ def playbookInput(event):
         event.setAttribute('scUser', prompt="SecurityCenter Username", header=inputHeader)
         event.setAttribute('scPassword', getpass())
         
-    event._riskFactors = {'critical': 1, 'high': 2, 'medium': 3, 'low': 4, 'info': 5}
+    event._riskFactors = {'critical': 4, 'high': 3, 'medium': 2, 'low': 1, 'info': 0}
     if event._adhoc:
         selectedRiskFactor = getUserMultiChoice('Risk Factor', 'Severity', ['Critical', 'High', 'Medium', 'Low', 'Info'], 1, default=['High'], allowMultiple=False)[0]
         event.setAttribute('scSeverity', selectedRiskFactor)
