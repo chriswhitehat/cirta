@@ -16,7 +16,7 @@ ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEAL
 import socket
 from securitycenter import SecurityCenter
 from getpass import getpass
-from lib.util import epochToDatetime, printStatusMsg
+from lib.util import epochToDatetime, printStatusMsg, getUserMultiChoice
 
 
 
@@ -34,10 +34,12 @@ def playbookInput(event):
         event.setAttribute('scUser', prompt="SecurityCenter Username", header=inputHeader)
         event.setAttribute('scPassword', getpass())
         
+    event._riskFactors = {'critical': 1, 'high': 2, 'medium': 3, 'low': 4, 'info': 5}
     if event._adhoc:
-        event.setAttribute('scSeverity', prompt="Severity", default=confVars.scSeverity)
+        selectedRiskFactor = getUserMultiChoice('Risk Factor', 'Severity', event._riskFactors.keys(), 'high', allowMultiple=False)
+        event.setAttribute('scSeverity', selectedRiskFactor)
     else:
-        event.setAttribute('scSeverity', confVars.scSeverity)
+        event.setAttribute('scSeverity', confVars.scSeverity.lower())
     
 def adhocInput(event):
     playbookInput(event)
@@ -90,7 +92,7 @@ def execute(event):
             
             splunkVulnerabilities.append(event.sc_lastScan.isoformat() + ' ' + ' '.join([k + '="' + v + '"' for k,v in sorted(vuln.iteritems()) if k not in excluded]))
                     
-            if int(vuln['severity']) > int(event.scSeverity):
+            if int(vuln['severity']) >= event._riskFactors[event.scSeverity]:
                 vulnerabilities.append('%(ip)-16s%(riskFactor)-12s%(port)-6s%(pluginName)s' % vuln)
                 
         printStatusMsg('Scan Details', 22, '-', color=colors.HEADER2)
