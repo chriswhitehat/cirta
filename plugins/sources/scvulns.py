@@ -36,7 +36,7 @@ def playbookInput(event):
         
     event._riskFactors = {'critical': 1, 'high': 2, 'medium': 3, 'low': 4, 'info': 5}
     if event._adhoc:
-        selectedRiskFactor = getUserMultiChoice('Risk Factor', 'Severity', event._riskFactors.keys(), 'high', allowMultiple=False)
+        selectedRiskFactor = getUserMultiChoice('Risk Factor', 'Severity', event._riskFactors.keys(), 2, allowMultiple=False)
         event.setAttribute('scSeverity', selectedRiskFactor)
     else:
         event.setAttribute('scSeverity', confVars.scSeverity.lower())
