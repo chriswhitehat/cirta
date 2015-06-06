@@ -92,7 +92,7 @@ def execute(event):
             splunkVulnerabilities.append(event.sc_lastScan.isoformat() + ' ' + ' '.join([k + '="' + v + '"' for k,v in sorted(vuln.iteritems()) if k not in excluded]))
                     
             if int(vuln['severity']) >= event._riskFactors[event.scSeverity.lower()]:
-                vulnerabilities.append('%(ip)-16s%(riskFactor)-12s%(port)-6s%(pluginName)s' % vuln)
+                vulnerabilities.append('%(ip)-16s%(riskFactor)-12s%(port)-6s%(pluginID)-6s%(pluginName)s' % vuln)
                 
         printStatusMsg('Scan Details', 22, '-', color=colors.HEADER2)
         print('Last Scan: %s' % event.sc_lastScan.isoformat())
