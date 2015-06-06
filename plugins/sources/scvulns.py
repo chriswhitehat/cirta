@@ -19,7 +19,6 @@ from getpass import getpass
 from lib.util import epochToDatetime, printStatusMsg, getUserMultiChoice
 
 
-
 def playbookInput(event):
     inputHeader = '%s Query Options' % FORMAL_NAME
     event.setOutPath()
@@ -36,7 +35,7 @@ def playbookInput(event):
         
     event._riskFactors = {'critical': 1, 'high': 2, 'medium': 3, 'low': 4, 'info': 5}
     if event._adhoc:
-        selectedRiskFactor = getUserMultiChoice('Risk Factor', 'Severity', event._riskFactors.keys(), 2, allowMultiple=False)
+        selectedRiskFactor = getUserMultiChoice('Risk Factor', 'Severity', ['Critical', 'High', 'Medium', 'Low', 'Info'], 1, default=['High'], allowMultiple=False)
         event.setAttribute('scSeverity', selectedRiskFactor)
     else:
         event.setAttribute('scSeverity', confVars.scSeverity.lower())
