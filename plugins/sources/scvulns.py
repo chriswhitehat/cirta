@@ -101,6 +101,7 @@ def execute(event):
         print('\n'.join(sorted(localAdmins)))
         printStatusMsg('Vulnerabilities', 22, '-', color=colors.HEADER2)
         print('%-16s%-13s%-6s%-12s%s' % ('IP', 'Risk Factor', 'Port', 'Plugin ID', 'Plugin Name'))
+        print('-' * 80)
         print('\n'.join(vulnerabilities))
         
         if vulnerabilities:
