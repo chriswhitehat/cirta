@@ -315,7 +315,7 @@ def datetimeToEpoch(dateInDatetime):
 def syslogTimeToDatetime(text):
     return datetime.strptime(text[:-6], '%Y-%m-%dT%H:%M:%S')
 
-def ciscoTimeExtract(line):
+def yearlessTimeExtract(line):
     year = str(datetime.today().year) + ' '
     return datetime.strptime(year + line[:15], '%Y %b %d %H:%M:%S')
 

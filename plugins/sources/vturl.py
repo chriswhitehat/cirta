@@ -15,7 +15,7 @@ ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEAL
 
 import shlex, os
 from lib import virustotal
-from lib.util import YES, getTimeBisect, ciscoTimeExtract
+from lib.util import YES, getTimeBisect, yearlessTimeExtract
 
 def playbookInput(event):
     '''Requires no input'''
@@ -59,7 +59,7 @@ def execute(event):
                 log.warn('msg="Proxy file missing, potential proxy source plugin failure upstream" proxy_file="%s"' % proxyFile)
                 return
             
-            before, after = getTimeBisect(event._DT, '\n'.join([x for x in open(proxyFile, 'r').read().splitlines() if 'url=' in x]), ciscoTimeExtract)
+            before, after = getTimeBisect(event._DT, '\n'.join([x for x in open(proxyFile, 'r').read().splitlines() if 'url=' in x]), yearlessTimeExtract)
 
             swath = before[-25:]
             swath.extend(after[:25])
