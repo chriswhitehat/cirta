@@ -128,6 +128,10 @@ def execute(event):
         if ldapName in entry and attrName not in attrs:
             attrs[attrName] = entry[ldapName][0]
 
+    
+    if 'name' in entry and 'Admin' in entry['name']:
+        event.setAttribute('domain_elevated_priveleges', entry['name'], exceptional=True)
+
     createFullName(attrs)
     createPostalAddress(attrs)
 
@@ -160,4 +164,6 @@ def execute(event):
             #print('%s: %s' % (attr.replace('_', ' '), value))
         else:
             event.setAttribute(attr, value)
+            
+    if 
     
