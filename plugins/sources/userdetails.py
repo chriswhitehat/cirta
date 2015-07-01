@@ -172,5 +172,4 @@ def execute(event):
         else:
             event.setAttribute(attr, value)
             
-    if 
     
