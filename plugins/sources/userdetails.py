@@ -130,8 +130,15 @@ def execute(event):
 
     
     if 'name' in entry and 'Admin' in entry['name']:
-        event.setAttribute('domain_elevated_priveleges', entry['name'], exceptional=True)
-
+        event.setAttribute('privileged_account', 'convention', exceptional=True)
+        event.setAttribute('privileged_convention', entry['name'], exceptional=True)
+    elif 'adminCount' in entry and entry['adminCount'] == '1':
+        event.setAttribute('privileged_account', 'adminCount', exceptional=True)
+        event.setAttribute('privileged_adminCount', entry['adminCount'], exceptional=True)
+    elif 'memberOf' in entry and 'PrivGroup' in 'Group':
+        event.setAttribute('privileged_account', 'group', exceptional=True)
+        event.setAttribute('privileged_group', 'group', exceptional=True)
+    
     createFullName(attrs)
     createPostalAddress(attrs)
 
