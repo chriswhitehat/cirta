@@ -65,16 +65,25 @@ class SplunkIt():
         self.host = host
         self.source = cirta_id
         
-        random.shuffle(splunkIndexers)
-        for splunkServer in splunkIndexers:
+        self.splunkPort = splunkPort
+        self.splunkUser = splunkUser
+        self.splunkPassword = splunkPassword
+        self.splunkIndex = splunkIndex
+        
+        self.connect()
+        
+        
+    def connect(self):
+        random.shuffle(self.splunkIndexers)
+        for splunkServer in self.splunkIndexers:
             try:
                 log.debug('msg="selected random splunk indexer" indexer="%s"' % splunkServer)
-                self.service = client.connect(host=splunkServer, port=splunkPort, username=splunkUser, password=splunkPassword)
-                self.index = self.service.indexes[splunkIndex]
+                self.service = client.connect(host=splunkServer, port=self.splunkPort, username=self.splunkUser, password=self.splunkPassword)
+                self.index = self.service.indexes[self.splunkIndex]
                 break
             except(socket.error):
                 log.warning("Warning: Unable to connect to Splunk Indexer, skipping indexer.")
-                log.debug('msg="Unable to connect to Splunk instance" server="%s" port="%s" user="%s" host="%s"' % (splunkServer, splunkPort, splunkUser, host))
+                log.debug('msg="Unable to connect to Splunk instance" server="%s" port="%s" user="%s" host="%s"' % (splunkServer, self.splunkPort, self.splunkUser, self.host))
                 pass
         
         if not hasattr(self, 'index'):
@@ -87,6 +96,8 @@ class SplunkIt():
         
         if not self.splunkEnabled:
             return
+        
+        self.connect()
         
         if filename:
             if os.path.exists(filename):
