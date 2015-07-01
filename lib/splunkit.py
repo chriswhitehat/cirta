@@ -69,6 +69,7 @@ class SplunkIt():
         self.splunkUser = splunkUser
         self.splunkPassword = splunkPassword
         self.splunkIndex = splunkIndex
+        self.splunkIndexers = splunkIndexers
         
         self.connect()
         
