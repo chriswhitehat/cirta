@@ -67,7 +67,9 @@ def execute(event):
         
         for line in queryResults:
             outRawFile.write(','.join(line[:-3]) + '\n')
-            
+        
+        outRawFile.close()
+        
         splunkSguilEvents = []
         for line in open(orf, 'rb'):
             if 'INET_NTOA' not in line:
