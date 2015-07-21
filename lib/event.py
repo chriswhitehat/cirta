@@ -148,7 +148,7 @@ class Event(object):
                                 self.cirta_id)
         else:
             self._splunkEnabled = False
-            self._splunk = SplunkIt(None, None, None, None, None, None, None, None)
+            self._splunk = SplunkIt(None, None, None, None, None, None, None, None, None, None)
         self._stackTraces = []
         self._outDir = configs['cirta']['settings']['IR_PATH'] + self._DT.date().isoformat()
         self._outDirGroup = configs['cirta']['settings']['IR_PATH_GROUP']
