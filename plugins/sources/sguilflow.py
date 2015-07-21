@@ -26,7 +26,7 @@ def adhocInput(event):
     inputHeader = '%s Query Options' % FORMAL_NAME
     event.setOutPath()
     event.setDateRange()
-    event.setAttribute('ip_address_list', prompt='IP Address(es)', header=inputHeader, multiline=True)
+    event.setAttribute('ip_address_list', prompt='IP Address(es)', header=inputHeader, multiline=True, description="Provide a newline delimited list of one ore more IP addresses")
     event.ip_address_list = [x.strip() for x in event.ip_address_list.splitlines() if x]
     event.setAttribute('_sqlLimit', prompt='Maximum Number of flows', default='10000')
     
