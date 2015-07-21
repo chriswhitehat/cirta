@@ -26,51 +26,58 @@ def adhocInput(event):
     inputHeader = '%s Query Options' % FORMAL_NAME
     event.setOutPath()
     event.setDateRange()
-    event.setAttribute('ip_address', prompt='IP Address', header=inputHeader)
+    event.setAttribute('ip_address_list', prompt='IP Address(es)', header=inputHeader, multiline=True)
+    event.ip_address_list = [x.strip() for x in event.ip_address_list.splitlines() if x]
     event.setAttribute('_sqlLimit', prompt='Maximum Number of flows', default='10000')
     
 
 def execute(event):
     
-    print('Querying Sguil DB...')
+    print('Querying Sguil DB...\n')
     
     if (datetime.datetime.now() - event._startDate).days < 1:
         start = event._DT - datetime.timedelta(days=1)
     else:
         start = event._startDate
         
-    
-    query = "( SELECT sensor.hostname, sancp.sid, sancp.sancpid, sancp.start_time as datetime, sancp.end_time, "
-    query += "INET_NTOA(sancp.src_ip), sancp.src_port, INET_NTOA(sancp.dst_ip), sancp.dst_port, sancp.ip_proto, "
-    query += "sancp.src_pkts, sancp.src_bytes, sancp.dst_pkts, sancp.dst_bytes FROM sancp IGNORE INDEX (p_key) "
-    query += "INNER JOIN sensor ON sancp.sid=sensor.sid WHERE sancp.start_time > '%s' AND sancp.src_ip = INET_ATON('%s')) " % (start.date().isoformat(),
-                                                                                                                               event.ip_address)
-    query += "UNION "
-    query += "( SELECT sensor.hostname, sancp.sid, sancp.sancpid, sancp.start_time as datetime, sancp.end_time, "
-    query += "INET_NTOA(sancp.src_ip), sancp.src_port, INET_NTOA(sancp.dst_ip), sancp.dst_port, sancp.ip_proto, "
-    query += "sancp.src_pkts, sancp.src_bytes, sancp.dst_pkts, sancp.dst_bytes FROM sancp IGNORE INDEX (p_key) "
-    query += "INNER JOIN sensor ON sancp.sid=sensor.sid WHERE sancp.start_time > '%s' AND sancp.dst_ip = INET_ATON('%s')) " % (start.date().isoformat(),
-                                                                                                                               event.ip_address)
-    query += "ORDER BY datetime, src_port ASC LIMIT %s;" % event._sqlLimit
-    
-    log.debug('msg="Sguil Flow Query" query="%s"' % query)
-    
-    queryResults = getSguilSql(query, sguilserver=so_server, tableSplit=True)
-    
-    orf = '%s.%s' % (event._baseFilePath, confVars.outputExtension)
-    
-    outRawFile = open(orf, 'w')
-    
-    for line in queryResults:
-        outRawFile.write(','.join(line) + '\n')
+    if not hasattr(event, 'ip_address_list'):
+        event.ip_address_list = [event.ip_address]
         
+    for ip in event.ip_address_list:
+        print("Pulling flow for %s..." % ip)
+    
+        query = "( SELECT sensor.hostname, sancp.sid, sancp.sancpid, sancp.start_time as datetime, sancp.end_time, "
+        query += "INET_NTOA(sancp.src_ip), sancp.src_port, INET_NTOA(sancp.dst_ip), sancp.dst_port, sancp.ip_proto, "
+        query += "sancp.src_pkts, sancp.src_bytes, sancp.dst_pkts, sancp.dst_bytes FROM sancp IGNORE INDEX (p_key) "
+        query += "INNER JOIN sensor ON sancp.sid=sensor.sid WHERE sancp.start_time > '%s' AND sancp.src_ip = INET_ATON('%s')) " % (start.date().isoformat(),
+                                                                                                                                   ip)
+        query += "UNION "
+        query += "( SELECT sensor.hostname, sancp.sid, sancp.sancpid, sancp.start_time as datetime, sancp.end_time, "
+        query += "INET_NTOA(sancp.src_ip), sancp.src_port, INET_NTOA(sancp.dst_ip), sancp.dst_port, sancp.ip_proto, "
+        query += "sancp.src_pkts, sancp.src_bytes, sancp.dst_pkts, sancp.dst_bytes FROM sancp IGNORE INDEX (p_key) "
+        query += "INNER JOIN sensor ON sancp.sid=sensor.sid WHERE sancp.start_time > '%s' AND sancp.dst_ip = INET_ATON('%s')) " % (start.date().isoformat(),
+                                                                                                                                   ip)
+        query += "ORDER BY datetime, src_port ASC LIMIT %s;" % event._sqlLimit
+        
+        log.debug('msg="Sguil Flow Query" query="%s"' % query)
+        
+        queryResults = getSguilSql(query, sguilserver=so_server, tableSplit=True)
+        
+        orf = '%s.%s' % (event._baseFilePath, confVars.outputExtension)
+        
+        outRawFile = open(orf, 'a')
+        
+        for line in queryResults:
+            outRawFile.write(','.join(line) + '\n')
+            
+        outRawFile.close()
+            
     splunkSguilFlow = []
     for line in open(orf, 'rb'):
         if 'INET_NTOA' not in line:
             splunkSguilFlow.append(line)
 
     event._splunk.push(sourcetype=confVars.splunkSourcetype, eventList=splunkSguilFlow)
-
     
     print('\n%s results saved to: %s' % (FORMAL_NAME, orf))
 

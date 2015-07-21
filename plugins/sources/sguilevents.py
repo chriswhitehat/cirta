@@ -70,12 +70,12 @@ def execute(event):
         
         outRawFile.close()
         
-        splunkSguilEvents = []
-        for line in open(orf, 'rb'):
-            if 'INET_NTOA' not in line:
-                splunkSguilEvents.append(line)
-    
-        event._splunk.push(sourcetype=confVars.splunkSourcetype, eventList=splunkSguilEvents)
+    splunkSguilEvents = []
+    for line in open(orf, 'rb'):
+        if 'INET_NTOA' not in line:
+            splunkSguilEvents.append(line)
+
+    event._splunk.push(sourcetype=confVars.splunkSourcetype, eventList=splunkSguilEvents)
     
     print('\n%s results saved to: %s' % (FORMAL_NAME, orf))
 
