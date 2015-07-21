@@ -34,46 +34,47 @@ def adhocInput(event):
 
 def execute(event):
     
-    print('Querying Sguil DB...')
+    print('Querying Sguil DB...\n')
     
     if (datetime.datetime.now() - event._startDate).days < 7:
         start = event._DT - datetime.timedelta(days=7)
     else:
         start = event._startDate
         
-    for ip in event.ip_address_list:
-        print("ip: %s" % ip)
-    
-    query = "( SELECT event.status, event.priority, sensor.hostname, event.sid, event.cid, event.timestamp as datetime, "
-    query += "INET_NTOA(event.src_ip), event.src_port, INET_NTOA(event.dst_ip), event.dst_port, event.ip_proto, event.signature, "
-    query += "event.signature_gen, event.signature_id, event.signature_rev FROM event IGNORE INDEX (event_p_key, sid_time) "
-    query += "INNER JOIN sensor ON event.sid=sensor.sid WHERE event.timestamp > '%s' and event.src_ip = INET_ATON('%s')) " % (start.date().isoformat(),
-                                                                                                                              event.ip_address)
-    query += "UNION "
-    query += "( SELECT event.status, event.priority, sensor.hostname, event.sid, event.cid, event.timestamp as datetime, "
-    query += "INET_NTOA(event.src_ip), event.src_port, INET_NTOA(event.dst_ip), event.dst_port, event.ip_proto, event.signature, "
-    query += "event.signature_gen, event.signature_id, event.signature_rev FROM event IGNORE INDEX (event_p_key, sid_time) "
-    query += "INNER JOIN sensor ON event.sid=sensor.sid WHERE event.timestamp > '%s' and event.dst_ip = INET_ATON('%s')) ORDER BY datetime, " % (start.date().isoformat(),
-                                                                                                                                                 event.ip_address)
-    query += "src_port ASC LIMIT %s" % event._sqlLimit
-    
-    log.debug('msg="Sguil Events Query" query="%s"' % query)
-    
-    queryResults = getSguilSql(query, sguilserver=so_server, tableSplit=True)
-    
-    orf = '%s.%s' % (event._baseFilePath, confVars.outputExtension)
-    
-    outRawFile = open(orf, 'w')
-    
-    for line in queryResults:
-        outRawFile.write(','.join(line[:-3]) + '\n')
+    if not hasattr(event, 'ip_address_list'):
+        event.ip_address_list = [event.ip_address]
         
-    splunkSguilEvents = []
-    for line in open(orf, 'rb'):
-        if 'INET_NTOA' not in line:
-            splunkSguilEvents.append(line)
-
-    event._splunk.push(sourcetype=confVars.splunkSourcetype, eventList=splunkSguilEvents)
+    for ip in event.ip_address_list:
+        print("Pulling events for %s..." % ip)
+    
+        query = "( SELECT event.status, event.priority, sensor.hostname, event.sid, event.cid, event.timestamp as datetime, "
+        query += "INET_NTOA(event.src_ip), event.src_port, INET_NTOA(event.dst_ip), event.dst_port, event.ip_proto, event.signature, "
+        query += "event.signature_gen, event.signature_id, event.signature_rev FROM event IGNORE INDEX (event_p_key, sid_time) "
+        query += "INNER JOIN sensor ON event.sid=sensor.sid WHERE event.timestamp > '%s' and event.src_ip = INET_ATON('%s')) " % (start.date().isoformat(), ip)
+        query += "UNION "
+        query += "( SELECT event.status, event.priority, sensor.hostname, event.sid, event.cid, event.timestamp as datetime, "
+        query += "INET_NTOA(event.src_ip), event.src_port, INET_NTOA(event.dst_ip), event.dst_port, event.ip_proto, event.signature, "
+        query += "event.signature_gen, event.signature_id, event.signature_rev FROM event IGNORE INDEX (event_p_key, sid_time) "
+        query += "INNER JOIN sensor ON event.sid=sensor.sid WHERE event.timestamp > '%s' and event.dst_ip = INET_ATON('%s')) ORDER BY datetime, " % (start.date().isoformat(), ip)
+        query += "src_port ASC LIMIT %s" % event._sqlLimit
+        
+        log.debug('msg="Sguil Events Query" query="%s"' % query)
+        
+        queryResults = getSguilSql(query, sguilserver=so_server, tableSplit=True)
+        
+        orf = '%s.%s' % (event._baseFilePath, confVars.outputExtension)
+        
+        outRawFile = open(orf, 'a')
+        
+        for line in queryResults:
+            outRawFile.write(','.join(line[:-3]) + '\n')
+            
+        splunkSguilEvents = []
+        for line in open(orf, 'rb'):
+            if 'INET_NTOA' not in line:
+                splunkSguilEvents.append(line)
+    
+        event._splunk.push(sourcetype=confVars.splunkSourcetype, eventList=splunkSguilEvents)
     
     print('\n%s results saved to: %s' % (FORMAL_NAME, orf))
 
