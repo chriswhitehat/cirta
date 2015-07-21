@@ -134,7 +134,7 @@ class Event(object):
         else:
             self._analystUsername = getpass.getuser()
         self._analystHostname = gethostname()
-        if configs['cirta']['settings']['SPLUNK_ENABLED']:
+        if configs['cirta']['settings']['SPLUNK_ENABLED'] and not options.disable_splunk:
             self._splunkEnabled = True
             self._splunk = SplunkIt(configs['cirta']['settings']['SPLUNK_ENABLED'],
                                 [x.strip() for x in configs['cirta']['settings']['SPLUNK_INDEXERS'].split(',')],

@@ -22,6 +22,7 @@ from logging.handlers import SysLogHandler
 from lib.configure import config
 from lib.event import Event
 from lib.util import printStatusMsg, colors, getUserIn, YES, getUserMultiChoice
+from argparse import Action
 
 event = None
 
@@ -73,6 +74,7 @@ def processArgs(configs):
                 
                 
     behavior = parser.add_argument_group('Misc', 'Control the misc CIRTA functions with these switches.')
+    behavior.add_argument('--disable_splunk', Action="store_true", help='Disable Splunk functionality, this includes the system logging and data pushes to Splunk.')
     behavior.add_argument('--debug', action="store_true", help='set logging level to debug.')
     behavior.add_argument('--local_logging', action="store_true", help='log to local debug file')
     behavior.add_argument('--test', action='store_true', help='Test run script. Suppresses CIRTA and External actions.')
