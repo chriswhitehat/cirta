@@ -76,7 +76,7 @@ def execute(event):
 #            splunkSguilEvents.append(line)
 
 #    event._splunk.push(sourcetype=confVars.splunkSourcetype, eventList=splunkSguilEvents)
-    event._splunk.push(sourcetype=confVars.splunkSourcetype, filename=orf, excludeRegex='INET_NTOA')
+    event._splunk.push(sourcetype=confVars.splunkSourcetype, filename=orf, exclusionRegex='INET_NTOA')
     
     print('\n%s results saved to: %s' % (FORMAL_NAME, orf))
 
