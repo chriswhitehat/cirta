@@ -56,6 +56,7 @@ def processArgs(configs):
 
     flow.add_argument('--seed', action='store_true', help='Seed event attributes with externally known values or corrective values from previous CIRTA executions. Seeded values are set immutable.')
     flow.add_argument('--disable', nargs='+', metavar='<plugin_name>', help="globally disables any initializer, source, or action by the name of the plugin.")
+    flow.add_argument('--disable_splunk', action="store_true", help='Disable plugin Splunk functionality, this does not includes the system logging to Splunk.')
     flow.add_argument('--skip_actions_prompt', action='store_true', help='disables the "Execute Actions Prompt" which occurs after the Pre-Actions sources have completed')
        
     adhoc = parser.add_argument_group('Ad-Hoc Sources', 'Choose which source(s) to run Ad-Hoc.')
@@ -74,7 +75,6 @@ def processArgs(configs):
                 
                 
     behavior = parser.add_argument_group('Misc', 'Control the misc CIRTA functions with these switches.')
-    behavior.add_argument('--disable_splunk', action="store_true", help='Disable Splunk functionality, this includes the system logging and data pushes to Splunk.')
     behavior.add_argument('--debug', action="store_true", help='set logging level to debug.')
     behavior.add_argument('--local_logging', action="store_true", help='log to local debug file')
     behavior.add_argument('--test', action='store_true', help='Test run script. Suppresses CIRTA and External actions.')

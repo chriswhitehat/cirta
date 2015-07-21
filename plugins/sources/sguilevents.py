@@ -28,7 +28,6 @@ def adhocInput(event):
     event.setDateRange()
     event.setAttribute('ip_address_list', prompt='IP Address(es)', header=inputHeader, multiline=True)
     event.ip_address_list = [x.strip() for x in event.ip_address_list.splitlines() if x]
-    print event.ip_address_list
     event.setAttribute('_sqlLimit', prompt='Maximum Number of Events', default='10000')
     
 
