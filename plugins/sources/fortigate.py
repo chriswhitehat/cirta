@@ -110,5 +110,10 @@ def execute(event):
             l = dict([y for y in [token.split('=',1) for token in shlex.split(line)] if len(y) == 2])
             if 'user' not in l:
                 l['user'] = '-'
+            if 'hostname' not in l:
+                if 'dstip' in l:
+                    l['hostname'] = l['dstip']
+                else:
+                    l['hostname'] = '-' 
             print('%(date)sT%(time)s %(srcip)s %(user)s %(status)s %(hostname)s%(url)s' % l)
             
