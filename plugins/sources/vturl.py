@@ -69,7 +69,10 @@ def execute(event):
             
             urls = []
             for line in swath:
-                urls.append("%(hostname)s%(url)s" % dict([y for y in [token.split('=',1) for token in shlex.split(line)] if len(y) == 2]))
+                if 'hostname' in line:
+                    urls.append("%(hostname)s%(url)s" % dict([y for y in [token.split('=',1) for token in shlex.split(line)] if len(y) == 2]))
+                elif 'dstip' in line:
+                    urls.append("%(dstip)s%(url)s" % dict([y for y in [token.split('=',1) for token in shlex.split(line)] if len(y) == 2]))
 
             log.debug('msg="check temporal webproxy with virustotal" urls="%s"' % urls)
             
