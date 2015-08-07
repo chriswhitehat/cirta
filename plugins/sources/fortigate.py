@@ -103,8 +103,8 @@ def execute(event):
         
         
         
-        stdOutLines = uniq([x for x in before if 'type=utm' in x])[-10:]
-        stdOutLines.extend(uniq([x for x in after if 'type=utm' in x])[:10])
+        stdOutLines = uniq([x for x in before if 'type=utm' in x if 'subtype=webfilter' in x])[-10:]
+        stdOutLines.extend(uniq([x for x in after if 'type=utm' in x if 'subtype=webfilter' in x])[:10])
 
         for line in stdOutLines:
             l = dict([y for y in [token.split('=',1) for token in shlex.split(line)] if len(y) == 2])
