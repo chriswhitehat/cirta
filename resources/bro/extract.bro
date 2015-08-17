@@ -10,17 +10,34 @@ global ext_map: table[string] of string = {
     ["application/x-rar"] = "rar",
 } &default ="";
 
-event file_new(f: fa_file)
+#event file_new(f: fa_file)
+#    {
+#
+#    if ( ! f?$mime_type || ext_map[f$mime_type] == "" )
+#        return;
+#
+#    local ext = "";
+#
+#    if ( f?$mime_type )
+#        ext = ext_map[f$mime_type];
+#
+#    local fname = fmt("%s-%s.%s", f$source, f$id, ext);
+#    Files::add_analyzer(f, Files::ANALYZER_EXTRACT, [$extract_filename=fname]);
+#    }
+
+
+event file_sniff(f: fa_file, meta: fa_metadata)
     {
 
-    if ( ! f?$mime_type || ext_map[f$mime_type] == "" )
+    if ( ! meta?$mime_type || ext_map[meta$mime_type] == "" )
         return;
 
     local ext = "";
 
-    if ( f?$mime_type )
-        ext = ext_map[f$mime_type];
+    if ( meta?$mime_type )
+        ext = ext_map[meta$mime_type];
 
     local fname = fmt("%s-%s.%s", f$source, f$id, ext);
     Files::add_analyzer(f, Files::ANALYZER_EXTRACT, [$extract_filename=fname]);
     }
+    
