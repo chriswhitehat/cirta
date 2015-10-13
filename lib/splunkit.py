@@ -24,7 +24,8 @@ class Splunk():
     def __init__(self, host='', port=8089, username="", password="", scheme="https"):
         self.service = client.connect(host=host, port=port, username=username, password=password, scheme=scheme, autologin=True)
         self.jobs = self.service.jobs
-            
+        self.previousJobs = []
+    
     def search(self, search, searchArgs=None, resultFunc=None, blocking=True):
 
         if blocking:
@@ -33,7 +34,8 @@ class Splunk():
             job = self.jobs.create(search, **kwargs_blockingsearch)
         else:
             job = self.jobs.create(search)
-            
+
+        self.previousJobs.append(job['sid'])            
             
         searchResults = results.ResultsReader(job.results())
         
@@ -42,6 +44,13 @@ class Splunk():
                 resultFunc(result)
         else:
             return list(searchResults)
+
+    def getLatestSID(self):
+        return self.previousJobs[-1]
+    
+    def getAllSIDs(self):
+        return self.previousJobs
+
 
 class SplunkIt():
     def __init__(self, splunkEnabled, splunkIndexers, splunkPort, splunkSearchHead, splunkSearchHeadPort, splunkUser, splunkPassword, splunkIndex, host, cirta_id):

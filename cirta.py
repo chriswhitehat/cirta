@@ -104,7 +104,7 @@ def initLogging(configs, options):
     def local():
         return FileHandler(filename='cirta.debug')
         
-    def remote():
+    def remote(secondary=False):
         settings = configs['cirta']['settings']
         
         facilityCode = getattr(SysLogHandler, 'LOG_%s' % settings['SYSLOG_FACILITY'].upper())
@@ -117,10 +117,16 @@ def initLogging(configs, options):
             log.debug('msg="Usupported syslog protocol configuration" protocol="%s"' % settings['SYSLOG_PROTOCOL'])
             exit()  
         
-        sysHandler = SysLogHandler(address=(settings['SYSLOG_SERVER'], int(settings['SYSLOG_PORT'])), facility=facilityCode, socktype=socket.SOCK_STREAM)
-        sysHandler.addFilter(MultilineFilter())
+        try:
+            if secondary:
+                sysHandler = SysLogHandler(address=(settings['SYSLOG_SECONDARY_SERVER'], int(settings['SYSLOG_PORT'])), facility=facilityCode, socktype=socket.SOCK_STREAM)
+            else:
+                sysHandler = SysLogHandler(address=(settings['SYSLOG_SERVER'], int(settings['SYSLOG_PORT'])), facility=facilityCode, socktype=socket.SOCK_STREAM)
+            sysHandler.addFilter(MultilineFilter())
         
-        return sysHandler
+            return sysHandler
+        except:
+            return None
     
     addLoggingLevel(25, "STATE")
     
@@ -146,10 +152,21 @@ def initLogging(configs, options):
     else:
         defaultHandler = remote()
         
+    if not defaultHandler:
+        defaultHandler = local()
+
     defaultHandler.setFormatter(defaultFormatter)
     defaultHandler.setLevel(level)
     
     rootLogger.addHandler(defaultHandler)
+
+    if configs['cirta']['settings']['SYSLOG_SECONDARY_SERVER']:
+        secondaryHandler = remote(secondary=True)
+        if secondaryHandler:
+            secondaryHandler.setFormatter(defaultFormatter)
+            secondaryHandler.setLevel(level)
+
+            rootLogger.addHandler(secondaryHandler)
 
 
 def printProvided(event, source):
@@ -272,9 +289,17 @@ class Playbook(object):
         
         for plugins, base, pType in pluginSets:
             for plugin in plugins:
-                path = "%s.%s.%s" % (base, pType, plugin)
-                log.debug('msg="load module" type="%s" plugin="%s" path="%s"' % (pType, plugin, path))
-                self.pluginDict[plugin] = __import__(path, fromlist=[base, pType])
+                defaultPath = "%s.default.%s.%s" % (base, pType, plugin)
+                localPath = "%s.local.%s.%s" % (base, pType, plugin)
+                log.debug('msg="load module" type="%s" plugin="%s"' % (pType, plugin))
+                try:
+                    self.pluginDict[plugin] = __import__(localPath, fromlist=[base, 'local', pType])
+                    log.debug('msg="load module" type="%s" plugin="%s" path="%s"' % (pType, plugin, localPath))
+                    path = localPath
+                except(ImportError):
+                    self.pluginDict[plugin] = __import__(defaultPath, fromlist=[base, 'default', pType])
+                    log.debug('msg="load module" type="%s" plugin="%s" path="%s"' % (pType, plugin, defaultPath))
+                    path = defaultPath
                 self.applyConfig(self.pluginDict[plugin], self.configs[pType][plugin])
                 self.pluginDict[plugin].colors = self.colors
                 self.pluginDict[plugin].log = logging.getLogger(path)

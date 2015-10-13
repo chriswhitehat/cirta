@@ -53,30 +53,13 @@ def execute(event):
             
             vt = virustotal.VirusTotal(confVars.apiKey, oldestHours=int(confVars.oldestHours))
             
-            proxyFile = event._baseFilePath + '.fg'
-            
-            if not os.path.exists(proxyFile):
-                log.warn('msg="Proxy file missing, potential proxy source plugin failure upstream" proxy_file="%s"' % proxyFile)
+            if not event._vturls:
+                log.warn('msg="No URLs stored in vturls for procssing, potential proxy source plugin failure upstream"')
                 return
             
-            before, after = getTimeBisect(event._DT, '\n'.join([x for x in open(proxyFile, 'r').read().splitlines() if 'url=' in x]), yearlessTimeExtract)
-
-            swath = before[-25:]
-            swath.extend(after[:25])
+            log.debug('msg="check temporal webproxy with virustotal" urls="%s"' % event._vturls)
             
-            if not swath:
-                return 
-            
-            urls = []
-            for line in swath:
-                if 'hostname' in line:
-                    urls.append("%(hostname)s%(url)s" % dict([y for y in [token.split('=',1) for token in shlex.split(line)] if len(y) == 2]))
-                elif 'dstip' in line:
-                    urls.append("%(dstip)s%(url)s" % dict([y for y in [token.split('=',1) for token in shlex.split(line)] if len(y) == 2]))
-
-            log.debug('msg="check temporal webproxy with virustotal" urls="%s"' % urls)
-            
-            reports = vt.retrieveURL(urls, maxIter=5)
+            reports = vt.retrieveURL(event._vturls, maxIter=2)
             
         if reports:
             splunkReports = []
@@ -97,6 +80,6 @@ def execute(event):
         else:
             log.warn('\nThis is taking too long, backgrounding.')
             event.addToBackgroundSource(__name__)
-            event.__vtscans__ = urls
+            event.__vtscans__ = event._vturls
             
             

@@ -1,4 +1,8 @@
 *.pyc
 .project
+/plugins/local/
 /etc/local/
 /etc/users/
+cirta.debug
+*.save*
+

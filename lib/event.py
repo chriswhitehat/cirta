@@ -218,9 +218,11 @@ class Event(object):
         try:
             if userDate != self._DT.date().isoformat():
                 self._DT = datetime.datetime.strptime(userDate, '%Y-%m-%d')
-                   
-            self._startDate = self._DT - datetime.timedelta(days=int(getUserInWithDef("Days Before", '0')))
-            self._endDate = self._DT + datetime.timedelta(days=int(getUserInWithDef("Days After", '0')))
+            
+            self._daysBefore = int(getUserInWithDef("Days Before", '0'))       
+            self._daysAfter = int(getUserInWithDef("Days After", '0'))       
+            self._startDate = self._DT - datetime.timedelta(days=self._daysBefore)
+            self._endDate = self._DT + datetime.timedelta(days=self._daysAfter)
         
             if self._endDate > datetime.datetime.today():
                 print("\nI'm good, but not that good... I can't predict system")
