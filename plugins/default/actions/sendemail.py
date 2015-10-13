@@ -27,7 +27,6 @@ def execute(event):
     #subject = getUserInWithDef('Subject', '%s %s' % (subjectStart, event.Category.split(',')[0]))
     
     event.ir_ticket = getUserIn('IR Ticket')
-    event.carts_ticket = ' '
     
     toAddress = splitAndStrip(getUserInWithDef('Recipient(s)', confVars.toAddr))
     
@@ -59,7 +58,7 @@ def execute(event):
     
     containmentActions = splitAndStrip( confVars.containmentActions)
     containmentPreferred = splitAndStrip( confVars.containmentPreferred)
-    ##containmentAlternative = splitAndStrip( confVars.containmentAlternative)
+    containmentAlternative = splitAndStrip( confVars.containmentAlternative)
     containmentTimeline = splitAndStrip( confVars.containmentTimeline)
     containmentDefaultTimeline = splitAndStrip( confVars.containmentDefaultTimeline)
     
@@ -72,7 +71,7 @@ def execute(event):
     event.eventStage = ', '.join(getUserMultiChoice('Current Event Stage', 'Selection', eventStage, numCols=1, default=eventDefaultStage, allowMultiple=False))
     
     event.containmentPreferred = ', '.join(getUserMultiChoice('Preferred Containment', 'Selection', containmentActions, numCols=2, default=containmentPreferred, allowMultiple=True, other=True))
-    ##event.containmentAlternative = ', '.join(getUserMultiChoice('Alternative Containment', 'Selection', containmentActions, numCols=2, default=containmentAlternative, allowMultiple=True, other=True))
+    event.containmentAlternative = ', '.join(getUserMultiChoice('Alternative Containment', 'Selection', containmentActions, numCols=2, default=containmentAlternative, allowMultiple=True, other=True))
     event.containmentTimeline = ', '.join(getUserMultiChoice('Containment Timeline', 'Selection', containmentTimeline, numCols=2, default=containmentDefaultTimeline, allowMultiple=False, other=True))
     
     event.eradicationActions = ', '.join(getUserMultiChoice('Mitigation Actions', 'Selection', eradicationActions, numCols=1, default=eradicationDefaultActions, allowMultiple=True, other=True))
@@ -85,7 +84,7 @@ def execute(event):
     
     msg += 'Containment Timeline -- %s\n' % event.containmentTimeline
     msg += 'Containment Preference -- %s\n\n' % event.containmentPreferred
-    ##msg += 'Containment Alternatives -- %s\n\n' % event.containmentAlternative
+    msg += 'Containment Alternatives -- %s\n\n' % event.containmentAlternative
     
     msg += 'Mitigation Timeline -- %s\n' % event.eradicationTimeline
     msg += 'Mitigation Action -- %s\n' % event.eradicationActions
@@ -110,17 +109,6 @@ def execute(event):
     f = open(ticketFilePath, 'r')
     msg = f.read()
     f.close()
-    
-    printStatusMsg('CARTS Final Ticket', 22, '>', color=colors.HEADER2)
-    
-    print('Subject: %s\n' % subject)
-    print(msg + '\n')
-    
-    printStatusMsg('CARTS Final Ticket', 22, '<', color=colors.HEADER2)
-    
-    event.setAttribute('carts_ticket', prompt='CARTS Ticket Number', force=True)
-    
-    msg = msg.replace('CARTS Ticket --  ', 'CARTS Ticket -- %s' % event.carts_ticket)
     
     printStatusMsg('IR Final Ticket', 22, '>', color=colors.HEADER2)
     
