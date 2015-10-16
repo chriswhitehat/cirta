@@ -81,7 +81,7 @@ def execute(event):
 
     print('\nChecking Splunk for Hostname and MAC...'),
 
-    query = '''search index=infoblox earliest_time="%sd@d" latest_time="%sd@d" %s | eval timedelta = %s -_time | where timedelta >= 0 | sort timedelta | stats first(hostname) AS hostname first(src_mac) AS src_mac''' % (earliest, latest, event._include, datetimeToEpoch(event._DT))
+    query = '''search index=infoblox earliest_time="%sd@d" latest_time="%sd@d" %s | eval timedelta = %s -_time | where timedelta >= 0 | sort 0 timedelta | stats first(hostname) AS hostname first(src_mac) AS src_mac''' % (earliest, latest, event._include, datetimeToEpoch(event._DT))
 
     log.debug('''msg="raw event query" query="%s"''' % query)
 

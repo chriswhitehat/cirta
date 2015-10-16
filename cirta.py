@@ -21,7 +21,7 @@ from logging import Formatter, FileHandler
 from logging.handlers import SysLogHandler
 from lib.configure import config
 from lib.event import Event
-from lib.util import printStatusMsg, colors, getUserIn, YES, getUserMultiChoice
+from lib.util import printStatusMsg, colors, getUserIn, YES, getUserMultiChoice, keepaliveWait
 from argparse import Action
 
 event = None

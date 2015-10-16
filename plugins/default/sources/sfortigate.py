@@ -83,7 +83,7 @@ def execute(event):
 
     print('\nChecking Splunk for user...'),
     
-    query = '''search index=fortinet earliest_time="%sd@d" latest_time="%sd@d" %s | eval timedelta = abs(_time - %s) | sort timedelta | where isnotnull(user) | head 1 | table user''' % (earliest, latest, event._include, datetimeToEpoch(event._DT))
+    query = '''search index=fortinet earliest_time="%sd@d" latest_time="%sd@d" %s | eval timedelta = abs(_time - %s) | sort 0 timedelta | where isnotnull(user) | head 1 | table user''' % (earliest, latest, event._include, datetimeToEpoch(event._DT))
                 
     results = sp.search(query)
         
@@ -96,8 +96,8 @@ def execute(event):
 
     print('\nChecking Splunk for surrounding events...'),
 
-    query = '''search index=fortinet earliest_time="%sd@d" latest_time="%sd@d" %s | eval timedelta = abs(_time - %s) | sort timedelta | search type=utm | head 500 | eval uri = coalesce(hostname, dstip) + url | dedup uri | head 50 | sort -_time | table _time srcip user status uri''' % (earliest, latest, event._include, datetimeToEpoch(event._DT))
-    query = '''search index=fortinet type=utm earliest_time="%sd@d" latest_time="%sd@d" %s | regex url!="\.jpg$|\.png$|\.gif$|\.crl$" | eval timedelta = _time - %s | eval position = if(timedelta < 0, "before", "after") | eval abstimedelta = abs(timedelta) | sort abstimedelta | dedup hostname url | streamstats count AS row by position | where row <= 25 | eval uri = coalesce(hostname, dstip) + url | sort _time | table _time srcip user status uri''' % (earliest, latest, event._include, datetimeToEpoch(event._DT))
+    query = '''search index=fortinet earliest_time="%sd@d" latest_time="%sd@d" %s | eval timedelta = abs(_time - %s) | sort 0 timedelta | search type=utm | head 500 | eval uri = coalesce(hostname, dstip) + url | dedup uri | head 50 | sort 0 -_time | table _time srcip user status uri''' % (earliest, latest, event._include, datetimeToEpoch(event._DT))
+    query = '''search index=fortinet type=utm earliest_time="%sd@d" latest_time="%sd@d" %s | regex url!="\.jpg$|\.png$|\.gif$|\.crl$" | eval timedelta = _time - %s | eval position = if(timedelta < 0, "before", "after") | eval abstimedelta = abs(timedelta) | sort 0 abstimedelta | dedup hostname url | streamstats count AS row by position | where row <= 25 | eval uri = coalesce(hostname, dstip) + url | sort 0 _time | table _time srcip user status uri''' % (earliest, latest, event._include, datetimeToEpoch(event._DT))
 
     log.debug('''msg="raw event query" query="%s"''' % query)
         
