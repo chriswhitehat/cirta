@@ -405,6 +405,7 @@ def keepaliveWait(interval=10):
         try:
             sys.stdout.write('\rPress Enter to continue...')
             sys.stdin.read(1)
+            signal.alarm(0)
             break
         except(IOError):
             pass
