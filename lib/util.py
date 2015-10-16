@@ -14,7 +14,7 @@ ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEAL
 '''
 
 from __future__ import division
-import os, sys, warnings, pytz, readline, re, math, time, logging
+import os, sys, warnings, pytz, readline, re, math, time, logging, signal
 from itertools import izip_longest
 from subprocess import Popen, PIPE
 from getpass import getpass, getuser
@@ -391,3 +391,20 @@ def getUserMultiChoice(msg, prompt, choices, numCols=2, default=[], allowMultipl
 
 
 
+def keepaliveWait(interval=10):
+    def alive(signum, frame):
+        sys.stdout.flush()
+
+    signal.signal(signal.SIGALRM, alive)
+
+
+    printStatusMsg('Session Keepalive Prompt', char='-')
+
+    while 1:
+        signal.alarm(interval)
+        try:
+            sys.stdout.write('\rPress Enter to continue...')
+            sys.stdin.read(1)
+            break
+        except(IOError):
+            pass

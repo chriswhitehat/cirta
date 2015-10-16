@@ -455,6 +455,7 @@ def launchBackgroundedSources(playbook, event):
             pass
 
 def launchActionsNow(playbook, event):
+    keepaliveWait()
     log.info('msg="prompt to launch actions"')
     msg = '''Launching Playbook Actions now means the remaining Playbook Sources will be executed at the end.
 Otherwise the remaining Playbook Sources will be executed, followed by the Playbook Actions at the end.
@@ -533,10 +534,12 @@ def main():
     launchSources(playbook, event, preAction=False)
         
     if playbook.POST_SOURCES and playbook.ACTIONS and not playbook.actionsLaunched:
+        keepaliveWait()
         playbook.actionsLaunched = True
         launchActions(playbook, event)
         
     if not playbook.actionsLaunched:
+        keepaliveWait()
         launchActions(playbook, event)
         
     if hasattr(event, "_backgroundedDS"):
