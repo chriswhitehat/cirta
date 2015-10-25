@@ -53,7 +53,7 @@ def execute(event):
             
             vt = virustotal.VirusTotal(confVars.apiKey, oldestHours=int(confVars.oldestHours))
             
-            if not event._vturls:
+            if not hasattr(event, '_vturls') or not event._vturls:
                 log.warn('msg="No URLs stored in vturls for procssing, potential proxy source plugin failure upstream"')
                 return
             
