@@ -71,7 +71,11 @@ def execute(event):
                                                                                      ' '.join(['%s="%s"' % (vendor.replace(' ', '_'),result['result']) for vendor, result in sorted(report['scans'].iteritems()) if result['detected']])))
             
             event._splunk.push(sourcetype=splunkSourcetype, eventList=splunkReports)
-            
+
+            with open("%s.%s" % (event._baseFilePath, confVars.outputExtension), 'w') as orf:
+                for vtevent in splunkReports:
+                    orf.write(vtevent)
+
             print('')
             vt.prettyPrint(reports)
         elif hasattr(event, "__vtscans__"):
