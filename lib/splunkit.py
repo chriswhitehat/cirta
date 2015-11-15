@@ -29,15 +29,18 @@ class Splunk():
     def search(self, search, searchArgs=None, resultFunc=None, blocking=True):
 
         if blocking:
-            kwargs_blockingsearch = {"exec_mode": "blocking"}
+#            kwargs_blockingsearch = {"exec_mode": "blocking", "count": 0}
+            kwargs_blockingsearch = {"count": 0}
             
-            job = self.jobs.create(search, **kwargs_blockingsearch)
+#            job = self.jobs.create(search, **kwargs_blockingsearch)
+            job = self.jobs.oneshot(search, **kwargs_blockingsearch)
         else:
             job = self.jobs.create(search)
 
-        self.previousJobs.append(job['sid'])            
+#        self.previousJobs.append(job['sid'])            
             
-        searchResults = results.ResultsReader(job.results())
+#        searchResults = results.ResultsReader(job.results())
+        searchResults = results.ResultsReader(job)
         
         if resultFunc:
             for result in searchResults:

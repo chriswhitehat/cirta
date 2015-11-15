@@ -79,8 +79,6 @@ def execute(event):
     event._splunk.push(sourcetype=confVars.splunkSourcetype, eventList=raw)
 
 
-    sid = sp.getLatestSID()
-
     print('\nChecking Splunk for user...'),
     
     query = '''search index=fortinet earliest_time="%sd@d" latest_time="%sd@d" %s | eval timedelta = abs(_time - %s) | sort 0 timedelta | where isnotnull(user) | head 1 | table user''' % (earliest, latest, event._include, datetimeToEpoch(event._DT))
