@@ -22,7 +22,12 @@ log = logging.getLogger(__name__)
 
 class Splunk():
     def __init__(self, host='', port=8089, username="", password="", scheme="https"):
-        self.service = client.connect(host=host, port=port, username=username, password=password, scheme=scheme, autologin=True)
+
+        try:
+            self.service = client.connect(host=host, port=port, username=username, password=password, scheme=scheme, autologin=True)
+        except(error):
+            log.error('''msg="There was an error trying to connect to the Splunk Search Head" searchHead="%s%s:%s" username="%s"''' % (scheme, host, port, username))
+            exit()
         self.jobs = self.service.jobs
         self.previousJobs = []
     
@@ -125,20 +130,24 @@ class SplunkIt():
             log.warning('Warning: no data to push to Splunk.')
             log.debug('msg="no data to push" type="%s"' % sourcetype)
             return
-            
-        with self.index.attached_socket(host=self.host, source=self.source, sourcetype=sourcetype) as sock:
-            i = 0
-            for line in events:
-                if exclusionRegex and not inclusionRegex:
-                    if re.search(exclusionRegex, line):
-                        continue
-                elif inclusionRegex:
-                    if not re.search(inclusionRegex, line):
-                        continue
-                i += 1
-                if line.endswith('\n'):
-                    sock.send(line)
-                else:
-                    sock.send(line + '\n')
-            log.debug('msg="pushed data to splunk" type="%s" event_count="%s"' % (sourcetype, i))
-    
+
+
+        try:            
+            with self.index.attached_socket(host=self.host, source=self.source, sourcetype=sourcetype) as sock:
+                i = 0
+                for line in events:
+                    if exclusionRegex and not inclusionRegex:
+                        if re.search(exclusionRegex, line):
+                            continue
+                    elif inclusionRegex:
+                        if not re.search(inclusionRegex, line):
+                            continue
+                    i += 1
+                    if line.endswith('\n'):
+                        sock.send(line)
+                    else:
+                        sock.send(line + '\n')
+                log.debug('msg="pushed data to splunk" type="%s" event_count="%s"' % (sourcetype, i))
+        except(error):
+            log.error('''msg="There was an error trying to push data to the Splunk Host" splunkHosst="%s"''' % (self.host))
+
