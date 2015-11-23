@@ -13,7 +13,7 @@ COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER I
 ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 '''
 
-import datetime
+import datetime, sys
 from lib.splunkit import Splunk
 from lib.util import getUserInWithDef, printStatusMsg, getUserMultiChoice
 
@@ -29,6 +29,8 @@ def execute(event):
     query = '''search index=fireeye earliest_time=-60d | spath alert.id | search alert.id="%s" | spath alert.product | spath alert.sensor | spath alert.occurred | spath alert.src.ip | spath alert.src.mac | spath alert.dst.ip | spath alert.dst.mac | spath alert.name | spath output="malware.names" "alert.explanation.malware-detected.malware{}.name" | table alert.occurred alert.product alert.sensor alert.id alert.src.ip alert.src.mac alert.dst.ip alert.dst.mac alert.name malware.names''' % (event.fireID)
 
     print('\nChecking Splunk...'),
+
+    sys.stdout.flush()
     #try:
     #print query
         
@@ -47,7 +49,8 @@ def execute(event):
     event.setOutPath(event.fireID)
     
     
-    result = results[0]
+#    result = results[0]
+    result = results.next()
     
     product = result['alert.product']
     sensor = result['alert.sensor']

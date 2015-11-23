@@ -23,15 +23,16 @@ log = logging.getLogger(__name__)
 class Splunk():
     def __init__(self, host='', port=8089, username="", password="", scheme="https"):
 
-        try:
-            self.service = client.connect(host=host, port=port, username=username, password=password, scheme=scheme, autologin=True)
-        except(error):
-            log.error('''msg="There was an error trying to connect to the Splunk Search Head" searchHead="%s%s:%s" username="%s"''' % (scheme, host, port, username))
-            exit()
+#        try:
+        self.service = client.connect(host=host, port=port, username=username, password=password, scheme=scheme, autologin=True)
+#        except(error):
+#            log.error('''msg="There was an error trying to connect to the Splunk Search Head" searchHead="%s%s:%s" username="%s"''' % (scheme, host, port, username))
+#            raise error
         self.jobs = self.service.jobs
         self.previousJobs = []
     
     def search(self, search, searchArgs=None, resultFunc=None, blocking=True):
+        global job
 
         if blocking:
 #            kwargs_blockingsearch = {"exec_mode": "blocking", "count": 0}
@@ -43,15 +44,17 @@ class Splunk():
             job = self.jobs.create(search)
 
 #        self.previousJobs.append(job['sid'])            
+
             
 #        searchResults = results.ResultsReader(job.results())
         searchResults = results.ResultsReader(job)
-        
+#        print [x for x in searchResults]        
         if resultFunc:
             for result in searchResults:
                 resultFunc(result)
         else:
-            return list(searchResults)
+#            return list(searchResults)
+            return searchResults
 
     def getLatestSID(self):
         return self.previousJobs[-1]

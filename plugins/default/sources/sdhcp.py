@@ -16,6 +16,7 @@ ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEAL
 from datetime import datetime
 from lib.util import datetimeToEpoch, epochToDatetime
 from lib.splunkit import Splunk
+import sys
 
 def playbookInput(event):
     inputHeader = '%s Query Options' % FORMAL_NAME
@@ -33,7 +34,10 @@ def adhocInput(event):
 
 def execute(event):
 
-    print('\nChecking Splunk for events...'),
+    print('Checking Splunk for events...'),
+
+
+    sys.stdout.flush()
 
     sp = Splunk(host=SPLUNK_SEARCH_HEAD, port=SPLUNK_SEARCH_HEAD_PORT, username=SPLUNK_SEARCH_HEAD_USERNAME, password=SPLUNK_SEARCH_HEAD_PASSWORD, scheme=SPLUNK_SEARCH_HEAD_SCHEME)
 
@@ -81,11 +85,13 @@ def execute(event):
 
     print('\nChecking Splunk for Hostname and MAC...'),
 
+    sys.stdout.flush()
+
     query = '''search index=infoblox earliest_time="%sd@d" latest_time="%sd@d" %s | eval timedelta = %s -_time | where timedelta >= 0 | sort 0 timedelta | stats first(hostname) AS hostname first(src_mac) AS src_mac''' % (earliest, latest, event._include, datetimeToEpoch(event._DT))
 
     log.debug('''msg="raw event query" query="%s"''' % query)
 
-    results = sp.search(query)
+    results = [x for x in sp.search(query)]
 
     print('Done')
 

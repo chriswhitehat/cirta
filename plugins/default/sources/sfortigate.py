@@ -16,6 +16,7 @@ ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEAL
 from datetime import datetime
 from lib.splunkit import Splunk
 from lib.util import datetimeToEpoch, epochToDatetime
+import sys
 
 def playbookInput(event):
     inputHeader = '%s Query Options' % FORMAL_NAME
@@ -33,7 +34,9 @@ def adhocInput(event):
 
 def execute(event):
     
-    print('\nChecking Splunk for events...'),
+    print('Checking Splunk for events...'),
+
+    sys.stdout.flush()
 
     sp = Splunk(host=SPLUNK_SEARCH_HEAD, port=SPLUNK_SEARCH_HEAD_PORT, username=SPLUNK_SEARCH_HEAD_USERNAME, password=SPLUNK_SEARCH_HEAD_PASSWORD, scheme=SPLUNK_SEARCH_HEAD_SCHEME)
     
@@ -81,9 +84,11 @@ def execute(event):
 
     print('\nChecking Splunk for user...'),
     
+    sys.stdout.flush()
+
     query = '''search index=fortinet earliest_time="%sd@d" latest_time="%sd@d" %s | eval timedelta = abs(_time - %s) | sort 0 timedelta | where isnotnull(user) | head 1 | table user''' % (earliest, latest, event._include, datetimeToEpoch(event._DT))
                 
-    results = sp.search(query)
+    results = [x for x in sp.search(query)]
         
     print('Done')
         
@@ -93,6 +98,8 @@ def execute(event):
         log.warn("Warning: unable to pull Fortinet user from Splunk")
 
     print('\nChecking Splunk for surrounding events...'),
+
+    sys.stdout.flush()
 
     query = '''search index=fortinet earliest_time="%sd@d" latest_time="%sd@d" %s | eval timedelta = abs(_time - %s) | sort 0 timedelta | search type=utm | head 500 | eval uri = coalesce(hostname, dstip) + url | dedup uri | head 50 | sort 0 -_time | table _time srcip user status uri''' % (earliest, latest, event._include, datetimeToEpoch(event._DT))
     query = '''search index=fortinet type=utm earliest_time="%sd@d" latest_time="%sd@d" %s | regex url!="\.jpg$|\.png$|\.gif$|\.crl$" | eval timedelta = _time - %s | eval position = if(timedelta < 0, "before", "after") | eval abstimedelta = abs(timedelta) | sort 0 abstimedelta | dedup hostname url | streamstats count AS row by position | where row <= 25 | eval uri = coalesce(hostname, dstip) + url | sort 0 _time | table _time srcip user status uri''' % (earliest, latest, event._include, datetimeToEpoch(event._DT))

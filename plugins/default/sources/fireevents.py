@@ -14,6 +14,7 @@ ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEAL
 '''
 
 from lib.splunkit import Splunk
+import sys
 
 def playbookInput(event):
     inputHeader = '%s Query Options' % FORMAL_NAME
@@ -30,8 +31,10 @@ def execute(event):
     
     rawQuery = '''search index=fireeye | spath alert.src.ip | spath alert.dst.ip | search alert.src.ip="%s" OR alert.dst.ip="%s" | sort 0 _time | table _raw''' % (event.ip_address, event.ip_address)
 
-    print('\nChecking Splunk Raw...'),
+    print('Checking Splunk Raw...'),
     
+    sys.stdout.flush()
+
     results = sp.search(rawQuery)
     #print results
     #except(error):
@@ -54,7 +57,9 @@ def execute(event):
     #try:
     #print query
         
-    results = sp.search(query)
+    sys.stdout.flush()
+
+    results = [x for x in sp.search(query)]
     #print results
     #except(error):
     #    print('Warning: Splunk query failed.\n')
