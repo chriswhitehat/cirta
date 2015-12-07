@@ -82,6 +82,8 @@ def execute(event):
         with open('%s.%s' % (event._baseFilePath, confVars.outputExtension), 'w') as outFile:
             for row in raw:
                 outFile.write(row + '\n')
+        print('%s file: %s%s.%s' % (sourcetype, colors.OKGREEN, event._baseFilePath, confVars.outputExtension))
+
 
     event._splunk.push(sourcetype=confVars.splunkSourcetype, eventList=raw)
 
