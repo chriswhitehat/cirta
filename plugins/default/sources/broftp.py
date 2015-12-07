@@ -79,9 +79,10 @@ def execute(event):
     
     raw = [x['_raw'] for x in results]
 
-    with open('%s.%s' % (event._baseFilePath, confVars.outputExtension), 'w') as outFile:
-        for row in raw:
-            outFile.write(row + '\n')
+    if raw:
+        with open('%s.%s' % (event._baseFilePath, confVars.outputExtension), 'w') as outFile:
+            for row in raw:
+                outFile.write(row + '\n')
 
     event._splunk.push(sourcetype=confVars.splunkSourcetype, eventList=raw)
 
