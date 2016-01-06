@@ -17,7 +17,7 @@ ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEAL
 import datetime, pytz, logging, getpass, os, re, sys, grp, glob
 from collections import OrderedDict
 from socket import gethostname
-from lib.util import printStatusMsg, getUserIn, getUserInWithDef, YES, epochToDatetime
+from lib.util import printStatusMsg, getUserIn, getUserInWithDef, YES, epochToDatetime, datetimeToEpoch
 from lib.splunkit import SplunkIt
 
 log = logging.getLogger(__name__)
@@ -201,6 +201,7 @@ class Event(object):
                 self.setEventDateTime()
                 
         self.setAttribute('eventDT', self._DT.strftime('%Y-%m-%d %H:%M:%S'))
+        self.setAttribute('eventEpoch', datetimeToEpoch(self._DT))
                 
         self._localTZ = self._configs['cirta']['settings']['TIMEZONE']
         
