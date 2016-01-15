@@ -368,11 +368,11 @@ def getUserMultiChoice(msg, prompt, choices, numCols=2, default=[], allowMultipl
         else:
             ans = getUserIn(prompt)
             
-        if re.search('[a-zA-Z]', ans):
+        if not (re.match('([0-9]*\s*,*)+', ans) and re.match('([0-9]*\s*,*)+', ans).group() == ans):
             print("Invalid input given, please provide the number(s) for you selection.")
             result = []
         else:
-            result = [choiceDict[int(x.strip())] for x in ans.split(',') if int(x) <= len(choices)]
+            result = [choiceDict[int(x.strip())] for x in ans.split(',') if x.strip() if int(x) <= len(choices)]
             
             if len(result) < 1:
                 print("Invalid input given, try again.")
