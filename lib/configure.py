@@ -12,11 +12,19 @@ WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEM
 COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, 
 ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 '''
-import ConfigParser, os, logging, getpass
+import ConfigParser, os, logging, getpass, sys
 from copy import deepcopy
 from collections import OrderedDict
 
 log = logging.getLogger(__name__)
+
+#log.setLevel(logging.DEBUG)
+
+ch = logging.StreamHandler(sys.stdout)
+ch.setLevel(logging.DEBUG)
+formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+ch.setFormatter(formatter)
+log.addHandler(ch)
 
 def config(confBasePath):
     
@@ -78,6 +86,32 @@ def mergeConfigs(confPaths):
                 for opt, val in parser.items(section):
                     config[section][opt] = normalize(val)
                     
+    def reOrderConfig(config):
+        insertions = OrderedDict()
+        positions = OrderedDict()
+
+        for key, val in [(key,val) for key, val in config.iteritems() if 'INSERT_AFTER' in val if val['INSERT_AFTER'] in config]:
+            insertions[key] = val
+            position = val['INSERT_AFTER']
+            if position in positions:
+                positions[position].append(key)
+            else:
+                positions[position] = [key]
+
+        if insertions:
+            newConfig = OrderedDict()
+            
+            for key, val in config.iteritems():
+                if key not in insertions:
+                    newConfig[key] = config[key]
+                    if key in positions:
+                        for insertKey in positions[key]:
+                            newConfig[insertKey] = config[insertKey]
+
+            config.clear()
+            config.update(newConfig)
+
+
     parsers = []
     
     for confPath in confPaths:
@@ -89,6 +123,8 @@ def mergeConfigs(confPaths):
     defaultOptions = getDefaultOptions(parsers)
     
     populateConfig(config, defaultOptions, parsers)
+
+    reOrderConfig(config)
     
     '''
     defaultParser = ConfigParser.ConfigParser()
