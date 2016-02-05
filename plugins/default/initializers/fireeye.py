@@ -78,26 +78,19 @@ def execute(event):
     print('\nChecking Splunk...'),
 
     sys.stdout.flush()
-    #try:
-    #print query
 
     results = sp.search(query)
-    #print results
-    #except(error):
-    #    print('Warning: Splunk query failed.\n')
-    #    raise error
 
     print('Done')
 
-    if not results:
-        log.error("Error: unable to pull FireEye ID event details from Splunk")
+    try:
+        result = results.next()
+    except(StopIteration):
+        log.warn("Error: unable to pull FireEye ID event details from Splunk")
         exit()
 
     event.setOutPath(event.fireID)
 
-
-#    result = results[0]
-    result = results.next()
 
     product = normMV('Product', result, 'alert_product')
     sensor = normMV('Sensor', result, 'alert_sensor')

@@ -37,28 +37,30 @@ def execute(event):
     
         print('Done\n')
         
-        if not results:
-            log.error("Error: unable to pull CIRTA ID state from Splunk")
+        try:
+            result = results.next()
+        except(StopIteration):
+            log.warn("Error: unable to pull CIRTA ID state from Splunk")
             exit()
-        
-        if results[0].get('hostname'):
-            defaultName = 'cmpd-host-' + results[0].get('hostname')
+
+        if result.get('hostname'):
+            defaultName = 'cmpd-host-' + result.get('hostname')
         else:
-            defaultName = 'cmpd-host-' + results[0].get('ip_address')
+            defaultName = 'cmpd-host-' + result.get('ip_address')
         
         event.setAttribute('fw_object_name', default=defaultName, prompt="Firewall Object Name", force=True)
-        event.setAttribute('ip_address', default=results[0]['ip_address'], prompt="IP to Quarantine", force=True)
+        event.setAttribute('ip_address', default=result['ip_address'], prompt="IP to Quarantine", force=True)
         event.setAttribute('subnet_mask', default='255.255.255.255', prompt="Subnet Mask", force=True)
         
         msg = ''
         for qAttr in [x.strip() for x in quarantineAttrs.split(',') if x if x.strip()]:
-            value = results[0].get(qAttr.lstrip('_'))
+            value = result.get(qAttr.lstrip('_'))
     
             if value:                
-                event.setAttribute(qAttr, results[0].get(qAttr.lstrip('_')), force=True)
+                event.setAttribute(qAttr, result.get(qAttr.lstrip('_')), force=True)
                 msg += '%s -- %s\n' % (event._fifoAttrs[qAttr].formalName, event._fifoAttrs[qAttr].value)
      
-        event._baseFilePath = results[0]['baseFilePath']
+        event._baseFilePath = result['baseFilePath']
         outfilePath = event._baseFilePath + '.eventd'
         
         with open(outfilePath, 'w') as outfile:
@@ -101,14 +103,15 @@ end''' % (event.fw_object_name, msg.replace('"', '').rstrip(), event.ip_address,
         print('Done\n')
         
          
-        if not results:
-            log.warn("Unable to retrieve previous quarantine hosts from Splunk")
-            hosts = fwObjects.keys()
-        else:
-            originalHosts = [x.strip() for x in results[0]['hosts'].split(',')]
+        try:
+            result = results.next()
+            originalHosts = [x.strip() for x in result['hosts'].split(',')]
             hosts = originalHosts[:]
             hosts.extend(fwObjects.keys())
             hosts = set(hosts)
+        except(StopIteration):
+            log.warn("Unable to retrieve previous quarantine hosts from Splunk")
+            hosts = fwObjects.keys()
 
         toRemove = getUserMultiChoice("Unquarantine Hosts", "Hosts to Unquarantine", hosts, 2, default=['None'], noneChoice=True)     
         
