@@ -36,6 +36,10 @@ def execute(event):
 
     sp = Splunk(host=SPLUNK_SEARCH_HEAD, port=SPLUNK_SEARCH_HEAD_PORT, username=SPLUNK_SEARCH_HEAD_USERNAME, password=SPLUNK_SEARCH_HEAD_PASSWORD, scheme=SPLUNK_SEARCH_HEAD_SCHEME)
 
+    if not sp.connected:
+        log.warn("FireEye initializer requires the Splunk API, please ensure your Splunk instance is available for API connections")
+        exit()
+
     if hasattr(event, 'fireID'):
         event.setAttribute('fireID', prompt='FireEye ID', header= '', force=True)
     else:

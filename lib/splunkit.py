@@ -23,11 +23,16 @@ log = logging.getLogger(__name__)
 class Splunk():
     def __init__(self, host='', port=8089, username="", password="", scheme="https"):
 
-        #try:
-        self.service = client.connect(host=host, port=port, username=username, password=password, scheme=scheme, autologin=True)
-        #except(error):
-        #    log.error('''msg="There was an error trying to connect to the Splunk Search Head" searchHead="%s%s:%s" username="%s"''' % (scheme, host, port, username))
-        #    raise error
+        self.connected = False
+
+        try:
+            self.service = client.connect(host=host, port=port, username=username, password=password, scheme=scheme, autologin=True)
+            self.connected = True
+        except(socket.error):
+            log.error("Error: Unable to connect to Splunk API.")
+            log.debug('msg="Unable to connect to Splunk instance" server="%s" port="%s" user="%s"' % (host, port, username))
+            return
+
         self.jobs = self.service.jobs
         self.previousJobs = []
     
