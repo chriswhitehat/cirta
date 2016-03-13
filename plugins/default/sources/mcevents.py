@@ -40,9 +40,9 @@ def execute(event):
 
     timedelta = (event._DT - cirtaDT).days
 
-    earliest = timedelta - event._daysBefore
+    earliest = timedelta - 20
 
-    latest = timedelta + 1 + event._daysAfter
+    latest = timedelta + 10
 
     if earliest >= 0:
         earliest = '+' + str(earliest)
@@ -73,7 +73,7 @@ def execute(event):
 
     #event._splunk.push(sourcetype=confVars.splunkSourcetype, eventList=results)
 
-    query = '''search index=mcafee src_ip="%s" OR dest_ip="%s" earliest_time="%sd@d" latest_time="now" \
+    query = '''search index=mcafee category!="ops*" threat_type!="none" src_ip="%s" OR dest_ip="%s" earliest_time="%sd@d" latest_time="now" \
                | eval timedelta = _time - %s | eval position = if(timedelta < 0, "before", "after") \
                | eval abstimedelta = abs(timedelta) | sort 0 abstimedelta \
                | head 20 | sort 0 _time | eval mcafee_id = "mc".substr(detected_timestamp, -5, 2).".".AutoID \
@@ -90,10 +90,11 @@ def execute(event):
 
     print('Done')
 
-    print("\n_time\t\t\ttype\taction\tuser\tsrc_ip\t\tdest_ip\t\tsignature\t\tfile_name")
-    print("-" * 115)
-    for result in results:
-        print(result['_time'].split('.')[0] + "\t" + '\t'.join(result.values()[1:]))
+    if results:
+        print("\n_time\t\t\ttype\taction\tuser\tsrc_ip\t\tdest_ip\t\tsignature\t\tfile_name")
+        print("-" * 115)
+        for result in results:
+            print(result['_time'].split('.')[0] + "\t" + '\t'.join(result.values()[1:]))
 
 
     event._splunk.push(sourcetype=confVars.splunkSourcetype, eventList=raw)

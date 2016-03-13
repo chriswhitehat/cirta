@@ -14,7 +14,7 @@ ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEAL
 '''
 
 import socket
-from securitycenter import SecurityCenter
+from securitycenter import SecurityCenter5
 from getpass import getpass
 from lib.util import epochToDatetime, printStatusMsg, getUserMultiChoice
 
@@ -46,27 +46,34 @@ def adhocInput(event):
     
 def execute(event):
     
-    sc = SecurityCenter(event.scHostname, event.scUser, event.scPassword)
+    sc = SecurityCenter5(event.scHostname)
 
-    ipInfo = sc.ip_info(event.ip_address)['records']
+    sc.login(event.scUser, event.scPassword)
+
+    ipInfo = sc.get('''ipInfo?ip=%s''' % event.ip_address)
     
+    if ipInfo.status_code == 200:
+        ipInfo = ipInfo.json()['response']
+    else:
+        log.warn("No vulnerability results found")
+
+    #ipInfo = sc.ip_info(event.ip_address)['records']
     
     if ipInfo:
-        ipInfo = ipInfo[0]
-        if ipInfo:
-            event.setAttribute('operating_system', ipInfo.get('os'))
-            event.setAttribute('netbios_name', ipInfo.get('netbiosName').split('\\')[-1])
-            event.setAttribute('mac_address', ipInfo.get('macAddress'))
-            try:
-                socket.inet_aton(ipInfo.get('dnsName'))
-            except socket.error:
-                event.setAttribute('hostname', ipInfo.get('dnsName').split('.')[0])
-                event.setAttribute('fqdn', ipInfo.get('dnsName'))
-                event.setAttribute('domain_name', ipInfo.get('dnsName').split('.', 1)[-1])
-            event.setAttribute('sc_compliant', ipInfo.get('hasCompliance'))
-            event.setAttribute('sc_lastScan', epochToDatetime(ipInfo.get('lastScan')))
-        
-    vulns = sc.query('vulndetails', ip=event.ip_address)
+        event.setAttribute('operating_system', ipInfo.get('os'))
+        event.setAttribute('netbios_name', ipInfo.get('netbiosName').split('\\')[-1])
+        event.setAttribute('mac_address', ipInfo.get('macAddress'))
+        try:
+            socket.inet_aton(ipInfo.get('dnsName'))
+        except socket.error:
+            event.setAttribute('hostname', ipInfo.get('dnsName').split('.')[0])
+            event.setAttribute('fqdn', ipInfo.get('dnsName'))
+            event.setAttribute('domain_name', ipInfo.get('dnsName').split('.', 1)[-1])
+        event.setAttribute('sc_compliant', ipInfo.get('hasCompliance'))
+        event.setAttribute('sc_lastScan', epochToDatetime(ipInfo.get('lastScan')))
+      
+    vulns = sc.analysis(('ip','=', event.ip_address), ('severity','!=','0'), tool='vulndetails')
+    
     
     if vulns:
         for vuln in vulns:
@@ -75,6 +82,10 @@ def execute(event):
                 
         localAdmins = []
         for vuln in vulns:
+            vuln['severity'] = vuln['severity']['id']
+            vuln['repository'] = vuln['repository']['name']
+            vuln['family'] = vuln['family']['name']
+
             if vuln['pluginID'] == '10902':
                 localAdmins = [x.split('  - ')[-1] for x in vuln['pluginText'].split("'Administrators' group :<br/><br/>")[-1].split('</plugin_output')[0].split('<br/>') if x]
                 
