@@ -49,8 +49,9 @@ def processArgs(configs):
     playbook = parser.add_argument_group('Playbooks', 'The following playbooks are available.')
     
     for book, settings in configs['playbooks'].iteritems():
-        log.debug('msg="adding playbook to argument parser" playbook="%s"' % book)
-        playbook.add_argument('--' + book, action='store_true', help=settings['HELP_DESCRIPTION'])
+        if settings['ENABLED']:
+            log.debug('msg="adding playbook to argument parser" playbook="%s"' % book)
+            playbook.add_argument('--' + book, action='store_true', help=settings['HELP_DESCRIPTION'])
        
     flow = parser.add_argument_group('Flow Control', 'Influence the flow of CIRTA Playbooks with the following controls.')
 
