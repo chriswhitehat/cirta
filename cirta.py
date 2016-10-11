@@ -497,7 +497,7 @@ def launchBackgroundedActions(playbook, event):
         
         
 def main():
-    global event, playbook
+    global event, playbook, configs
     
     cirtaHome = os.path.dirname(os.path.realpath(__file__))
     
@@ -510,7 +510,7 @@ def main():
     playbook = Playbook(configs, options)
     
     event = Event(cirta_id, configs, options, playbook, cirtaHome)
-        
+    
     printModeHeader(playbook, event)
     
     printCirtaID(event)
@@ -570,8 +570,9 @@ if __name__ == '__main__':
         log.info('msg="cirta execution finished"')
     except:
         sys.stderr.write(traceback.format_exc())
-        event.cirta_status = 'failure'
-        log.state(event.getAttrs())
+        if event:
+            event.cirta_status = 'failure'
+            log.state(event.getAttrs())
         log.info('msg="cirta execution failed"')
         exit()
         

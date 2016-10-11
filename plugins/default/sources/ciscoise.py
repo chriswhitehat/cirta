@@ -29,6 +29,7 @@ def adhocInput(event):
     event.setOutPath()
     event.setDateRange()
     event.setAttribute('_include', prompt='Include', header=inputHeader)
+    event.setAttribute('_include', event.detectInputCases(event._include), force=True)
 
 
 def execute(event):
@@ -41,8 +42,8 @@ def execute(event):
     sp = Splunk(host=SPLUNK_SEARCH_HEAD, port=SPLUNK_SEARCH_HEAD_PORT, username=SPLUNK_SEARCH_HEAD_USERNAME, password=SPLUNK_SEARCH_HEAD_PASSWORD, scheme=SPLUNK_SEARCH_HEAD_SCHEME)
 
     if not event.adHoc:
-        if hasattr(event, 'ip_address'):
-            event._include = 'src="%s"' % (event.ip_address)
+        if hasattr(event, 'mac_address'):
+            event._include = 'EndPointMACAddress="%s"' % (event.mac_address.replace(":", "-"))
 
     cirtaDT = epochToDatetime(event.cirta_id.split('.')[0])
 
@@ -60,7 +61,7 @@ def execute(event):
 
     log.debug('DT="%s" cirtaDT="%s" timedelta="%s" daysBefore="%s" daysAfter="%s" earliest="%s" latest="%s"' % (event._DT, cirtaDT, (event._DT - cirtaDT).days, event._daysBefore, event._daysAfter, earliest, latest))
 
-    query = '''search index=infoblox earliest_time="%sd@d" latest_time="%sd@d" %s | table _raw''' % (earliest,
+    query = '''search index=cisco_ise earliest_time="%sd@d" latest_time="%sd@d" %s | table _raw''' % (earliest,
                                                                                                      latest,
                                                                                                      event._include)
 
@@ -86,18 +87,16 @@ def execute(event):
 
     sys.stdout.flush()
 
-
-    if event.adHoc:
-        query = '''search index=infoblox earliest_time="%sd@d" latest_time="%sd@d" %s | stats first(hostname) AS hostname first(src_mac) AS src_mac''' % (earliest, latest, event._include)
-    else:
-        query = '''search index=infoblox earliest_time="%sd@d" latest_time="%sd@d" %s | eval timedelta = %s -_time | where timedelta >= 0 | sort 0 timedelta | stats first(hostname) AS hostname first(src_mac) AS src_mac''' % (earliest, latest, event._include, datetimeToEpoch(event._DT))
+    query = '''search index=cisco_ise earliest_time="%sd@d" latest_time="%sd@d" %s | eval timedelta = abs(_time - %s) | sort 0 timedelta | where isnotnull(AD_User_Resolved_Identities) | rex field=AD_User_Resolved_Identities "(?<user>.+)@" | head 1 | rename NetworkDeviceGroups AS network_device_groups Location AS location EndPointMatchedProfile AS device_type AD_Domain as domain | table user network_device_groups location device_type domain''' % (earliest, latest, event._include, datetimeToEpoch(event._DT))
 
     log.debug('''msg="raw event query" query="%s"''' % query)
 
     results = [x for x in sp.search(query)]
 
     print('Done')
-
+    '''
+    exit()
+####################################### Stopped here
     if results and 'src_mac' in results[0]:
         event.setAttribute('mac_address', results[0]['src_mac'].lower())
     else:
@@ -111,3 +110,4 @@ def execute(event):
 
     print('')
 
+'''

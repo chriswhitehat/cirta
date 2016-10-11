@@ -311,7 +311,7 @@ class Event(object):
         for attr in self._fifoAttrs.values():
             if attr.logged:
                 if isinstance(attr.value, basestring):
-                    attrs += '%s="%s", ' % (attr.name, attr.value.replace('"', '\\"'))
+                    attrs += '%s="%s", ' % (attr.name, attr.value.replace('"', '\\"').decode('utf8', 'ignore'))
                 else:
                     attrs += '%s="%s", ' % (attr.name, attr.value)
         return attrs.rstrip(', ')

@@ -16,6 +16,8 @@ ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEAL
 import splunklib.client as client 
 import splunklib.results as results
 import logging, os, socket, random, re
+from splunklib.client import AuthenticationError
+from util import proceed
 
 log = logging.getLogger(__name__)
 
@@ -111,20 +113,31 @@ class SplunkIt():
                 log.warning("Warning: Unable to connect to Splunk Indexer, skipping indexer.")
                 log.debug('msg="Unable to connect to Splunk instance" server="%s" port="%s" user="%s" host="%s"' % (splunkServer, self.splunkPort, self.splunkUser, self.host))
                 pass
+            except(AuthenticationError):
+                log.warn("Warning: Authentication Failure to '%s' with user '%s'" % (splunkServer, self.splunkUser))
+                pass
         
         if not hasattr(self, 'index'):
             log.warning("Warning: Unable to connect to any Splunk Indexers, skipping splunk data push.")
-            self.splunkEnabled = False
+            self.splunkPushEnabled = False
+            proceed()
+        else:
+            self.splunkPushEnabled = True
         
             
         
     def push(self, sourcetype, filename=None, eventList=None, event=None, exclusionRegex=None, inclusionRegex=None):
         
-        if not self.splunkEnabled:
+        if not self.splunkEnabled or not self.splunkPushEnabled:
             return
         
-        self.connect()
-        
+        try:
+            self.connect()
+        except:
+            log.error("Error: failed to Authenticate to Splunk. Disabling Splunk functionality.")
+            self.splunkEnabled = False
+            return
+
         if filename:
             if os.path.exists(filename):
                 events = open(filename, 'rb')

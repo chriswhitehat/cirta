@@ -27,6 +27,9 @@ def execute(event):
     else:
         event.setAttribute('mcAfeeID', prompt='McAfee ID', header="McAfee Initial Indicator")
 
+    event.setAttribute('alertID', event.mcAfeeID, force=True)
+    event.setAttribute('alertType', 'McAfee', force=True)
+
     query = '''search index=mcafee earliest=-30d@d | eval mcafee_id = "mc".substr(detected_timestamp, -5, 2).".".AutoID | search mcafee_id="%s" | head 1 | table detected_timestamp src_ip src_mac dest_ip dest_mac signature category''' % (event.mcAfeeID)
 
     print('\nChecking Splunk...'),

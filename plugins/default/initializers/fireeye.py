@@ -45,6 +45,9 @@ def execute(event):
     else:
         event.setAttribute('fireID', prompt='FireEye ID', header="FireEye Initial Indicator")
 
+    event.setAttribute('alertID', event.fireID, force=True)
+    event.setAttribute('alertType', 'FireEye', force=True)
+
     query = '''search index=fireeye earliest_time=-60d 
 | spath output="alert_id" alert.id 
 | spath output="alert_id_mv" "alert{}.id" 

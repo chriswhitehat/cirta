@@ -24,19 +24,22 @@ def execute(event):
     #timestamp, srcIP, dstIP, signature = None, None, None, None
     
     def set_sID_cID():
-        if hasattr(event, 'alertID'):
-            event.setAttribute('alertID', prompt='Alert ID', header= '', force=True)
+        if hasattr(event, 'sguilID'):
+            event.setAttribute('sguilID', prompt='Alert ID', header= '', force=True)
         else:
-            event.setAttribute('alertID', prompt='Alert ID', header="Sguil Initial Indicator")
-            
+            event.setAttribute('sguilID', prompt='Alert ID', header="Sguil Initial Indicator")
+
+        event.setAttribute('alertID', event.sguilID, force=True)
+        event.setAttribute('alertType', 'Sguil', force=True)         
+   
         try:
-            splitID = event.alertID.split('.')
+            splitID = event.sguilID.split('.')
             event.setAttribute('_sID', value=splitID[0], force=True)
             event.setAttribute('_cID', value=splitID[1], force=True)
             
             query = 'SELECT timestamp, INET_NTOA(src_ip), INET_NTOA(dst_ip), signature FROM event WHERE sid in (%s) AND cid in (%s);' % (event._sID, event._cID)
             
-            log.debug('msg="MySQL query statement for alert id" alertID="%s" query="%s"' % (event.alertID, query))
+            log.debug('msg="MySQL query statement for alert id" alertID="%s" query="%s"' % (event.sguilID, query))
             
             queryResults = getSguilSql('SELECT timestamp, INET_NTOA(src_ip), INET_NTOA(dst_ip), signature FROM event WHERE sid in (%s) AND cid in (%s);' % (event._sID, event._cID), sguilserver=SGUIL_SERVER, tableSplit=True)
 
@@ -47,7 +50,7 @@ def execute(event):
             return set_sID_cID()
     
     timestamp, srcIP, dstIP, signature = set_sID_cID()
-    event.setOutPath(event.alertID)
+    event.setOutPath(event.sguilID)
     
     # Note the utc offset for the US will always be -x so by adding the offset you are adding a negative, i.e. subtracting
     # This is very important for accurate time conversion.  You should always add the offset if the time is in UTC and

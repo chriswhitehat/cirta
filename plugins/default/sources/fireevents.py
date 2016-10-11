@@ -74,6 +74,8 @@ def execute(event):
     headers = ['alert.occurred', 'alert.sensor', 'alert.id',
                'alert.src.ip', 'alert.dst.ip',  
                'alert.name', 'malware.names']
+
+    event.__fireeyeIDs__ = [x['alert.id'] for x in results]
     
     with open("%s.%s" % (event._baseFilePath, 'fef'), 'w') as orf:
         orf.write("%s\t\t%s" % (headers[0], '\t'.join(headers[1:]) + '\n'))

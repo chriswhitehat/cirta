@@ -46,7 +46,11 @@ def adhocInput(event):
     
 def execute(event):
     
-    sc = SecurityCenter5(event.scHostname)
+    try:
+        sc = SecurityCenter5(event.scHostname)
+    except:
+        log.error("Failed to connect to Security Center")
+        return
 
     sc.login(event.scUser, event.scPassword)
 
@@ -54,23 +58,30 @@ def execute(event):
     
     if ipInfo.status_code == 200:
         ipInfo = ipInfo.json()['response']
+        if not ipInfo.get('repositories'):
+            log.warn("No vulnerability results found")
+            return
     else:
         log.warn("No vulnerability results found")
+        return
 
     #ipInfo = sc.ip_info(event.ip_address)['records']
-    
+
     if ipInfo:
         event.setAttribute('operating_system', ipInfo.get('os'))
-        event.setAttribute('netbios_name', ipInfo.get('netbiosName').split('\\')[-1])
+        if ipInfo.get('netbiosName'):
+            event.setAttribute('netbios_name', ipInfo.get('netbiosName').split('\\')[-1])
         event.setAttribute('mac_address', ipInfo.get('macAddress'))
         try:
-            socket.inet_aton(ipInfo.get('dnsName'))
+            if ipInfo.get('dnsName'):
+                socket.inet_aton(ipInfo.get('dnsName'))
         except socket.error:
             event.setAttribute('hostname', ipInfo.get('dnsName').split('.')[0])
             event.setAttribute('fqdn', ipInfo.get('dnsName'))
             event.setAttribute('domain_name', ipInfo.get('dnsName').split('.', 1)[-1])
         event.setAttribute('sc_compliant', ipInfo.get('hasCompliance'))
-        event.setAttribute('sc_lastScan', epochToDatetime(ipInfo.get('lastScan')))
+        if ipInfo.get('lastScan'):
+            event.setAttribute('sc_lastScan', epochToDatetime(ipInfo.get('lastScan')))
       
     vulns = sc.analysis(('ip','=', event.ip_address), ('severity','!=','0'), tool='vulndetails')
     
