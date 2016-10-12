@@ -44,8 +44,9 @@ def config(confBasePath):
                 confs[filename].append(os.path.join(base, filename))
             
     for confName, confPaths in confs.iteritems():
-        configs[confName.split('.conf')[0]] = mergeConfigs(confPaths)
-        
+        conf = mergeConfigs(confPaths)
+        configs[confName.split('.conf')[0]] = conf
+
     processPlaybooks(configs)
     
     processSources(configs)
