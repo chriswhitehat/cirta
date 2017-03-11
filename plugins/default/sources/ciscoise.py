@@ -95,7 +95,7 @@ def execute(event):
 
     print('Done')
     '''
-    exit()
+    return
 ####################################### Stopped here
     if results and 'src_mac' in results[0]:
         event.setAttribute('mac_address', results[0]['src_mac'].lower())

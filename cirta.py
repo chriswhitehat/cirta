@@ -15,13 +15,14 @@ COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER I
 ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 '''
 
-import sys, os, argparse, logging, traceback, socket
-from datetime import datetime
+import sys, os, argparse, logging, traceback, socket, getpass
+from datetime import datetime, timedelta
 from logging import Formatter, FileHandler
 from logging.handlers import SysLogHandler
+from lib import pydap
 from lib.configure import config
 from lib.event import Event
-from lib.util import printStatusMsg, colors, getUserIn, YES, getUserMultiChoice, keepaliveWait
+from lib.util import printStatusMsg, colors, getUserIn, YES, getUserMultiChoice, keepaliveWait, proceed
 from argparse import Action
 
 event = None
@@ -39,6 +40,66 @@ warningHandler.setFormatter(warningFormatter)
 
 log.addHandler(errorHandler)
 log.addHandler(warningHandler)
+
+
+
+def checkCredentials(configs, force):
+    successful = pydap.ldapConnect(configs['cirta']['settings']['LDAP_SERVER'], configs['cirta']['settings']['LDAP_USER_DN'], configs['cirta']['settings']['LDAP_USER_PW'], configs['cirta']['settings']['BASE_DN'])
+
+    if not successful:
+        log.warn("Credentials used for LDAP were not successful, further credential expiration checks are not possible.")
+        return
+
+    def convert_ad_timestamp(timestamp):
+        epoch_start = datetime(year=1601, month=1, day=1)
+        seconds_since_epoch = float(timestamp)/10**7
+        return epoch_start + timedelta(seconds=seconds_since_epoch)
+
+    expirations = ''
+    expirations_full = ''
+
+
+    tracked_users = [x.strip() for x in configs['cirta']['settings']['LDAP_TRACKED_USERS'].split(',')]
+
+    if configs['cirta']['settings']['ANALYST_USERNAME']:
+        tracked_users.append(configs['cirta']['settings']['ANALYST_USERNAME'])
+    else:
+        tracked_users.append(getpass.getuser())
+
+    for credential in tracked_users:
+
+        ldap_results = pydap.ldapSearch('sAMAccountName=' + credential)
+
+        if ldap_results and 'accountExpires' in ldap_results[0][0][1] and ldap_results[0][0][1]['accountExpires'][0] != '9223372036854775807':
+
+            ad_expiration = convert_ad_timestamp(ldap_results[0][0][1]['accountExpires'][0]).date()
+
+            days_to_expiration = (ad_expiration - datetime.now().date()).days
+
+            expirations_full += "%s - account expires in %s days\n" % (credential, days_to_expiration)
+
+            if days_to_expiration < int(configs['cirta']['settings']['DAYS_TO_WARN']):
+                expirations += "%s - account expires in %s days\n" % (credential, days_to_expiration)
+
+        if ldap_results and 'pwdLastSet' in ldap_results[0][0][1] and ldap_results[0][0][1]['pwdLastSet'][0] != '9223372036854775807':
+
+            pwdLastSet = convert_ad_timestamp(ldap_results[0][0][1]['pwdLastSet'][0]).date()
+
+            password_age = (datetime.now().date() - pwdLastSet).days
+
+            expirations_full += "%s - password expires in %s days\n" % (credential, (int(configs['cirta']['settings']['MAX_PWD_AGE']) - password_age))
+
+            if (int(configs['cirta']['settings']['MAX_PWD_AGE']) - password_age) < int(configs['cirta']['settings']['DAYS_TO_WARN']):
+                expirations += "%s - password expires in %s days\n" % (credential, (int(configs['cirta']['settings']['MAX_PWD_AGE']) - password_age))
+                
+
+    if force or expirations:
+        printStatusMsg(' ' * 14 + 'Password Expirations', char=' ', length=50, color=colors.TITLEFAIL)
+        if force:
+            print(expirations_full)
+        else:
+            print(expirations)
+        proceed()
 
             
 def processArgs(configs):
@@ -78,6 +139,7 @@ def processArgs(configs):
                 
                 
     behavior = parser.add_argument_group('Misc', 'Control the misc CIRTA functions with these switches.')
+    behavior.add_argument('--expirations', action='store_true', help='Force the credential expiration check output for all tracked users.')
     behavior.add_argument('--debug', action="store_true", help='set logging level to debug.')
     behavior.add_argument('--local_logging', action="store_true", help='log to local debug file')
     behavior.add_argument('--test', action='store_true', help='Test run script. Suppresses CIRTA and External actions.')
@@ -188,6 +250,11 @@ def checkStackTraces(event):
         printStatusMsg('  Fatal Data Source Errors Detected', 20, '@ ', color=colors.WARNING)
         for st in event._stackTraces:
             printStatusMsg(colors.GREY + st + colors.ENDC, 20, '-', color=colors.FAIL)
+
+        with open('%s.%s' % (event._baseFilePath, 'stack'), 'w') as outFile:
+            for st in event._stackTraces:
+                outfile.write('\n\n' + '-' * 40 + '\n\n')
+                outFile.write(st)
 
 
 class Playbook(object):
@@ -505,15 +572,17 @@ def main():
     cirtaHome = os.path.dirname(os.path.realpath(__file__))
     
     configs = config(os.path.join(cirtaHome, 'etc'))
-    
+
     options = processArgs(configs)
-    
+      
+    checkCredentials(configs, options.expirations)    
+  
     initLogging(configs, options)
     
     playbook = Playbook(configs, options)
     
     event = Event(cirta_id, configs, options, playbook, cirtaHome)
-    
+  
     printModeHeader(playbook, event)
     
     printCirtaID(event)

@@ -14,6 +14,7 @@ ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEAL
 '''
 
 import datetime, sys
+from pytz import timezone
 from lib.splunkit import Splunk
 from lib.util import getUserInWithDef, printStatusMsg, getUserMultiChoice, epochToDatetime
 
@@ -48,10 +49,14 @@ def execute(event):
 
     event.setOutPath(event.mcAfeeID)
 
-    timestamp = epochToDatetime(result['detected_timestamp'][:-3])
+    #timestamp = epochToDatetime(result['detected_timestamp'][:-3])
+    utctimestamp = datetime.datetime.strptime(result['detected_timestamp'], "%Y-%m-%d %H:%M:%S.0").replace(tzinfo=timezone('UTC'))
+
+    timestamp = utctimestamp.astimezone(timezone('US/Pacific')).replace(tzinfo=None)
 
     srcIP = result['src_ip']
-    srcMAC = result['src_mac']
+    if 'src_mac' in result:
+        srcMAC = result['src_mac']
     dstIP = result['dest_ip']
     dstMAC = result['dest_mac']
     secondaryName = result['signature']

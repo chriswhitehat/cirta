@@ -36,7 +36,7 @@ def execute(event):
      
     if not results:
         log.warn("Unable to retrieve previous quarantine hosts from Splunk")
-        exit()
+        return
     else:
         hosts = set([x.strip() for x in results[0]['hosts'].split(',')])
 

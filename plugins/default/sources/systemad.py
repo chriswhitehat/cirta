@@ -35,7 +35,7 @@ def playbookInput(event):
         successful = pydap.ldapConnect(confVars.ldapServer, confVars.userDN, confVars.password, confVars.baseDistinguishedName)
         
         if not successful:
-            print('Invalid Credentials, ldap data sources will fail.')
+            log.error('Error: Invalid LDAP Credentials, LDAP data sources will fail.')
             return        
         
     

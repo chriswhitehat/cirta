@@ -55,9 +55,11 @@ def execute(event):
     sc.login(event.scUser, event.scPassword)
 
     ipInfo = sc.get('''ipInfo?ip=%s''' % event.ip_address)
+
     
     if ipInfo.status_code == 200:
         ipInfo = ipInfo.json()['response']
+
         if not ipInfo.get('repositories'):
             log.warn("No vulnerability results found")
             return
@@ -83,7 +85,10 @@ def execute(event):
         if ipInfo.get('lastScan'):
             event.setAttribute('sc_lastScan', epochToDatetime(ipInfo.get('lastScan')))
       
-    vulns = sc.analysis(('ip','=', event.ip_address), ('severity','!=','0'), tool='vulndetails')
+    if event.scSeverity.lower() == 'info':
+        vulns = sc.analysis(('ip','=', event.ip_address), tool='vulndetails')
+    else:
+        vulns = sc.analysis(('ip','=', event.ip_address), ('severity','!=','0'), tool='vulndetails')
     
     
     if vulns:
