@@ -29,7 +29,6 @@ def adhocInput(event):
     event.setOutPath()
     event.setDateRange()
     event.setAttribute('_include', prompt='Include', header=inputHeader)
-    event.setAttribute('_include', event.detectInputCases(event._include), force=True)
 
 
 def execute(event):
@@ -87,7 +86,11 @@ def execute(event):
 
     sys.stdout.flush()
 
-    query = '''search index=infoblox earliest_time="%sd@d" latest_time="%sd@d" %s | eval timedelta = %s -_time | where timedelta >= 0 | sort 0 timedelta | stats first(hostname) AS hostname first(src_mac) AS src_mac''' % (earliest, latest, event._include, datetimeToEpoch(event._DT))
+
+    if event.adHoc:
+        query = '''search index=infoblox earliest_time="%sd@d" latest_time="%sd@d" %s | stats first(hostname) AS hostname first(src_mac) AS src_mac''' % (earliest, latest, event._include)
+    else:
+        query = '''search index=infoblox earliest_time="%sd@d" latest_time="%sd@d" %s | eval timedelta = %s -_time | where timedelta >= 0 | sort 0 timedelta | stats first(hostname) AS hostname first(src_mac) AS src_mac''' % (earliest, latest, event._include, datetimeToEpoch(event._DT))
 
     log.debug('''msg="raw event query" query="%s"''' % query)
 

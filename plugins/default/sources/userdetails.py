@@ -35,7 +35,7 @@ def playbookInput(event):
         successful = pydap.ldapConnect(confVars.ldapServer, confVars.userDN, confVars.password, confVars.baseDistinguishedName)
         
         if not successful:
-            print('Invalid Credentials, ldap data sources will fail.')
+            log.error('Error: Invalid LDAP Credentials, LDAP data sources will fail.')
             return        
         
     
@@ -85,6 +85,11 @@ def execute(event):
     
     pydap.ldapConnect(confVars.ldapServer, confVars.userDN, confVars.password, confVars.baseDistinguishedName)
     
+    entr = pydap.ldapSearch('sAMAccountName=' + event._analystUsername)
+    if entr:
+        entry = entr[0][0][1]
+        event.setAttribute('_analystName', '%s, %s' % (entry['sn'], entry['givenName']))
+
     entr = pydap.ldapSearch('sAMAccountName=' + event.username)
     if not entr:
         return 
@@ -106,6 +111,7 @@ def execute(event):
     empAttrMap = [('physicalDeliveryOfficeName', '_physicalDeliveryOfficeName'),
                   ('distinguishedName', '_userADDN'),
                   ('givenName', '_first_name'),
+                  ('middleName', '_middle_name'),
                   ('sn', '_last_name'),
                   ('l', '_city'),
                   ('st', '_state'),

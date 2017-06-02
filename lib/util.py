@@ -39,6 +39,7 @@ class bcolors:
     HEADER2 = '\033[95m'
     TITLE = '\033[44m'
     TITLE2 = '\033[105m'
+    TITLEFAIL = '\033[41m'
     OKBLUE = '\033[94m'
     OKGREEN = '\033[92m'
     WARNING = '\033[93m'
@@ -368,8 +369,8 @@ def getUserMultiChoice(msg, prompt, choices, numCols=2, default=[], allowMultipl
         else:
             ans = getUserIn(prompt)
             
-        if not (re.match('([0-9]*\s*,*)+', ans) and re.match('([0-9]*\s*,*)+', ans).group() == ans):
-            print("Invalid input given, please provide the number(s) for you selection.")
+        if not (re.match('([0-9]*\s*,*)+', ans) and re.match('([0-9]*\s*,*)+', ans).group() == ans) or not all([int(x.strip()) in choiceDict for x in ans.split(',') if x.strip()]):
+            print("Invalid input given, please provide the number(s) for you selection (%d - %d)." % (min(choiceDict.keys()), max(choiceDict.keys())))
             result = []
         else:
             result = [choiceDict[int(x.strip())] for x in ans.split(',') if x.strip() if int(x) <= len(choices)]

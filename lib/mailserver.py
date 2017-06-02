@@ -14,8 +14,10 @@ ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEAL
 '''
 
 import smtplib
+from os.path import basename
 from email.MIMEText import MIMEText
 from email.MIMEMultipart import MIMEMultipart
+from email.mime.application import MIMEApplication
 from lib.util import getUserIn, getUserInWithDef
 
 class MailServer():
@@ -26,7 +28,7 @@ class MailServer():
         self.prior = self.convertPriority(prior)
         self.server = server
                   
-    def sendMail(self, subject, msgBody, fromAddr=None, toAddr=None, ccAddr=None, bccAddr=None, prior=None, server=None):
+    def sendMail(self, subject, msgBody, fromAddr=None, toAddr=None, ccAddr=None, bccAddr=None, prior=None, server=None, files=[]):
     
         if not fromAddr:
             if not self.fromAddr:
@@ -66,7 +68,15 @@ class MailServer():
             toAddr += bccAddr
 
         msg.attach(body)
-        
+
+        for f in files or []:
+            with open(f, "rb") as fil:
+                msg.attach(MIMEApplication(
+                    fil.read(),
+                    Content_Disposition='attachment; filename="%s"' % basename(f),
+                    Name=basename(f)
+                ))
+
         try:
             smtpObj = smtplib.SMTP(server)
             smtpObj.sendmail(fromAddr, toAddr, msg.as_string())

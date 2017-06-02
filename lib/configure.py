@@ -37,15 +37,16 @@ def config(confBasePath):
     confs = OrderedDict()
 
     for base, dirs, files in sorted([x for x in os.walk(confBasePath)]):
-        for filename in sorted([x for x in files if ".conf" in x]):
+        for filename in sorted([x for x in files if x.endswith(".conf")]):
             if 'etc/users' not in base or ('users' in base and getpass.getuser() in base):
                 if filename not in confs:
                     confs[filename] = []
                 confs[filename].append(os.path.join(base, filename))
             
     for confName, confPaths in confs.iteritems():
-        configs[confName.split('.conf')[0]] = mergeConfigs(confPaths)
-        
+        conf = mergeConfigs(confPaths)
+        configs[confName.split('.conf')[0]] = conf
+
     processPlaybooks(configs)
     
     processSources(configs)

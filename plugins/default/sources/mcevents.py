@@ -77,7 +77,7 @@ def execute(event):
                | eval timedelta = _time - %s | eval position = if(timedelta < 0, "before", "after") \
                | eval abstimedelta = abs(timedelta) | sort 0 abstimedelta \
                | head 20 | sort 0 _time | eval mcafee_id = "mc".substr(detected_timestamp, -5, 2).".".AutoID \
-               | table _time threat_type vendor_action user src_ip dest_ip signature file_name''' % (event.ip_address, 
+               | table _time mcafee_id threat_type vendor_action user src_ip dest_ip signature file_name''' % (event.ip_address, 
                                                                                                                                 event.ip_address, 
                                                                                                                                 earliest, 
                                                                                                                                 datetimeToEpoch(event._DT))
@@ -91,7 +91,7 @@ def execute(event):
     print('Done')
 
     if results:
-        print("\n_time\t\t\ttype\taction\tuser\tsrc_ip\t\tdest_ip\t\tsignature\t\tfile_name")
+        print("\n_time\t\t\tmcafee_id\ttype\taction\tuser\tsrc_ip\t\tdest_ip\t\tsignature\t\tfile_name")
         print("-" * 115)
         for result in results:
             print(result['_time'].split('.')[0] + "\t" + '\t'.join(result.values()[1:]))

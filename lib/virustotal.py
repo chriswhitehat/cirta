@@ -236,7 +236,8 @@ class VirusTotal(object):
                   "IP address not found in dataset": self.notFound,
                   "Invalid IP address": self.notValid,
                   "Your resource is queued for analysis": self.notDone,
-                  "Invalid resource, check what you are submitting": self.hashNotFound}
+                  "Invalid resource, check what you are submitting": self.hashNotFound,
+                  "Resource does not exist in the dataset": self.notFound}
         
         for group in chunker(items, self.maxConcurrent[apiURL]):
             log.debug('msg="getting reports by group" chunk="%s" max_concurrent="%s" param="%s" delim="%s"' % (group, self.maxConcurrent[apiURL], param, delim))

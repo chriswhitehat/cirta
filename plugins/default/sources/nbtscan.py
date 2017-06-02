@@ -38,8 +38,12 @@ def execute(event):
     print('\n' + results)
     
     if not re.match('-', results):
-        ip, netName, server, user, mac = results.split()
-        
+        try:
+            ip, netName, server, user, mac = results.split()
+        except(ValueError):
+            log.error("nbtscan results failed to parse")
+            return
+
         event.setAttribute('netbios_name', netName.lower())
         event.setAttribute('hostname', netName.lower())
         

@@ -41,7 +41,7 @@ def execute(event):
             result = results.next()
         except(StopIteration):
             log.warn("Error: unable to pull CIRTA ID state from Splunk")
-            exit()
+            return
 
         if result.get('hostname'):
             defaultName = 'cmpd-host-' + result.get('hostname')

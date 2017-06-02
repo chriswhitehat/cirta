@@ -20,7 +20,7 @@ from lib.sguilsql import getSguilSql
 def playbookInput(event):
     event.setOutPath()
     event.setDateRange()
-    event.setAttribute('_sqlLimit', '10000')
+    event.setAttribute('_sqlLimit', confVars.sqlLimit)
     
 def adhocInput(event):
     inputHeader = '%s Query Options' % FORMAL_NAME
@@ -28,7 +28,7 @@ def adhocInput(event):
     event.setDateRange()
     event.setAttribute('ip_address_list', prompt='IP Address(es)', header=inputHeader, multiline=True, description="Provide a newline delimited list of one or more IP addresses")
     event.ip_address_list = [x.strip() for x in event.ip_address_list.splitlines() if x]
-    event.setAttribute('_sqlLimit', prompt='Maximum Number of Events', default='10000')
+    event.setAttribute('_sqlLimit', prompt='Maximum Number of Events', default=confVars.sqlLimit)
     
 
 def execute(event):
