@@ -5,4 +5,6 @@
 /etc/users/
 cirta.debug
 *.save*
-
+/resources/netident/
+/resources/nsmapper/
+ghfacilities.py
