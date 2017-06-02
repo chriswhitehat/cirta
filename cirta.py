@@ -247,7 +247,7 @@ class Playbook(object):
         for book in self.configs['playbooks'].keys():
             if self.configs['playbooks'][book]['DEFAULT']:
                 defaultBook = book
-            if getattr(self.options, book):
+            if self.configs['playbooks'][book]['ENABLED'] and getattr(self.options, book):
                 return book
         
         return defaultBook

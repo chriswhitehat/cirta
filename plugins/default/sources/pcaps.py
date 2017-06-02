@@ -207,11 +207,16 @@ def playbookInput(event):
     event.setOutPath()
     setPCAPRange(event)
 
-    existingSensors = getSguilSensorList(sguilserver=confVars.so_server)
+    existingSensors = sorted(getSguilSensorList(sguilserver=confVars.so_server))
 
     choices = ['All']
     choices.extend(existingSensors)
-    selected = getUserMultiChoice("Sensors to pull PCAPs.", 'Sensors', choices, default=['All'])
+
+    defaultSensors = ['All']
+    if confVars.defaultSensors:
+        defaultSensors = [x.strip() for x in confVars.defaultSensors.split(',')]
+
+    selected = getUserMultiChoice("Sensors to pull PCAPs.", 'Sensors', choices, default=defaultSensors)
     
     if 'All' in selected:
         event._selectedSensors = existingSensors
