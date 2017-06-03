@@ -78,11 +78,11 @@ def getUserIn(msg, allowBlank=False):
             return getUserIn(msg)
     return var
 
-def getUserInWithDef(msg, default):
+def getUserInWithDef(msg, default, allowBlank=False):
     readline.set_startup_hook(lambda: readline.insert_text(default))
     var = raw_input(colors.BOLDON + "%s: " % (msg) + colors.BOLDOFF)
     readline.set_startup_hook(lambda: readline.insert_text(''))
-    if var == "":
+    if var == "" and not allowBlank:
         print("No input given, try again.")
         return getUserIn(msg)
     return var

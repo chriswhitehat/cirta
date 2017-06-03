@@ -78,7 +78,7 @@ def checkCredentials(configs, force):
 
             expirations_full += "%s - account expires in %s days\n" % (credential, days_to_expiration)
 
-            if days_to_expiration < int(configs['cirta']['settings']['DAYS_TO_WARN']):
+            if days_to_expiration > 0 and days_to_expiration < int(configs['cirta']['settings']['DAYS_TO_WARN']):
                 expirations += "%s - account expires in %s days\n" % (credential, days_to_expiration)
 
         if ldap_results and 'pwdLastSet' in ldap_results[0][0][1] and ldap_results[0][0][1]['pwdLastSet'][0] != '9223372036854775807':
