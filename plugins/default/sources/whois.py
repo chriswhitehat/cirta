@@ -27,7 +27,7 @@ def playbookInput(event):
 def adhocInput(event):
     inputHeader = '%s Query Options' % FORMAL_NAME
     event.setOutPath()
-    event.setAttribute('_vturls', prompt="IPs/URLs/Domains", description="List of IPs URLs and/or Domains newline separated", multiline=True) 
+    event.setAttribute('_vturls', prompt="IPs/URLs/Domains:", description="List of IPs URLs and/or Domains newline separated", multiline=True) 
     event._vturls = set([x.strip() for x in event._vturls.splitlines() if x])
 
 
@@ -56,6 +56,10 @@ def execute(event):
                         event._whoisIPs[hostname] = ip
                 except gaierror:
                     pass
+
+    if not event._whoisIPs.keys():
+        log.warn("No IP's to lookup via whois. Skipping...")
+        return
 
     domainMax = max([len(x) for x in event._whoisIPs.keys()]) + 1
 

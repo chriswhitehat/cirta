@@ -253,7 +253,7 @@ def checkStackTraces(event):
 
         with open('%s.%s' % (event._baseFilePath, 'stack'), 'w') as outFile:
             for st in event._stackTraces:
-                outfile.write('\n\n' + '-' * 40 + '\n\n')
+                outFile.write('\n\n' + '-' * 40 + '\n\n')
                 outFile.write(st)
 
 
