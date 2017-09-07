@@ -162,7 +162,7 @@ class VirusTotal(object):
             self.scans.append(report['scan_id'])
         else:
             self.scans.append(report['resource'])
-        self.scans.append(report['resource'])
+        #self.scans.append(report['resource'])
         if self.status:
             self.stdWriteFlush("\r%-70s [ %sScanning%s ]\n" % (self.getPrintResource(report), colors.WARNING, colors.ENDC))
 
@@ -180,6 +180,7 @@ class VirusTotal(object):
             if self.status:
                 self.stdWriteFlush("\r%-70s [ %sFinished%s ]\n" % (self.getPrintResource(report), colors.OKBLUE, colors.ENDC))
             self.reports.append(report)            
+
         else:
             if self.status:
                 self.stdWriteFlush("\r%-70s [ %sError%s ]\n" % (self.getPrintResource(report), colors.FAIL, colors.ENDC))
