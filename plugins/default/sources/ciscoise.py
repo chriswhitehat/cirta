@@ -33,7 +33,6 @@ def adhocInput(event):
 
 
 def execute(event):
-
     print('Checking Splunk for events...'),
 
 
@@ -43,13 +42,13 @@ def execute(event):
 
     if not event.adHoc:
         if hasattr(event, 'mac_address'):
-            event._include = 'EndPointMACAddress="%s"' % (event.mac_address.replace(":", "-"))
+            event._include = '(%s OR %s AND %s)' % (event.mac_address, event.mac_address.replace(":", "-"), event.ip_address)
 
     cirtaDT = epochToDatetime(event.cirta_id.split('.')[0])
 
     timedelta = (datetime.date(event._DT) - datetime.date(cirtaDT)).days
 
-    earliest = timedelta - event._daysBefore
+    earliest = timedelta - event._daysBefore - 7
 
     latest = timedelta + 1 + event._daysAfter
 
@@ -61,10 +60,8 @@ def execute(event):
 
     log.debug('DT="%s" cirtaDT="%s" timedelta="%s" daysBefore="%s" daysAfter="%s" earliest="%s" latest="%s"' % (event._DT, cirtaDT, (event._DT - cirtaDT).days, event._daysBefore, event._daysAfter, earliest, latest))
 
-    query = '''search index=cisco_ise earliest_time="%sd@d" latest_time="%sd@d" %s | table _raw''' % (earliest,
-                                                                                                     latest,
+    query = '''search index=cisco_ise earliest_time="%sd@d" latest_time="%sd@d" %s | table _raw''' % (earliest,latest,
                                                                                                      event._include)
-
     log.debug('''msg="raw event query" query="%s"''' % query)
 
     results = sp.search(query)
@@ -72,7 +69,7 @@ def execute(event):
     print('Done')
 
     if not results:
-        log.warn("No Infoblox events exist in Splunk")
+        log.warn("No Cisco ISE events exist in Splunk")
         return
 
     raw = [x['_raw'] for x in results]
@@ -83,31 +80,26 @@ def execute(event):
 
     event._splunk.push(sourcetype=confVars.splunkSourcetype, eventList=raw)
 
-    print('\nChecking Splunk for Hostname and MAC...'),
+    print('\nChecking Splunk for Username...'),
 
     sys.stdout.flush()
 
-    query = '''search index=cisco_ise earliest_time="%sd@d" latest_time="%sd@d" %s | eval timedelta = abs(_time - %s) | sort 0 timedelta | where isnotnull(AD_User_Resolved_Identities) | rex field=AD_User_Resolved_Identities "(?<user>.+)@" | head 1 | rename NetworkDeviceGroups AS network_device_groups Location AS location EndPointMatchedProfile AS device_type AD_Domain as domain | table user network_device_groups location device_type domain''' % (earliest, latest, event._include, datetimeToEpoch(event._DT))
+    query = '''search index=cisco_ise earliest_time="%sd@d" latest_time="%sd@d" %s | eval timedelta = abs(_time - %s) | sort 0 timedelta  | where isnotnull(User_Name) or isnotnull(UserName) | eval username = rtrim(coalesce(User_Name, UserName), "\\\\") | rex field=NetworkDeviceGroups "#[^0-9]+?(?<sys_warehouse_num>[0-9]+)$" | stats earliest(sys_warehouse_num) AS sys_warehouse_num earliest(username) AS username earliest(ISEPolicySetName) AS ise_policy | lookup naming_warehouses sys_warehouse_num | fields username ise_policy sys_*''' % (earliest, latest, event._include, datetimeToEpoch(event._DT))
 
     log.debug('''msg="raw event query" query="%s"''' % query)
 
     results = [x for x in sp.search(query)]
 
     print('Done')
-    '''
-    return
-####################################### Stopped here
-    if results and 'src_mac' in results[0]:
-        event.setAttribute('mac_address', results[0]['src_mac'].lower())
+
+    if results and 'username' in results[0]:
+        for k, v in results[0].items():
+            if k == 'ise_policy':
+                if 'cwifi' in v:
+                    event.setAttribute('_byod', True)
+                else:
+                    event.setAttribute('_byod', False)
+            elif v:
+                event.setAttribute(k, v.lower())
     else:
-        log.warn("Warning: unable to pull Infoblox MAC from Splunk")
-
-    if results and 'hostname' in results[0]:
-        event.setAttribute('hostname', results[0]['hostname'].lower())
-    else:
-        log.warn("Warning: unable to pull Infoblox hostname from Splunk")
-
-
-    print('')
-
-'''
+        log.warn("Warning: unable to pull Username from Cisco ISE")

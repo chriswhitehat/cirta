@@ -61,6 +61,10 @@ class bcolors:
 
 colors = bcolors()
 
+
+def duplicates(lst, item):
+    return [i for i, x in enumerate(lst) if x == item]
+
 def printStatusMsg(msg, length=35, char='*', color=colors.HEADER):
     print("\n%s%s%s\n%s\n%s%s%s\n" % (color, char * length, colors.ENDC, msg, color, char * length, colors.ENDC))
     
@@ -410,3 +414,11 @@ def keepaliveWait(interval=10):
             break
         except(IOError):
             pass
+
+def convertTime(time):
+    return datetimeToEpoch(datetime.strptime(time, '%Y-%m-%dT%H:%M'))
+
+def UTCtoPST(time):
+    time_out =convertTime(time)
+    return str (epochToDatetime(time_out) - getUTCTimeDelta())
+

@@ -68,7 +68,6 @@ def execute(event):
     sys.stdout.flush()
 
     results = [x for x in sp.search(query)]
-    #print results
     #except(error):
     #    print('Warning: Splunk query failed.\n')
     #    raise error

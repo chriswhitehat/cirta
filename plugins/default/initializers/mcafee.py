@@ -19,8 +19,6 @@ from lib.splunkit import Splunk
 from lib.util import getUserInWithDef, printStatusMsg, getUserMultiChoice, epochToDatetime
 
 def execute(event):
-
-
     sp = Splunk(host=SPLUNK_SEARCH_HEAD, port=SPLUNK_SEARCH_HEAD_PORT, username=SPLUNK_SEARCH_HEAD_USERNAME, password=SPLUNK_SEARCH_HEAD_PASSWORD, scheme=SPLUNK_SEARCH_HEAD_SCHEME)
 
     if hasattr(event, 'mcAfeeID'):

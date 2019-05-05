@@ -43,7 +43,6 @@ class DailyLogSource(object):
         fileName = os.path.basename(logpath)
         
         server = initSSH(server, event=self.event)
-        
         tick = time()
         
         output = ""

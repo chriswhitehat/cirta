@@ -1,4 +1,4 @@
-#!/usr/bin/env python2
+#!/usr/bin/env python2.7
 
 '''
 Copyright (c) 2014 Chris White
@@ -24,7 +24,7 @@ from lib.configure import config
 from lib.event import Event
 from lib.util import printStatusMsg, colors, getUserIn, YES, getUserMultiChoice, keepaliveWait, proceed
 from argparse import Action
-
+import pdb
 event = None
 
 log = logging.getLogger('cirta')
@@ -45,7 +45,6 @@ log.addHandler(warningHandler)
 
 def checkCredentials(configs, force):
     successful = pydap.ldapConnect(configs['cirta']['settings']['LDAP_SERVER'], configs['cirta']['settings']['LDAP_USER_DN'], configs['cirta']['settings']['LDAP_USER_PW'], configs['cirta']['settings']['BASE_DN'])
-
     if not successful:
         log.warn("Credentials used for LDAP were not successful, further credential expiration checks are not possible.")
         return
@@ -139,6 +138,7 @@ def processArgs(configs):
                 
                 
     behavior = parser.add_argument_group('Misc', 'Control the misc CIRTA functions with these switches.')
+    behavior.add_argument('-x', '--suppress_output', action='store_true', help='Send all output to /tmp/')
     behavior.add_argument('--expirations', action='store_true', help='Force the credential expiration check output for all tracked users.')
     behavior.add_argument('--debug', action="store_true", help='set logging level to debug.')
     behavior.add_argument('--local_logging', action="store_true", help='log to local debug file')
@@ -576,7 +576,7 @@ def main():
     options = processArgs(configs)
       
     checkCredentials(configs, options.expirations)    
-  
+    
     initLogging(configs, options)
     
     playbook = Playbook(configs, options)

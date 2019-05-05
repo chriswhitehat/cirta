@@ -5,9 +5,6 @@
 /etc/users/
 cirta.debug
 *.save*
-resources/archer/
-resources/fireeye/.*
-/resources/netident/
-/resources/nsmapper/
+resources
 ghfacilities.py
 

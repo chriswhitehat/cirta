@@ -90,7 +90,7 @@ def execute(event):
     msg += 'Mitigation Action -- %s\n' % event.eradicationActions
     
     emailSections = splitAndStrip(confVars.emailSections)
-    
+
     for emailSection in emailSections:
         sectionAttrs = [attr for attr in event._fifoAttrs.values() if attr.value and attr.verify and attr.emailSection == emailSection]
         if sectionAttrs:

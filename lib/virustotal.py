@@ -13,11 +13,13 @@ COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER I
 ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 '''
 
+from __future__ import print_function
 import datetime, simplejson, urllib, urllib2, sys, formdata, itertools, logging
 from pprint import pprint
 from time import sleep
 from lib.util import colors
-
+import pdb
+import sys
 log = logging.getLogger(__name__)
 
 class RequestHungException(Exception):
@@ -42,6 +44,10 @@ class VirusTotal(object):
                               "https://www.virustotal.com/vtapi/v2/url/scan": 25,
                               "https://www.virustotal.com/vtapi/v2/ip-address/report": 1,
                               "https://www.virustotal.com/vtapi/v2/domain/report": 1}
+
+        self.exclude  = ['version','scan_id','sha1','resource','response','verbose_msg', 'sha256','response_code']
+        self.ignore = None
+        self.hashmsg = None
 
     def stdWriteFlush(self, msg):
         sys.stdout.write(msg)
@@ -227,6 +233,7 @@ class VirusTotal(object):
 
         msgMap = {"Scan request successfully queued, come back later for the report": self.queued,                   
                   "Scan finished, scan information embedded in this object": self.finished,
+                  "Scan finished, scan information embedded": self.finished,
                   "The requested resource is not among the finished, queued or pending scans": self.unknown,
                   "Invalid URL, the scan request was not queued": self.notValid,
                   "Domain found in dataset": self.finished,
@@ -244,7 +251,6 @@ class VirusTotal(object):
             self.group = group
             parameters[param] = delim.join(group)
             response = self.makeRequest(apiURL, parameters)
-            
             for report in response:
                 #pprint(report)
                 if 'verbose_msg' not in report:
@@ -256,10 +262,35 @@ class VirusTotal(object):
                 if msg in msgMap:
                     msgMap[msg](report)
                 else:
-                    print("Unhandled Response\n")
-                    pprint(report)
-     
-     
+                    #print("Unhandled Response\n")
+                    self.printHash(report)
+
+    def printHash(self,report,pad=-5):
+            if isinstance(report,dict):
+               pad += 5
+               print (' ')
+               for k in (report):
+                   if isinstance(report[k],dict):
+                      if not  report[k].values()[0]:
+                         continue 
+                   if k  in self.exclude: 
+                       self.ignore = True
+                       self.printHash(report[k],pad)
+                   else:
+                        print(pad * ' ', end='')
+                        print (k, end=' : ')
+                        if 'scans' in k:
+                            print ("\n")
+                        self.printHash(report[k],pad)
+            else:
+                if not self.ignore:
+                    print (report) #print the values
+                else:
+                    self.ignore = False
+                   
+                
+            #print ''.join('%s : %s\n' % (v,k) for v,k in report.iteritems() if 'scans' not in v)
+
     def pollScans(self, url, delim, maxIter):
         
         for i, junk in enumerate(itertools.count(0, 0)):
@@ -267,8 +298,15 @@ class VirusTotal(object):
                 return not self.scans
             self.sleepWithStatus()
             self.getReports(self.scans, url, 'resource', {'apikey': self.apiKey}, delim)
-    
-        
+    def retrieveHash(self,hashes):
+        self.setItems(hashes, '\n')
+        self.request = True
+        self.starTime = datetime.datetime.today()
+        self.items = [x.replace(',', '%2C') for x in self.items]
+        return self.getReports(self.unscanned, "https://www.virustotal.com/vtapi/v2/url/scan", 'url', {'apikey': self.apiKey}, '\n')
+
+
+      
     def retrieveURL(self, urls, maxIter=0, force=False):
         self.reset()
         self.setItems(urls, '\n')
@@ -417,7 +455,7 @@ class VirusTotal(object):
                             msg += '        %-64s (%s%d/%d%s)\n' % (hashsum['sha256'], colors.OKGREEN, hashsum['positives'], hashsum['total'], colors.ENDC)
             
             if len([x for x in report.keys() if x not in ['undetected_downloaded_samples', 'detected_downloaded_samples', 'detected_communicating_samples', 'detected_urls', 'resolutions', 'resource', 'response_code', 'verbose_msg']]) > 0:
-                print report.keys()
+                print (report.keys())
                  
         self.stdWriteFlush(msg)
     
@@ -481,7 +519,7 @@ class VirusTotal(object):
                             msg += '        %-40s (%s%d/%d%s)\n' % (hashsum['sha256'], colors.OKGREEN, hashsum['positives'], hashsum['total'], colors.ENDC)
             
             if len([x for x in report.keys() if x not in ['undetected_downloaded_samples', 'detected_downloaded_samples', 'detected_communicating_samples', 'detected_urls', 'resolutions', 'resource', 'response_code', 'verbose_msg']]) > 0:
-                print report.keys()
+                print (report.keys())
                  
         self.stdWriteFlush(msg)
     

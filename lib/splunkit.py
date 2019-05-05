@@ -158,17 +158,17 @@ class SplunkIt():
                 i = 0
                 for line in events:
                     if exclusionRegex and not inclusionRegex:
-                        if re.search(exclusionRegex, line):
+                        if re.search(exclusionRegex, line.encode('utf-8')):
                             continue
                     elif inclusionRegex:
-                        if not re.search(inclusionRegex, line):
+                        if not re.search(inclusionRegex, line.encode('utf-8')):
                             continue
                     i += 1
                     if line.endswith('\n'):
-                        sock.send(line)
+                        sock.send(line.encode('utf-8'))
                     else:
-                        sock.send(line + '\n')
+                        sock.send(line.encode('utf-8') + '\n')
                 log.debug('msg="pushed data to splunk" type="%s" event_count="%s"' % (sourcetype, i))
-        except(error):
+        except ValueError as error:
             log.error('''msg="There was an error trying to push data to the Splunk Host" splunkHosst="%s"''' % (self.host))
 

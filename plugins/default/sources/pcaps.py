@@ -17,6 +17,7 @@ ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEAL
 
 from __future__ import division
 import datetime, re, os
+from socket import gethostbyname
 from lib.util import getUserInWithDef, printStatusMsg, epochToDatetime, initSSH, stdWriteFlush, runBash, getUserMultiChoice
 from lib.sguilsql import getSguilSensorList
 
@@ -27,7 +28,6 @@ def precentComplete(msg, current, total):
 def setPCAPRange(event):
     if event._DT and hasattr(event, '_pcapStart') and hasattr(event, '_pcapEnd'):
         return
-    
     printStatusMsg("PCAP Date & Time Window")
     
     print('Configured Timezone: %s\n' % event._localTZ)
@@ -249,13 +249,25 @@ def execute(event):
 
     if not event.pcaps:
         event.setAttribute('pcaps', [])
-
-    for server in [x.strip() for x in confVars.so_sensors.split(',')]:
-        ssh = initSSH(server)
-        
-        dailies = getDailylogsInScope(event, ssh)
      
-        tcpdumpFiles(event, ssh, server, dailies)
+#    for server in [x.strip() for x in confVars.so_sensors.split(',')]:
+    sensorsChecked = []
+    
+    for server in [x.strip() for x in event._selectedSensors]:
+        try:
+            if gethostbyname(server) not in sensorsChecked:
+                sensorsChecked.append(gethostbyname(server))
+
+                log.info(msg="Connecting to sensor: %s" % server)
+                ssh = initSSH(server)
+        
+                dailies = getDailylogsInScope(event, ssh)
+     
+                tcpdumpFiles(event, ssh, server, dailies)
+            else:
+                log.info(msg="Already checked sensor, skipping")
+        except:
+            log.warn(msg="Warning: unable to connect to %s" % server)
         
     if confVars.mergeGroups:
         mergePCAPGroups(event)

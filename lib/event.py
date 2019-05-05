@@ -150,6 +150,8 @@ class Event(object):
             self._splunkEnabled = False
             self._splunk = SplunkIt(None, None, None, None, None, None, None, None, None, None)
         self._stackTraces = []
+        if options.suppress_output:
+            configs['cirta']['settings']['IR_PATH'] = '/tmp/'
         self._outDir = configs['cirta']['settings']['IR_PATH'] + self._DT.date().isoformat()
         self._outDirGroup = configs['cirta']['settings']['IR_PATH_GROUP']
         self._resourcesPath = os.path.join(self._cirtaHome, 'resources')
@@ -241,13 +243,13 @@ class Event(object):
             existingFiles = glob.glob(proposedPath + '.*')
             
             if not existingFiles:
-                return proposedPath
+                return proposedPath.strip()
             else:
                 try:
                     with open(existingFiles[0], 'a'):
                         log.warn('Warning: files with this base path exist. Proceeding will very likely overwrite a previous run.')
                         if getUserInWithDef('Proceed? (Yes/No)', 'No') in YES:
-                            return proposedPath
+                            return proposedPath.strip()
                         else:
                             print('')
                             return checkPath(filePath)
@@ -261,6 +263,9 @@ class Event(object):
         printStatusMsg("Output base file path")
         
         if defFileName:
+            defFileName = defFileName.strip()
+            for char in '''@$%^&*()`:;<>?,[]{}+=!~|/''':
+                defFileName = defFileName.replace(char, '_')
             baseFilePath = "%s/%s" % (self._outDir, defFileName)
         else:
             baseFilePath = "%s/%s_%s" % (self._outDir, self._analystUsername, datetime.datetime.today().strftime("%H%M"))

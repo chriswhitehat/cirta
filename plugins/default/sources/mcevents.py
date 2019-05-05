@@ -53,7 +53,6 @@ def execute(event):
     rawQuery = '''search index=mcafee src_ip="%s" OR dest_ip="%s" earliest_time="%sd@d" latest_time="%sd@d" \
                 | eval mcafee_id = "mc".substr(detected_timestamp, -5, 2).".".AutoID \
                 | sort 0 _time | table _raw''' % (event.ip_address, event.ip_address, earliest, latest)
-
     print('Checking Splunk Raw...'),
 
     sys.stdout.flush()
@@ -68,8 +67,9 @@ def execute(event):
 
 
     with open("%s.%s" % (event._baseFilePath, 'mc'), 'w') as orf:
+        
         for row in raw:
-            orf.write(row)
+            orf.write(row.encode('utf-8'))
 
     #event._splunk.push(sourcetype=confVars.splunkSourcetype, eventList=results)
 
@@ -81,7 +81,6 @@ def execute(event):
                                                                                                                                 event.ip_address, 
                                                                                                                                 earliest, 
                                                                                                                                 datetimeToEpoch(event._DT))
-
     print('\nChecking Splunk...'),
 
     sys.stdout.flush()

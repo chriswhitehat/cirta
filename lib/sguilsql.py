@@ -43,4 +43,4 @@ def getSguilSql(query, sguilserver=None, serverUser=None, serverPass=None,
         print(err)
     
 def getSguilSensorList(**kwargs):
-    return getSguilSql('SELECT hostname FROM sensor WHERE agent_type=\\"pcap\\";', **kwargs).split()[1:]
+    return getSguilSql('SELECT hostname FROM sensor WHERE agent_type=\\"pcap\\" AND active=\\"Y\\";', **kwargs).split()[1:]

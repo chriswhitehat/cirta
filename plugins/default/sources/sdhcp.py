@@ -16,6 +16,7 @@ ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEAL
 from datetime import datetime
 from lib.util import datetimeToEpoch, epochToDatetime
 from lib.splunkit import Splunk
+from lib.maclookup import mac_check
 import sys
 
 def playbookInput(event):
@@ -100,6 +101,7 @@ def execute(event):
 
     if results and 'src_mac' in results[0]:
         event.setAttribute('mac_address', results[0]['src_mac'].lower())
+        event.setAttribute('oui',mac_check(event.mac_address))
     else:
         log.warn("Warning: unable to pull Infoblox MAC from Splunk")
 
