@@ -40,8 +40,8 @@ class VirusTotal(object):
         self.maxConcurrent = {"https://www.virustotal.com/vtapi/v2/file/scan": 1,
                               "https://www.virustotal.com/vtapi/v2/file/report": 1,
                               "https://www.virustotal.com/vtapi/v2/file/rescan": 1,
-                              "https://www.virustotal.com/vtapi/v2/url/report": 25,
-                              "https://www.virustotal.com/vtapi/v2/url/scan": 25,
+                              "https://www.virustotal.com/vtapi/v2/url/report": 4,
+                              "https://www.virustotal.com/vtapi/v2/url/scan": 4,
                               "https://www.virustotal.com/vtapi/v2/ip-address/report": 1,
                               "https://www.virustotal.com/vtapi/v2/domain/report": 1}
 
@@ -135,7 +135,7 @@ class VirusTotal(object):
         log.debug('msg="Items after unique and stripping" items="%s"' % self.items)
         
     def removeScan(self, report):
-        self.scans = [x for x in self.scans if x != report['scan_id']]
+        self.scans = [x for x in self.scans if x != report['scan_id'] if x!= report['resource']]
 
 
     def getResource(self, report):
@@ -168,6 +168,7 @@ class VirusTotal(object):
             self.scans.append(report['scan_id'])
         else:
             self.scans.append(report['resource'])
+        #self.scans.append(report['resource'])
         if self.status:
             self.stdWriteFlush("\r%-70s [ %sScanning%s ]\n" % (self.getPrintResource(report), colors.WARNING, colors.ENDC))
 
@@ -185,6 +186,7 @@ class VirusTotal(object):
             if self.status:
                 self.stdWriteFlush("\r%-70s [ %sFinished%s ]\n" % (self.getPrintResource(report), colors.OKBLUE, colors.ENDC))
             self.reports.append(report)            
+
         else:
             if self.status:
                 self.stdWriteFlush("\r%-70s [ %sError%s ]\n" % (self.getPrintResource(report), colors.FAIL, colors.ENDC))
@@ -329,7 +331,7 @@ class VirusTotal(object):
             self.getReports(self.unscanned, "https://www.virustotal.com/vtapi/v2/url/scan", 'url', {'apikey': self.apiKey}, '\n')
             self.unscanned = []
         
-        self.completed = self.pollScans("https://www.virustotal.com/vtapi/v2/url/report", ', ', maxIter)
+        self.completed = self.pollScans("https://www.virustotal.com/vtapi/v2/url/report", '\n', maxIter)
         
         if self.completed:
             self.finishTime = datetime.datetime.today()

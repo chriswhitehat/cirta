@@ -58,7 +58,10 @@ def checkCredentials(configs, force):
     expirations_full = ''
 
 
-    tracked_users = [x.strip() for x in configs['cirta']['settings']['LDAP_TRACKED_USERS'].split(',')]
+    if configs['cirta']['settings']['LDAP_TRACKED_USERS']:
+        tracked_users = [x.strip() for x in configs['cirta']['settings']['LDAP_TRACKED_USERS'].split(',')]
+    else:
+        tracked_users = []
 
     if configs['cirta']['settings']['ANALYST_USERNAME']:
         tracked_users.append(configs['cirta']['settings']['ANALYST_USERNAME'])
@@ -79,6 +82,7 @@ def checkCredentials(configs, force):
 
             if days_to_expiration > 0 and days_to_expiration < int(configs['cirta']['settings']['DAYS_TO_WARN']):
                 expirations += "%s - account expires in %s days\n" % (credential, days_to_expiration)
+                log.warn('msg="Tracked account epiration" account="%s" expiration_days="%s"' % (credential, days_to_expiration))
 
         if ldap_results and 'pwdLastSet' in ldap_results[0][0][1] and ldap_results[0][0][1]['pwdLastSet'][0] != '9223372036854775807':
 
@@ -90,9 +94,9 @@ def checkCredentials(configs, force):
 
             if (int(configs['cirta']['settings']['MAX_PWD_AGE']) - password_age) < int(configs['cirta']['settings']['DAYS_TO_WARN']):
                 expirations += "%s - password expires in %s days\n" % (credential, (int(configs['cirta']['settings']['MAX_PWD_AGE']) - password_age))
-                
+                log.warn('msg="Tracked account password expiration" account="%s" expiration_days="%s"' % (credential, (int(configs['cirta']['settings']['MAX_PWD_AGE']) - password_age)))
 
-    if force or expirations:
+    if not configs['cirta']['settings']['QUIET'] and (force or expirations):
         printStatusMsg(' ' * 14 + 'Password Expirations', char=' ', length=50, color=colors.TITLEFAIL)
         if force:
             print(expirations_full)
