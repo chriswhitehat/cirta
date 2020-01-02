@@ -54,7 +54,7 @@ def execute(event):
 
     sc.login(event.scUser, event.scPassword)
 
-    ipInfo = sc.get('''ipInfo?ip=%s''' % event.ip_address)
+    ipInfo = sc.get('''deviceInfo?ip=%s''' % event.ip_address)
 
     
     if ipInfo.status_code == 200:

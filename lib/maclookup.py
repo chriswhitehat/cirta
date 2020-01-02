@@ -9,7 +9,7 @@ def mac_check(mac_address):
         valid_mac = re.findall(regex,mac_address)
         url = url + valid_mac[0]
         s = requests.Session()
-        r = s.get(url)
+        r = s.get(url, verify=False)
         return  r.text
 
     except ValueError as error:
