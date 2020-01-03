@@ -56,7 +56,7 @@ def ldapConnect(server, username, password, baseDistinguishedName):
 def ldapSearch(searchFilter='none', retrieveAttributes=['*'], auto_escape=True):
     global valid
     
-     if valid:
+    if valid:
         try:
             if searchFilter[0] != '(':
                 if auto_escape:
