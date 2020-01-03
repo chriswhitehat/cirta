@@ -23,7 +23,7 @@ def getSguilSql(query, sguilserver=None, serverUser=None, serverPass=None, serve
         if serverKey:
             sguilDBServer = initSSH(sguilserver, u=serverUser, k=serverKey)
         else:
-            sguilDBServer = initSSH(sguilserver, user=serverUser, pwd=serverPass, pubpriv=False)
+            sguilDBServer = initSSH(sguilserver, u=serverUser, p=serverPass, k='')
     else:
         sguilDBServer = initSSH(sguilserver)
     
@@ -40,7 +40,7 @@ def getSguilSql(query, sguilserver=None, serverUser=None, serverPass=None, serve
         print(err)
         
     if tableSplit:
-        return [x.split('\t') for x in stdout.read().splitlines()]
+        return [x.decode().split('\t') for x in stdout.read().splitlines()]
     else:
         return stdout.read()
 

@@ -167,7 +167,7 @@ class SplunkIt():
                     if not line.endswith('\n'):
                         line += '\n'
                         
-                    sock.send(line.encode())
+                    sock.send(line.encode('utf-8'))
                     
                 log.debug('msg="pushed data to splunk" type="%s" event_count="%s"' % (sourcetype, i))
         except ValueError as error:
