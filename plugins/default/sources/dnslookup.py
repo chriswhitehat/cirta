@@ -28,7 +28,7 @@ def execute(event):
     
     print('Executing dig...')
     
-    a_record = runBash('dig -x %s +short' % event.ip_address).read().strip().rstrip('.')
+    a_record = runBash('dig -x %s +short' % event.ip_address).strip().rstrip('.')
     
     if a_record:
         event.setAttribute('a_record', a_record)

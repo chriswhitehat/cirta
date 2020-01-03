@@ -14,7 +14,7 @@ ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEAL
 '''
 
 import datetime, os
-from lib.util import runBash, printStatusMsg
+from lib.util import printStatusMsg
 from lib.nsmap import nsmap
 
 

@@ -14,7 +14,7 @@ ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEAL
 '''
 
 import csv, socket, struct
-from lib.util import printStatusMsg, runBash
+from lib.util import printStatusMsg
 
 
 def addressInNetwork(ip,net):
@@ -45,7 +45,7 @@ def adhocInput(event):
     
 def execute(event):
 
-    reader = csv.reader(open("%s/%s" % (event._resourcesPath, "netident/networks.csv"), mode="rb"), delimiter=",")
+    reader = csv.reader(open("%s/%s" % (event._resourcesPath, "netident/networks.csv"), mode="r"), delimiter=",")
 
     reader.next()
     

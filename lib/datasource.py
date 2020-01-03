@@ -95,10 +95,10 @@ class DailyLogSource(object):
             startDate += oneDay
                     
             if collect:
-                output += stdout.read()
+                output += stdout.read().decode()
                 #output += 'tada\n'
             else:
-                out = stdout.read()
+                out = stdout.read().decode()
                 #out = 'tada'
                 if formatter:
                     outf = formatter(out)
@@ -214,14 +214,14 @@ class DailyLogSource(object):
             startDate += oneDay
                     
             
-            output += stdout.read()
+            output += stdout.read().decode()
 
 
         if not toStdOut:
             print('\n\nRetrieval time: %s\n' % (str(time() - tick)))
                 
         if retResults:
-            return output
+            return output.read().decode()
 
 
 
@@ -309,10 +309,10 @@ class ISOLogSource(object):
             startDate += oneDay
                     
             if collect:
-                output += stdout.read()
+                output += stdout.read().decode()
                 #output += 'tada\n'
             else:
-                out = stdout.read()
+                out = stdout.read().decode()
                 #out = 'tada'
                 if formatter:
                     outf = formatter(out)
@@ -428,7 +428,7 @@ class ISOLogSource(object):
             startDate += oneDay
                     
             
-            output += stdout.read()
+            output += stdout.read().decode()
 
         if not toStdOut:
             print('\n\nRetrieval time: %s\n' % (str(time() - tick)))

@@ -72,7 +72,7 @@ def execute(event):
             event._splunk.push(sourcetype="brospect_" + dest.split('.')[-2], filename=dest, exclusionRegex='^#')
 
         if os.path.exists(tempPath + '/extract_files'):
-            files = open(filesPath).read().splitlines()
+            files = open(filesPath, 'r').read().splitlines()
             print('')
             extractBase = os.sep.join([outDir, 'bin',  '.'.join(os.path.basename(pcap).split('.')[:-1])])
     

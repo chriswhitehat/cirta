@@ -105,7 +105,7 @@ class FireEye():
         
         curlCmd = '''curl -qgsSkH "Content-Type: multipart/form-data" --no-progress-bar --header "X-FEApi-Token: %s" -F "filename=@%s" -F "options=%s" %s''' % (self.token, filepath, simplejson.dumps(submissionSettings).replace('"', '\\"'), submitURL)
 
-        response = runBash(curlCmd).read()
+        response = runBash(curlCmd)
         
         if response:
             print(response)

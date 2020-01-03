@@ -153,7 +153,7 @@ def tcpdumpFiles(event, ssh, server, dailies):
             #stdWriteFlush('.')
             absTempPath = "%s%06d" % (tmpPath, i)
             stdin, stdout, stderr = ssh.exec_command('/usr/sbin/tcpdump -s 1515 -nn -r %s -w %s %s' % (pcapFile, absTempPath, event._pcapBPF))
-            error = stderr.read()
+            error = stderr.read().decode()
             stdout.read()
             
             if 'tcpdump: syntax error' in error:
