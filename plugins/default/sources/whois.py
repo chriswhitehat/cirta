@@ -69,7 +69,7 @@ def execute(event):
     out = []
 
     for domain, ip in event._whoisIPs.items():
-        origin = [x for x in runBash('dig +short %s.origin.asn.cymru.com TXT' % ('.'.join(reversed(ip.split('.'))))).read().splitlines() if re.match('"[0-9]', x)]
+        origin = [x.decode() for x in runBash('dig +short %s.origin.asn.cymru.com TXT' % ('.'.join(reversed(ip.split('.'))))).read().splitlines() if re.match('"[0-9]', x.decode())]
         if origin:
             as_number, bgp_prefix, cc, registry, allocated = [x.strip().strip('"') for x in origin[0].split(' | ')]
 
