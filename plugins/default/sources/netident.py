@@ -28,7 +28,7 @@ def addressInNetwork(ip,net):
 
 def calcDottedNetmask(mask):
     bits = 0
-    for i in xrange(32-mask,32):
+    for i in range(32-mask,32):
         bits |= (1 << i)
     return "%d.%d.%d.%d" % ((bits & 0xff000000) >> 24, (bits & 0xff0000) >> 16, (bits & 0xff00) >> 8 , (bits & 0xff))
 

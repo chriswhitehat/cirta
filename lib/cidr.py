@@ -26,7 +26,7 @@ class cidr():
 
     def int2ipstr(self, s):
         s = hex(s)[2:]
-        return '.'.join(('%s' % int(x,16) for x in (s[i:2+i] for i in xrange(0,8,2))))
+        return '.'.join(('%s' % int(x,16) for x in (s[i:2+i] for i in range(0,8,2))))
 
     def ipstr2int(self, addr):
         return

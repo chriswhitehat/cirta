@@ -27,7 +27,7 @@ class RequestHungException(Exception):
         pass
     
 def chunker(seq, size):
-    return (seq[pos:pos + size] for pos in xrange(0, len(seq), size))
+    return (seq[pos:pos + size] for pos in range(0, len(seq), size))
 
 class VirusTotal(object):
     def __init__(self, apiKey, status=True, oldestHours=12):
