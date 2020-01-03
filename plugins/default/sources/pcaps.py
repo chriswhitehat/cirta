@@ -1,5 +1,5 @@
 '''
-Copyright (c) 2014 Chris White
+Copyright (c) 2020 Chris White
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), 
 to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, 
@@ -79,13 +79,13 @@ def getDailylogsInScope(event, ssh):
     
     def dayInScope(day):
         date = datetime.datetime.strptime(day.split(os.path.sep)[-1], '%Y-%m-%d').date()
-        #print event._pcapStart.date() <= date and date <= event._pcapEnd.date() 
+        #print(event._pcapStart.date() <= date and date <= event._pcapEnd.date() )
         return event._pcapStart.date() <= date and date <= event._pcapEnd.date()
     
     def logInScope(path):
         epoch = epochToDatetime(path.split('.')[-1]) - event._utcOffsetTimeDelta
-        #print epoch
-        #print event._pcapStart <= epoch and epoch <= event._pcapEnd 
+        #print(epoch)
+        #print(event._pcapStart <= epoch and epoch <= event._pcapEnd )
         return event._pcapStart <= epoch and epoch <= event._pcapEnd 
     
     def addToScope(path):
@@ -138,7 +138,7 @@ def tcpdumpFiles(event, ssh, server, dailies):
     
     #event.pcaps = []
 
-    for sensor, logs in dailies.iteritems():
+    for sensor, logs in dailies.items():
         tmpPath = '/tmp/%s_%s' % (os.path.basename(event._baseFilePath), sensor)
         
         i = 0
@@ -271,7 +271,7 @@ def execute(event):
         
     if confVars.mergeGroups:
         mergePCAPGroups(event)
-        #print dailies
+        #print(dailies)
     
     
     

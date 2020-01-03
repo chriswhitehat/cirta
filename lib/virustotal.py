@@ -1,5 +1,5 @@
 '''
-Copyright (c) 2014 Chris White
+Copyright (c) 2020 Chris White
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), 
 to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, 
@@ -14,7 +14,8 @@ ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEAL
 '''
 
 from __future__ import print_function
-import datetime, simplejson, urllib, urllib2, sys, formdata, itertools, logging
+import datetime, simplejson, urllib, sys, itertools, logging
+import urllib.request as urllib2
 from pprint import pprint
 from time import sleep
 from lib.util import colors
@@ -82,7 +83,7 @@ class VirusTotal(object):
             json = response
         except(urllib2.URLError):
             print(colors.FAIL + "Proxy Auth: Refresh your browser!" + colors.ENDC)
-            raw_input('Hit Enter to continue')
+            input('Hit Enter to continue')
             if count > 5:
                 raise RequestHungException
             print('')
@@ -101,24 +102,24 @@ class VirusTotal(object):
             raise RequestHungException
         
         
-    def uploadFiles(self, items, fileInfo):
+    # def uploadFiles(self, items, fileInfo):
         
-        for hashsum in items:
-            if hashsum in fileInfo:
-                realFileName, localFilePath = self.fileInfo[hashsum]
+    #     for hashsum in items:
+    #         if hashsum in fileInfo:
+    #             realFileName, localFilePath = self.fileInfo[hashsum]
         
-                fields = {'apikey': self.apiKey}
-                files = {'file': {'filename': realFileName, 'content': open(localFilePath, 'rb').read()}}
-                data, headers = formdata.encode_multipart(fields, files)
-                req = urllib2.Request('https://www.virustotal.com/vtapi/v2/file/scan', data=data, headers=headers)
-                response = urllib2.urlopen(req).read()
+    #             fields = {'apikey': self.apiKey}
+    #             files = {'file': {'filename': realFileName, 'content': open(localFilePath, 'rb').read()}}
+    #             data, headers = formdata.encode_multipart(fields, files)
+    #             req = urllib2.Request('https://www.virustotal.com/vtapi/v2/file/scan', data=data, headers=headers)
+    #             response = urllib2.urlopen(req).read()
         
-                if response:
-                    report = simplejson.loads(response)
-                    self.queued(report)
-            else:
-                if self.status:
-                    self.stdWriteFlush("\r%-70s [ %sNo File Info%s ]\n" % (hashsum, colors.FAIL, colors.ENDC))
+    #             if response:
+    #                 report = simplejson.loads(response)
+    #                 self.queued(report)
+    #         else:
+    #             if self.status:
+    #                 self.stdWriteFlush("\r%-70s [ %sNo File Info%s ]\n" % (hashsum, colors.FAIL, colors.ENDC))
                     
 
     def setItems(self, items, delim=None):
@@ -185,7 +186,7 @@ class VirusTotal(object):
         elif 'resolutions' in report:
             if self.status:
                 self.stdWriteFlush("\r%-70s [ %sFinished%s ]\n" % (self.getPrintResource(report), colors.OKBLUE, colors.ENDC))
-            self.reports.append(report)            
+            self.reports.append(report)
 
         else:
             if self.status:
@@ -233,7 +234,7 @@ class VirusTotal(object):
 
     def getReports(self, items, apiURL, param, parameters, delim=''):
 
-        msgMap = {"Scan request successfully queued, come back later for the report": self.queued,                   
+        msgMap = {"Scan request successfully queued, come back later for the report": self.queued,
                   "Scan finished, scan information embedded in this object": self.finished,
                   "Scan finished, scan information embedded": self.finished,
                   "The requested resource is not among the finished, queued or pending scans": self.unknown,
@@ -270,7 +271,7 @@ class VirusTotal(object):
     def printHash(self,report,pad=-5):
             if isinstance(report,dict):
                pad += 5
-               print (' ')
+               print(' ')
                for k in (report):
                    if isinstance(report[k],dict):
                       if not  report[k].values()[0]:
@@ -280,18 +281,18 @@ class VirusTotal(object):
                        self.printHash(report[k],pad)
                    else:
                         print(pad * ' ', end='')
-                        print (k, end=' : ')
+                        print(k, end=' : ')
                         if 'scans' in k:
-                            print ("\n")
+                            print("\n")
                         self.printHash(report[k],pad)
             else:
                 if not self.ignore:
-                    print (report) #print the values
+                    print(report) #printthe values
                 else:
                     self.ignore = False
                    
                 
-            #print ''.join('%s : %s\n' % (v,k) for v,k in report.iteritems() if 'scans' not in v)
+            #print''.join('%s : %s\n' % (v,k) for v,k in report.items() if 'scans' not in v)
 
     def pollScans(self, url, delim, maxIter):
         
@@ -457,7 +458,7 @@ class VirusTotal(object):
                             msg += '        %-64s (%s%d/%d%s)\n' % (hashsum['sha256'], colors.OKGREEN, hashsum['positives'], hashsum['total'], colors.ENDC)
             
             if len([x for x in report.keys() if x not in ['undetected_downloaded_samples', 'detected_downloaded_samples', 'detected_communicating_samples', 'detected_urls', 'resolutions', 'resource', 'response_code', 'verbose_msg']]) > 0:
-                print (report.keys())
+                print(report.keys())
                  
         self.stdWriteFlush(msg)
     
@@ -521,7 +522,7 @@ class VirusTotal(object):
                             msg += '        %-40s (%s%d/%d%s)\n' % (hashsum['sha256'], colors.OKGREEN, hashsum['positives'], hashsum['total'], colors.ENDC)
             
             if len([x for x in report.keys() if x not in ['undetected_downloaded_samples', 'detected_downloaded_samples', 'detected_communicating_samples', 'detected_urls', 'resolutions', 'resource', 'response_code', 'verbose_msg']]) > 0:
-                print (report.keys())
+                print(report.keys())
                  
         self.stdWriteFlush(msg)
     
@@ -544,7 +545,7 @@ class VirusTotal(object):
                 else:
                     msg += '\n\n%-70s [ %s%s/%s%s ]\n\nHits:\n' % (self.getPrintResource(report), colors.FAIL, report['positives'], report['total'], colors.ENDC)
                 
-                for vendor, result in [(vendor,result) for vendor, result in sorted(report['scans'].iteritems()) if result['detected']]:
+                for vendor, result in [(vendor,result) for vendor, result in sorted(report['scans'].items()) if result['detected']]:
                     msg += '\t%-24s %s%s%s\n' % (vendor + ':', colors.FAIL, result['result'], colors.ENDC)
                 
         else:

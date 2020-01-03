@@ -1,5 +1,5 @@
 '''
-Copyright (c) 2017 Chris White
+Copyright (c) 2020 Chris White
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"),
 to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense,
@@ -63,25 +63,47 @@ def execute(event):
 
     domainMax = max([len(x) for x in event._whoisIPs.keys()]) + 1
 
-    print('Domain/IP'.ljust(domainMax) + '| AS      | IP               | BGP Prefix          | CC | Registry | Allocated  | AS Name')
+    print('Domain/IP'.ljust(domainMax) + '| AS      | IP               | BGP Prefix          | CC | Registry | Allocated  | AS Allocated | AS Name')
     print('-' * (89 + domainMax))
 
     out = []
 
     for domain, ip in event._whoisIPs.items():
-        whois = [x for x in runBash('whois -h whois.cymru.com -v %s' % ip).read().splitlines() if re.match('[0-9]', x)]
-        if whois:
-            print('%s| %s' % (domain.ljust(domainMax), whois[0]))
-            as_number, ip, bgp_prefix, cc, registry, allocated, as_name = [x.strip() for x in whois[0].split('|')]
-            out.append('%s domain="%s" ip="%s" bgp_prefix="%s" cc="%s" registry="%s" allocated="%s" as_number="%s" as_name="%s"' % (datetime.datetime.today(),
-                                                                                                                domain, 
-                                                                                                                ip,
-                                                                                                                bgp_prefix, 
-                                                                                                                cc, 
-                                                                                                                registry, 
-                                                                                                                allocated, 
-                                                                                                                as_number, 
-                                                                                                                as_name))
+        origin = [x for x in runBash('dig +short %s.origin.asn.cymru.com TXT' % ('.'.join(reversed(ip.split('.'))))).read().splitlines() if re.match('"[0-9]', x)]
+        if origin:
+            as_number, bgp_prefix, cc, registry, allocated = [x.strip().strip('"') for x in origin[0].split(' | ')]
+
+            asn = [x for x in runBash('dig +short AS%s.asn.cymru.com TXT' % as_number).read().splitlines() if re.match('"[0-9]', x)]
+
+            if asn:
+                as_number, cc, registry, as_allocated, as_name = [x.strip().strip('"') for x in asn[0].split(' | ')]
+
+            print('%s | %s | %s | %s | %s | %s | %s | %s | %s' % (domain.ljust(domainMax), as_number, ip, bgp_prefix, cc, registry, allocated, as_allocated, as_name))
+            out.append('%s domain="%s" ip="%s" bgp_prefix="%s" cc="%s" registry="%s" allocated="%s" as_allocated="%s" as_number="%s" as_name="%s"' % (datetime.datetime.today(),
+                                                                                                                 domain,
+                                                                                                                 ip,
+                                                                                                                 bgp_prefix,
+                                                                                                                 cc,
+                                                                                                                 registry,
+                                                                                                                 allocated,
+                                                                                                                 as_allocated,
+                                                                                                                 as_number,
+                                                                                                                 as_name))
+
+    # for domain, ip in event._whoisIPs.items():
+    #     whois = [x for x in runBash('whois -h whois.cymru.com -v %s' % ip).read().splitlines() if re.match('[0-9]', x)]
+    #     if whois:
+    #         print('%s| %s' % (domain.ljust(domainMax), whois[0]))
+    #         as_number, ip, bgp_prefix, cc, registry, allocated, as_name = [x.strip() for x in whois[0].split('|')]
+    #         out.append('%s domain="%s" ip="%s" bgp_prefix="%s" cc="%s" registry="%s" allocated="%s" as_number="%s" as_name="%s"' % (datetime.datetime.today(),
+    #                                                                                                             domain, 
+    #                                                                                                             ip,
+    #                                                                                                             bgp_prefix, 
+    #                                                                                                             cc, 
+    #                                                                                                             registry, 
+    #                                                                                                             allocated, 
+    #                                                                                                             as_number, 
+    #                                                                                                             as_name))
 
 
     if out and not event.adHoc:    

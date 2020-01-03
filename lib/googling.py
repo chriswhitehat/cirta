@@ -20,12 +20,12 @@ class Google():
 	    self.credential_dir = os.path.join(GOOGLE_API_DIR, '.credentials')
 	    if not os.path.exists(self.credential_dir):
 	        os.makedirs(self.credential_dir)
-	        print ("Path doesn't not exist")
+	        print("Path doesn't not exist")
 	    self.credential_path = os.path.join(self.credential_dir,'admin-directory_v1-python-quickstart.json')
 	    self.creds = self.getCreds()
 
         except Exception as error:
-		print (error)
+		print(error)
 
     def getCreds(self):
         try:
@@ -54,7 +54,7 @@ class Google():
             else:
                 print('Users:')
                 for user in users:
-                    print('{0} ({1})'.format(user['primaryEmail'].encode('utf-8').strip(),user['name']['fullName'].encode('utf-8').strip()))
+                    print('{0} ({1})'.format(user['primaryEmail'].decode().strip(),user['name']['fullName'].decode().strip()))
 
         except ValueError as error:
 	    return error
@@ -73,10 +73,10 @@ class Google():
                 for i in range(len(x.keys())):
                     if type(x.values()[i]) is list:
                        if x.keys()[i] in lookup:
-                          print (''.join(['%s  ' % (values) for values in x.values()[i][0].values()]))
+                          print(''.join(['%s  ' % (values) for values in x.values()[i][0].values()]))
                     else:
                        if x.keys()[i] in lookup:
-                          print ('%s : %s' % (x.keys()[i],x.values()[i]))
+                          print('%s : %s' % (x.keys()[i],x.values()[i]))
 
 	except ValueError as error:
 	    return error

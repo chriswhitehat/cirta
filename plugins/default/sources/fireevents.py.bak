@@ -1,5 +1,5 @@
 '''
-Copyright (c) 2015 Chris White
+Copyright (c) 2020 Chris White
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), 
 to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, 
@@ -31,12 +31,12 @@ def execute(event):
     
     rawQuery = '''search index=fireeye | spath alert.src.ip | spath alert.dst.ip | search alert.src.ip="%s" OR alert.dst.ip="%s" | sort 0 _time | table _raw''' % (event.ip_address, event.ip_address)
 
-    print('Checking Splunk Raw...'),
+    print('Checking Splunk Raw...', end='')
     
     sys.stdout.flush()
 
     results = sp.search(rawQuery)
-    #print results
+    #print(results)
     #except(error):
     #    print('Warning: Splunk query failed.\n')
     #    raise error
@@ -53,14 +53,14 @@ def execute(event):
     
     query = '''search index=fireeye | spath alert.id | spath alert.product | spath alert.sensor | spath alert.occurred | spath alert.src.ip | spath alert.src.mac | spath alert.dst.ip | spath alert.dst.mac | spath alert.name | spath output="malware.names" "alert.explanation.malware-detected.malware{}.name" | search alert.src.ip="%s" OR alert.dst.ip="%s" | sort 0 _time | table alert.occurred alert.product alert.sensor alert.id alert.src.ip alert.src.mac alert.dst.ip alert.dst.mac alert.name malware.names''' % (event.ip_address, event.ip_address)
 
-    print('\nChecking Splunk...'),
+    print('\nChecking Splunk...', end='')
     #try:
-    #print query
+    #print(query)
         
     sys.stdout.flush()
 
     results = [x for x in sp.search(query)]
-    #print results
+    #print(results)
     #except(error):
     #    print('Warning: Splunk query failed.\n')
     #    raise error

@@ -1,5 +1,5 @@
 '''
-Copyright (c) 2015 Chris White
+Copyright (c) 2020 Chris White
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), 
 to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, 
@@ -116,7 +116,7 @@ def execute(event):
         excluded = ['pluginText', 'description', 'solution', 'synopsis']
         for vuln in sorted(vulns, key=lambda v: int(v['severity']), reverse=True):
             
-            splunkVulnerabilities.append(event.sc_lastScan.isoformat() + ' ' + ' '.join([k + '="' + v + '"' for k,v in sorted(vuln.iteritems()) if k not in excluded]))
+            splunkVulnerabilities.append(event.sc_lastScan.isoformat() + ' ' + ' '.join([k + '="' + v + '"' for k,v in sorted(vuln.items()) if k not in excluded]))
                     
             if int(vuln['severity']) >= event._riskFactors[event.scSeverity.lower()]:
                 vulnerabilities.append('%(ip)-16s%(riskFactor)-13s%(port)-6s%(pluginID)-12s%(pluginName)s' % vuln)

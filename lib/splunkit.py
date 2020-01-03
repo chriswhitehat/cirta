@@ -1,5 +1,5 @@
 '''
-Copyright (c) 2014 Chris White
+Copyright (c) 2020 Chris White
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), 
 to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, 
@@ -17,7 +17,7 @@ import splunklib.client as client
 import splunklib.results as results
 import logging, os, socket, random, re
 from splunklib.client import AuthenticationError
-from util import proceed
+from lib.util import proceed
 
 log = logging.getLogger(__name__)
 
@@ -55,7 +55,7 @@ class Splunk():
             
         #searchResults = results.ResultsReader(job.results())
         searchResults = results.ResultsReader(job)
-        #print [x for x in searchResults]        
+        #print([x for x in searchResults])
         if resultFunc:
             for result in searchResults:
                 resultFunc(result)
@@ -158,16 +158,16 @@ class SplunkIt():
                 i = 0
                 for line in events:
                     if exclusionRegex and not inclusionRegex:
-                        if re.search(exclusionRegex, line.encode('utf-8')):
+                        if re.search(exclusionRegex, line.decode()):
                             continue
                     elif inclusionRegex:
-                        if not re.search(inclusionRegex, line.encode('utf-8')):
+                        if not re.search(inclusionRegex, line.decode()):
                             continue
                     i += 1
                     if line.endswith('\n'):
-                        sock.send(line.encode('utf-8'))
+                        sock.send(line.decode())
                     else:
-                        sock.send(line.encode('utf-8') + '\n')
+                        sock.send(line.decode() + '\n')
                 log.debug('msg="pushed data to splunk" type="%s" event_count="%s"' % (sourcetype, i))
         except ValueError as error:
             log.error('''msg="There was an error trying to push data to the Splunk Host" splunkHosst="%s"''' % (self.host))

@@ -1,7 +1,7 @@
-#!/usr/bin/env python2.7
+#!/usr/bin/env python3
 
 '''
-Copyright (c) 2014 Chris White
+Copyright (c) 2020 Chris White
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), 
 to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, 
@@ -72,9 +72,9 @@ def checkCredentials(configs, force):
 
         ldap_results = pydap.ldapSearch('sAMAccountName=' + credential)
 
-        if ldap_results and 'accountExpires' in ldap_results[0][0][1] and ldap_results[0][0][1]['accountExpires'][0] != '9223372036854775807':
+        if ldap_results and 'accountExpires' in ldap_results[0] and ldap_results[0].accountExpires.values[0] != '9223372036854775807':
 
-            ad_expiration = convert_ad_timestamp(ldap_results[0][0][1]['accountExpires'][0]).date()
+            ad_expiration = convert_ad_timestamp(ldap_results[0].accountExpires.values[0]).date()
 
             days_to_expiration = (ad_expiration - datetime.now().date()).days
 
@@ -84,9 +84,9 @@ def checkCredentials(configs, force):
                 expirations += "%s - account expires in %s days\n" % (credential, days_to_expiration)
                 log.warn('msg="Tracked account epiration" account="%s" expiration_days="%s"' % (credential, days_to_expiration))
 
-        if ldap_results and 'pwdLastSet' in ldap_results[0][0][1] and ldap_results[0][0][1]['pwdLastSet'][0] != '9223372036854775807':
+        if ldap_results and 'pwdLastSet' in ldap_results[0] and ldap_results[0].pwdLastSet.values[0] != '9223372036854775807':
 
-            pwdLastSet = convert_ad_timestamp(ldap_results[0][0][1]['pwdLastSet'][0]).date()
+            pwdLastSet = convert_ad_timestamp(ldap_results[0].pwdLastSet.values[0]).date()
 
             password_age = (datetime.now().date() - pwdLastSet).days
 
@@ -112,7 +112,7 @@ def processArgs(configs):
     
     playbook = parser.add_argument_group('Playbooks', 'The following playbooks are available.')
     
-    for book, settings in configs['playbooks'].iteritems():
+    for book, settings in configs['playbooks'].items():
         if settings['ENABLED']:
             log.debug('msg="adding playbook to argument parser" playbook="%s"' % book)
             playbook.add_argument('--' + book, action='store_true', help=settings['HELP_DESCRIPTION'])
@@ -128,13 +128,13 @@ def processArgs(configs):
        
     adhoc = parser.add_argument_group('Ad-Hoc Sources', 'Choose which source(s) to run Ad-Hoc.')
 
-    for source, settings in sorted(configs['sources'].iteritems()):
+    for source, settings in sorted(configs['sources'].items()):
         if settings['AD_HOC'] and settings['ENABLED']:
             log.debug('msg="adding adhoc source to argument parser" source="%s"' % source)
             if not settings['HELP_SHORT_FLAG']:
                 adhoc.add_argument('--' + source, action='store_true', help=settings['HELP_DESCRIPTION'])
                 
-    for source, settings in sorted(configs['sources'].iteritems()):
+    for source, settings in sorted(configs['sources'].items()):
         if settings['AD_HOC'] and settings['ENABLED']:
             log.debug('msg="adding adhoc source to argument parser" source="%s"' % source)
             if settings['HELP_SHORT_FLAG']:
@@ -302,7 +302,7 @@ class Playbook(object):
         
         confVars = ConfVars()
         
-        for opt, val in conf.iteritems():
+        for opt, val in conf.items():
             if opt not in self.configs['attributes'] or self.configs['attributes'][opt]['logged']:
                 if hasattr(obj, '__name__'):
                     log.debug('msg="applying config to object" object="%s" option="%s" value="%s"' % (obj.__name__, opt, val))
@@ -406,7 +406,7 @@ def printModeHeader(playbook, event):
         log.info('msg="cirta execution started" mode="playbook"')
         event.adHoc = False
         title = '%s CIRTA Playbook' % playbook.FORMAL_NAME
-        padding = ' ' * ((50 - len(title)) / 2)
+        padding = ' ' * ((50 - len(title)) // 2)
         printStatusMsg(padding + title, char=' ', length=50, color=colors.TITLE)
         
 

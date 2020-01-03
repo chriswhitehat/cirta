@@ -1,5 +1,5 @@
 '''
-Copyright (c) 2014 Chris White
+Copyright (c) 2020 Chris White
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), 
 to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, 
@@ -12,7 +12,7 @@ WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEM
 COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, 
 ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 '''
-import ConfigParser, os, logging, getpass, sys
+import configparser, os, logging, getpass, sys
 from copy import deepcopy
 from collections import OrderedDict
 
@@ -43,7 +43,7 @@ def config(confBasePath):
                     confs[filename] = []
                 confs[filename].append(os.path.join(base, filename))
             
-    for confName, confPaths in confs.iteritems():
+    for confName, confPaths in confs.items():
         conf = mergeConfigs(confPaths)
         configs[confName.split('.conf')[0]] = conf
 
@@ -63,7 +63,8 @@ def mergeConfigs(confPaths):
     config = OrderedDict()
     
     def normalize(val):
-        val = val.decode('string_escape')
+        # Decode not needed in python3
+        # val = val.decode('string_escape')
         # Replace None, True, False, etc values to Python appropriate objects
         # Compensate for end user inconsistency with .lower
         if val.lower() in replacements:
@@ -91,7 +92,7 @@ def mergeConfigs(confPaths):
         insertions = OrderedDict()
         positions = OrderedDict()
 
-        for key, val in [(key,val) for key, val in config.iteritems() if 'INSERT_AFTER' in val if val['INSERT_AFTER'] in config]:
+        for key, val in [(key,val) for key, val in config.items() if 'INSERT_AFTER' in val if val['INSERT_AFTER'] in config]:
             insertions[key] = val
             position = val['INSERT_AFTER']
             if position in positions:
@@ -102,7 +103,7 @@ def mergeConfigs(confPaths):
         if insertions:
             newConfig = OrderedDict()
             
-            for key, val in config.iteritems():
+            for key, val in config.items():
                 if key not in insertions:
                     newConfig[key] = config[key]
                     if key in positions:
@@ -117,7 +118,7 @@ def mergeConfigs(confPaths):
     
     for confPath in confPaths:
         log.debug('msg="parsing configurations" conf="%s"' % (confPath))
-        parsers.append(ConfigParser.ConfigParser())
+        parsers.append(configparser.ConfigParser())
         parsers[-1].optionxform = str
         parsers[-1].read(confPath)
     
@@ -128,11 +129,11 @@ def mergeConfigs(confPaths):
     reOrderConfig(config)
     
     '''
-    defaultParser = ConfigParser.ConfigParser()
+    defaultParser = configparser.ConfigParser()
     defaultParser.optionxform = str
     defaultParser.read(os.path.join(confBasePath, 'default', conf))
     
-    localParser = ConfigParser.ConfigParser()
+    localParser = configparser.ConfigParser()
     #Fix for case sensitive options
     localParser.optionxform = str
     localParser.read(os.path.join(confBasePath, 'local', conf))
@@ -150,7 +151,7 @@ def mergeConfigs(confPaths):
 def processPlaybooks(configs):
     commaEnabled = ['INITIALIZERS', 'SOURCES', 'DISABLE_SOURCES', 'ACTIONS', 'REQUIRES', 'PROVIDES']
     for playbook in configs['playbooks'].values():
-        for opt, val in playbook.iteritems():
+        for opt, val in playbook.items():
             try:
                 if val and val.lower() == 'all':
                     try:
@@ -168,7 +169,7 @@ def processPlaybooks(configs):
                 
                 
 def processSources(configs):
-    for name, source in configs['sources'].iteritems():
+    for name, source in configs['sources'].items():
         source['REQUIRES'] = [x.strip() for x in source['REQUIRES'].split(',') if x if x.strip()]
         source['PROVIDES'] = [x.strip() for x in source['PROVIDES'].split(',') if x if x.strip()]
         
@@ -186,7 +187,7 @@ def processSources(configs):
             exit()
             
 def processAttributes(configs):
-    for name, attr in configs['attributes'].iteritems():
+    for name, attr in configs['attributes'].items():
         if name in configs['CONTRACTS']:
             if not hasattr(attr, 'immutable'):
                 attr.immutable = True

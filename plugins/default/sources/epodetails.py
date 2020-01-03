@@ -1,5 +1,5 @@
 '''
-Copyright (c) 2014 Chris White
+Copyright (c) 2020 Chris White
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), 
 to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, 
@@ -13,7 +13,8 @@ COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER I
 ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 '''
 
-import urllib2, re
+import re
+import urllib.request as urllib2
 from lib.util import printStatusMsg
 from getpass import getpass
 
@@ -106,7 +107,7 @@ def execute(event):
         printStatusMsg('Informational Details', length=20, char='-', color=colors.HEADER2)
 
         for info in ['Description', 'System Description', 'Is Laptop', 'Tags', 'Time Zone', 'Last Communication']:
-            print "%s -- %s" % (info, resDict[info])
+            print("%s -- %s" % (info, resDict[info]))
     else:
-        print 'nada'
+        print('nada')
 

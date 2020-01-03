@@ -1,5 +1,5 @@
 '''
-Copyright (c) 2014 Chris White
+Copyright (c) 2020 Chris White
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), 
 to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, 
@@ -68,7 +68,7 @@ def execute(event):
                                                                                      vt.getPrintResource(report), 
                                                                                      report['positives'], 
                                                                                      report['total'], 
-                                                                                     ' '.join(['%s="%s"' % (vendor.replace(' ', '_'),result['result']) for vendor, result in sorted(report['scans'].iteritems()) if result['detected']])))
+                                                                                     ' '.join(['%s="%s"' % (vendor.replace(' ', '_'),result['result']) for vendor, result in sorted(report['scans'].items()) if result['detected']])))
             
             event._splunk.push(sourcetype=splunkSourcetype, eventList=splunkReports)
 

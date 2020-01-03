@@ -1,5 +1,5 @@
 '''
-Copyright (c) 2015 Chris White
+Copyright (c) 2020 Chris White
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), 
 to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, 
@@ -27,7 +27,7 @@ def execute(event):
         
     query = '''search index=cirta level=INFO msg="quarantine hosts" | head 1 | table _time hosts'''
 
-    print('\nChecking Splunk...'),
+    print('\nChecking Splunk...', end='')
         
     results = sp.search(query)
 
@@ -61,11 +61,11 @@ end
 end''' % (event.unquarantine_hosts)
 
     printStatusMsg('Final FW Change', 22, '>', color=colors.HEADER2)
-    print groupMods
+    print(groupMods)
     printStatusMsg('Final FW Change', 22, '<', color=colors.HEADER2)
     
     
     if getUserIn('Commit final changes to quarantine state? (y/n)') in YES:
-        #print '''msg="quarantine hosts" hosts="%s"''' % (','.join(event.quarantine_hosts.strip('"').split('" "')))
+        #print('''msg="quarantine hosts" hosts="%s"''' % (','.join(event.quarantine_hosts.strip('"').split('" "'))))
         log.info('''msg="quarantine hosts" hosts="%s"''' % (','.join(event.unquarantine_hosts.strip('"').split('" "'))))
         

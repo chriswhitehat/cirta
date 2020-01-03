@@ -1,5 +1,5 @@
 '''
-Copyright (c) 2014 Chris White
+Copyright (c) 2020 Chris White
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), 
 to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, 
@@ -156,14 +156,14 @@ class MessageParser(object):
             uid = re.search('\ss=[a-z0-9]+', line)
             if uid:
                 s = uid.group().split('=')[-1]
-                #print line
+                #print(line)
                 if s in self.transactions:
                     self.transactions[s].addData(line)
                 elif 'cmd=connect' in line:
                     self.transactions[s] = Transaction(line, s)
                     
                 
-            for s, transaction in self.transactions.iteritems():
+            for s, transaction in self.transactions.items():
                 if transaction.completed:
                     if profile:
                         self.profile(transaction, attrs)
@@ -178,10 +178,10 @@ class MessageParser(object):
                         
             if stuck > 10000:
                 # Pop the first element from transactionss when we're stuck
-                self.transactions.pop(self.transactions.iterkeys().next())
+                self.transactions.pop(self.transactions.keys().next())
                 stuck = 0
                     
-        for s, transaction in self.transactions.iteritems():
+        for s, transaction in self.transactions.items():
             if transaction.completed:
                 if profile:
                     self.profile(transaction, attrs)
@@ -269,7 +269,7 @@ class Transaction(object):
         
         out = ''
         
-        for m, msg in self.messages.iteritems():
+        for m, msg in self.messages.items():
             out += '%s %s %-10s %-4s %-19s %-19s\t%-19s\t%s\n' % (getattr(self, 'dt', '-'), 
                                                                  getattr(self, 'uid', '-'), 
                                                                  getattr(msg, 'action', '-'),
@@ -285,7 +285,7 @@ class Transaction(object):
         
         out = ''
         
-        for m, msg in self.messages.iteritems():
+        for m, msg in self.messages.items():
             mout = []
             for select in selected:
                 if hasattr(msg, select):
@@ -312,11 +312,9 @@ class Transaction(object):
             
             print('%s %-8s %-11s %s\t%s\t%s' % (self.dt, self.kv['action'][-1], self.kv['phishscore'][-1], self.kv['score'][-1], self.kv['suspectscore'][-1], ';'.join(self.env_from), ';'.join(self.env_rcpts), self.subject))
             
-            #raw_input()
             return '%s %-8s %-11s %s\t%s\t%s\n' % (self.dt, self.kv['action'][-1], ','.join((self.kv['phishscore'][-1], self.kv['score'][-1], self.kv['suspectscore'][-1])), ';'.join(self.env_from), ';'.join(self.env_rcpts), self.subject)
         except:
             #traceback.print_exc()
-            #raw_input()
             return ''
         
             

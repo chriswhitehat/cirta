@@ -1,5 +1,5 @@
 '''
-Copyright (c) 2014 Chris White
+Copyright (c) 2020 Chris White
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), 
 to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, 
@@ -34,7 +34,7 @@ def adhocInput(event):
 
 def execute(event):
     
-    print('Checking Splunk for events...'),
+    print('Checking Splunk for events...', end='')
 
     sys.stdout.flush()
 
@@ -82,7 +82,7 @@ def execute(event):
     event._splunk.push(sourcetype=confVars.splunkSourcetype, eventList=raw)
 
 
-    print('\nChecking Splunk for user...'),
+    print('\nChecking Splunk for user...', end='')
     
     sys.stdout.flush()
 
@@ -99,7 +99,7 @@ def execute(event):
     else:
         log.warn("Warning: unable to pull Fortinet user from Splunk")
 
-    print('\nChecking Splunk for surrounding events...'),
+    print('\nChecking Splunk for surrounding events...', end='')
 
     sys.stdout.flush()
 

@@ -1,5 +1,5 @@
 '''
-Copyright (c) 2015 Chris White
+Copyright (c) 2020 Chris White
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"),
 to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense,
@@ -31,7 +31,7 @@ def execute(event):
 
     query = '''search index=mcafee earliest=-30d@d | eval mcafee_id = "mc".substr(detected_timestamp, -5, 2).".".AutoID | search mcafee_id="%s" | head 1 | table detected_timestamp src_ip src_mac dest_ip dest_mac signature category''' % (event.mcAfeeID)
 
-    print('\nChecking Splunk...'),
+    print('\nChecking Splunk...', end='')
 
     sys.stdout.flush()
 

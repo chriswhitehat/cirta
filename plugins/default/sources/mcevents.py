@@ -1,6 +1,6 @@
 
 '''
-Copyright (c) 2016 Chris White
+Copyright (c) 2020 Chris White
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"),
 to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense,
@@ -53,7 +53,7 @@ def execute(event):
     rawQuery = '''search index=mcafee src_ip="%s" OR dest_ip="%s" earliest_time="%sd@d" latest_time="%sd@d" \
                 | eval mcafee_id = "mc".substr(detected_timestamp, -5, 2).".".AutoID \
                 | sort 0 _time | table _raw''' % (event.ip_address, event.ip_address, earliest, latest)
-    print('Checking Splunk Raw...'),
+    print('Checking Splunk Raw...', end='')
 
     sys.stdout.flush()
 
@@ -69,7 +69,7 @@ def execute(event):
     with open("%s.%s" % (event._baseFilePath, 'mc'), 'w') as orf:
         
         for row in raw:
-            orf.write(row.encode('utf-8'))
+            orf.write(row.decode())
 
     #event._splunk.push(sourcetype=confVars.splunkSourcetype, eventList=results)
 
@@ -81,7 +81,7 @@ def execute(event):
                                                                                                                                 event.ip_address, 
                                                                                                                                 earliest, 
                                                                                                                                 datetimeToEpoch(event._DT))
-    print('\nChecking Splunk...'),
+    print('\nChecking Splunk...', end='')
 
     sys.stdout.flush()
 

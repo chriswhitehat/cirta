@@ -1,5 +1,5 @@
 '''
-Copyright (c) 2014 Chris White
+Copyright (c) 2020 Chris White
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), 
 to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, 
@@ -16,11 +16,14 @@ ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEAL
 from lib.util import initSSH
 
 
-def getSguilSql(query, sguilserver=None, serverUser=None, serverPass=None, 
+def getSguilSql(query, sguilserver=None, serverUser=None, serverPass=None, serverKey=None,
                 dbuser='root', dbpass=None, sguildb='securityonion_db', tableSplit=False):
     
     if serverUser:
-        sguilDBServer = initSSH(sguilserver, user=serverUser, pwd=serverPass, pubpriv=False)
+        if serverKey:
+            sguilDBServer = initSSH(sguilserver, u=serverUser, k=serverKey)
+        else:
+            sguilDBServer = initSSH(sguilserver, user=serverUser, pwd=serverPass, pubpriv=False)
     else:
         sguilDBServer = initSSH(sguilserver)
     
@@ -31,6 +34,10 @@ def getSguilSql(query, sguilserver=None, serverUser=None, serverPass=None,
         stdin, stdout, stderr = sguilDBServer.exec_command('''mysql -u %s --password=%s -D %s -e "%s"''' % (dbuser, dbpass, sguildb, query))
     else:
         stdin, stdout, stderr = sguilDBServer.exec_command('''mysql -u %s -D %s -e "%s"''' % (dbuser, sguildb, query))
+    
+    err = stderr.read()
+    if err:
+        print(err)
         
     if tableSplit:
         return [x.split('\t') for x in stdout.read().splitlines()]
@@ -38,9 +45,6 @@ def getSguilSql(query, sguilserver=None, serverUser=None, serverPass=None,
         return stdout.read()
 
     
-    err = stderr.read()
-    if err:
-        print(err)
     
 def getSguilSensorList(**kwargs):
     return getSguilSql('SELECT hostname FROM sensor WHERE agent_type=\\"pcap\\" AND active=\\"Y\\";', **kwargs).split()[1:]

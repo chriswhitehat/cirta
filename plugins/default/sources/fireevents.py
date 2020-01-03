@@ -1,5 +1,5 @@
 '''
-Copyright (c) 2015 Chris White
+Copyright (c) 2020 Chris White
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"),
 to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense,
@@ -33,12 +33,12 @@ def execute(event):
     | sort 0 _time 
     | table _raw ''' % (event.ip_address, event.ip_address)
 
-    print('Checking Splunk Raw...'),
+    print('Checking Splunk Raw...', end='')
 
     sys.stdout.flush()
 
     results = sp.search(rawQuery)
-    #print results
+    #print(results)
     #except(error):
     #    print('Warning: Splunk query failed.\n')
     #    raise error
@@ -61,9 +61,9 @@ def execute(event):
     | eval signature = if(isnull(alert_signature), alert_category, alert_category." ".alert_signature) 
     | table alert_occurred device alert_id alert_src_ip alert_src_mac alert_dst_ip alert_dst_mac signature''' % (event.ip_address, event.ip_address)
 
-    print('\nChecking Splunk...'),
+    print('\nChecking Splunk...', end='')
     #try:
-    #print query
+    #print(query)
 
     sys.stdout.flush()
 

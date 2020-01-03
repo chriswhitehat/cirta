@@ -1,5 +1,5 @@
 '''
-Copyright (c) 2014 Chris White
+Copyright (c) 2020 Chris White
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), 
 to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, 
@@ -15,7 +15,7 @@ ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEAL
 
 from __future__ import division
 import os, sys, warnings, pytz, readline, re, math, time, logging, signal
-from itertools import izip_longest
+from itertools import zip_longest
 from subprocess import Popen, PIPE
 from getpass import getpass, getuser
 from datetime import datetime
@@ -72,7 +72,7 @@ def getStatusMsg(msg, length=35, char='*', color=colors.HEADER):
     return "\n%s%s%s\n%s\n%s%s%s\n\n" % (color, char * length, colors.ENDC, msg, color, char * length, colors.ENDC)
     
 def getUserIn(msg, allowBlank=False):
-    var = raw_input(colors.BOLDON + msg + ": " + colors.BOLDOFF)
+    var = input(colors.BOLDON + msg + ": " + colors.BOLDOFF)
     if var == "" and not allowBlank:
         print("No input given, try again.")
         return getUserIn(msg)
@@ -84,7 +84,7 @@ def getUserIn(msg, allowBlank=False):
 
 def getUserInWithDef(msg, default, allowBlank=False):
     readline.set_startup_hook(lambda: readline.insert_text(default))
-    var = raw_input(colors.BOLDON + "%s: " % (msg) + colors.BOLDOFF)
+    var = input(colors.BOLDON + "%s: " % (msg) + colors.BOLDOFF)
     readline.set_startup_hook(lambda: readline.insert_text(''))
     if var == "" and not allowBlank:
         print("No input given, try again.")
@@ -194,7 +194,7 @@ def initSSH(server, u=None, p=None, k=None, event=None, prompt=True):
         
     priv = None   
     if k:
-        priv = k
+        priv = paramiko.RSAKey.from_private_key_file(k)
     elif module and hasattr(module, 'sshPrivKey'):
         if module.sshPrivKey and os.path.exists(module.sshPrivKey):
             priv = paramiko.RSAKey.from_private_key_file(module.sshPrivKey)
@@ -328,12 +328,11 @@ def getUTCTimeDelta():
     return datetime.now(pytz.timezone('US/Pacific')).utcoffset()
 
 def touch(fname, times = None):
-    with file(fname, 'a'):
+    with open(fname, 'a'):
         os.utime(fname, times)
         
 def getUserMultiChoice(msg, prompt, choices, numCols=2, default=[], allowMultiple=True, other=False, allChoice=False, noneChoice=False):
     printStatusMsg(msg, 22, '-', color=colors.HEADER2)
-    #print(msg + '\n')
     
     if noneChoice and 'none' not in choices and 'None' not in choices:
         tempChoices = ['None']
@@ -352,9 +351,9 @@ def getUserMultiChoice(msg, prompt, choices, numCols=2, default=[], allowMultipl
     lenChoices = len(choices)
     defs = [str(choices.index(x) + 1) for x in default]
     choicesWithNum = zip(range(1, lenChoices+1), choices)
-    choiceDict = dict(choicesWithNum)
-    cols = list(izip_longest(*(iter(choicesWithNum),) * int(math.ceil(lenChoices/numCols))))
-    rows = izip_longest(*cols)
+    choiceDict = dict(zip(range(1, lenChoices+1), choices))
+    cols = list(zip_longest(*(iter(choicesWithNum),) * int(math.ceil(lenChoices/numCols))))
+    rows = zip_longest(*cols)
     for row in rows:
         r = ''
         for col in row:

@@ -1,6 +1,6 @@
 
 '''
-Copyright (c) 2014 Chris White
+Copyright (c) 2020 Chris White
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), 
 to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, 
@@ -41,11 +41,11 @@ class Attribute(object):
         
             
     def update(self, **kwargs):
-        for arg, val in kwargs.iteritems():
+        for arg, val in kwargs.items():
             if 'value' not in arg:
                 setattr(self, arg, val)
         
-        properties = ' '.join(['%s="%s"' % (prop, val) for prop, val in kwargs.iteritems()])
+        properties = ' '.join(['%s="%s"' % (prop, val) for prop, val in kwargs.items()])
         if not self.logged and 'value' in properties:
             del(properties['value'])
         log.debug('msg="update attribute properties" name="%s" %s' % (self.name, properties))
@@ -315,8 +315,8 @@ class Event(object):
         attrs = ""
         for attr in self._fifoAttrs.values():
             if attr.logged:
-                if isinstance(attr.value, basestring):
-                    attrs += '%s="%s", ' % (attr.name, attr.value.replace('"', '\\"').decode('utf8', 'ignore'))
+                if isinstance(attr.value, str):
+                    attrs += '%s="%s", ' % (attr.name, attr.value.replace('"', '\\"'))
                 else:
                     attrs += '%s="%s", ' % (attr.name, attr.value)
         return attrs.rstrip(', ')

@@ -18,10 +18,10 @@ def execute(event):
 | eval dt=date." ".time
 | table jobid dstip srcip md5 risk url dt''' %(event.jobid)
 
-    print('\nChecking Splunk...'),
+    print('\nChecking Splunk...', end='')
     sys.stdout.flush()
     results = sp.search(query)
-    print ('Done')
+    print('Done')
 
     try:
         result = results.next()
@@ -35,7 +35,7 @@ def execute(event):
         event.setEventDateTime(datetime.datetime.strptime(eventDT,'%Y-%m-%d %H:%M:%S'))
         event.setEventDateTime(event._DT + event._utcOffsetTimeDelta)
 
-        print ''.join('%s : %s\n' % (k,v) for k,v in result.items())
+        print(''.join('%s : %s\n' % (k,v) for k,v in result.items()))
 
         event.setAttribute('Event_Date/Time', event._DT.strftime('%Y-%m-%d %H:%M:%S'))
     else:

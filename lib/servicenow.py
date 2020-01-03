@@ -16,7 +16,7 @@ class Carts(object):
         self.session.headers = {"Content-Type": "application/json", "Accept": "application/json"}
 
     def getSession(self):
-        print ("{}".format(self.session))
+        print("{}".format(self.session))
 
 class CartsTicket(Carts):
     def __init__(self,hostname,username,password,payload):
@@ -28,14 +28,14 @@ class CartsTicket(Carts):
         return '{}'.format(self.urlAction)
 
     def getSession(self):
-        print (self.session)
+        print(self.session)
 
     def getVars(self):
-        print (self.baseUrl)
-        print (self.payload)
+        print(self.baseUrl)
+        print(self.payload)
 
     def getHeaders(self):
-        print (self.session.headers)
+        print(self.session.headers)
 
     def createTicket(self):
         try:   
@@ -43,7 +43,7 @@ class CartsTicket(Carts):
             results = json.loads(response.text)
             return results
         except ValueError as error:
-            print ("Unable to create CARTS ticket : {}".format(error))
+            print("Unable to create CARTS ticket : {}".format(error))
             log.error("Unble to create CARTS ticket: {}".format(error))
 
 class CartsCMDB(Carts):

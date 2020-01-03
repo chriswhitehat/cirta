@@ -1,5 +1,5 @@
 '''
-Copyright (c) 2015 Chris White
+Copyright (c) 2020 Chris White
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"),
 to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense,
@@ -34,7 +34,7 @@ def adhocInput(event):
 
 def execute(event):
 
-    print('Checking Splunk for events...'),
+    print('Checking Splunk for events...', end='')
 
 
     sys.stdout.flush()
@@ -83,7 +83,7 @@ def execute(event):
 
     event._splunk.push(sourcetype=confVars.splunkSourcetype, eventList=raw)
 
-    print('\nChecking Splunk for Hostname and MAC...'),
+    print('\nChecking Splunk for Hostname and MAC...', end='')
 
     sys.stdout.flush()
 

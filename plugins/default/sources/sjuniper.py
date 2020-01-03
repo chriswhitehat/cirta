@@ -1,5 +1,5 @@
 '''
-Copyright (c) 2015 Chris White
+Copyright (c) 2020 Chris White
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), 
 to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, 
@@ -34,7 +34,7 @@ def adhocInput(event):
 
 def execute(event):
     
-    print('\nChecking Splunk for events...'),
+    print('\nChecking Splunk for events...', end='')
 
     sys.stdout.flush()
 
@@ -84,7 +84,7 @@ def execute(event):
 
     sid = sp.getLatestSID()
 
-    print('\nChecking Splunk for user...'),
+    print('\nChecking Splunk for user...', end='')
     
     query = '''search index=juniper earliest_time="%sd@d" latest_time="%sd@d" %s | eval timedelta = abs(_time - %s) | sort 0 timedelta | where isnotnull(user) | head 1 | table user''' % (earliest, latest, event._include, datetimeToEpoch(event._DT))
                 
@@ -97,7 +97,7 @@ def execute(event):
     else:
         log.warn("Warning: unable to pull Fortinet user from Splunk")
 
-    print('\nChecking Splunk for surrounding events...'),
+    print('\nChecking Splunk for surrounding events...', end='')
 
     query = '''search index=fortinet earliest_time="%sd@d" latest_time="%sd@d" %s | eval timedelta = abs(_time - %s) | sort 0 timedelta | search type=utm | head 500 | eval uri = coalesce(hostname, dstip) + url | dedup uri | head 50 | sort 0 -_time | table _time srcip user status uri''' % (earliest, latest, event._include, datetimeToEpoch(event._DT))
     query = '''search index=fortinet type=utm earliest_time="%sd@d" latest_time="%sd@d" %s | regex url!="\.jpg$|\.png$|\.gif$|\.crl$" | eval timedelta = _time - %s | eval position = if(timedelta < 0, "before", "after") | eval abstimedelta = abs(timedelta) | sort 0 abstimedelta | dedup hostname url | streamstats count AS row by position | where row <= 25 | eval uri = coalesce(hostname, dstip) + url | sort 0 _time | table _time srcip user status uri''' % (earliest, latest, event._include, datetimeToEpoch(event._DT))

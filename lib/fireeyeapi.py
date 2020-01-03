@@ -1,5 +1,5 @@
 '''
-Copyright (c) 2015 Chris White
+Copyright (c) 2020 Chris White
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), 
 to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, 
@@ -32,7 +32,7 @@ class FireEye():
         
         
     def authenticate(self, username, password):
-        print('Authenticating...'),
+        print('Authenticating...', end='')
         authURL = self.baseURL + 'auth/login?'
         
         r = requests.post(authURL, auth=HTTPBasicAuth(username, password), verify=False)
@@ -82,7 +82,7 @@ class FireEye():
                 
                 
     def configInfo(self):
-        print('Pulling configurations...'),
+        print('Pulling configurations...', end='')
         configURL = self.baseURL + 'config'
         
         if self.authenticated:
@@ -108,7 +108,7 @@ class FireEye():
         response = runBash(curlCmd).read()
         
         if response:
-            print response
+            print(response)
             return simplejson.loads(response)[0]['ID']
 
 
@@ -128,7 +128,7 @@ class FireEye():
                               ("application", application), ("priority", priority),
                               ("force", force), ("prefetch", prefetch),
                               ("timeout", timeout)])
-        print submissionSettings
+        print(submissionSettings)
       
         for filepath in fileList:
             filename = os.path.basename(filepath)

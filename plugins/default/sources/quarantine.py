@@ -1,5 +1,5 @@
 '''
-Copyright (c) 2015 Chris White
+Copyright (c) 2020 Chris White
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), 
 to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, 
@@ -31,7 +31,7 @@ def execute(event):
             
         query = '''search index=cirta cirta_id=%s level=STATE | head 1 | fields - _raw | table *''' % (event.cirtaID)
     
-        print('\nChecking Splunk...'),
+        print('\nChecking Splunk...', end='')
             
         results = sp.search(query)
     
@@ -84,7 +84,7 @@ end''' % (event.fw_object_name, msg.replace('"', '').rstrip(), event.ip_address,
     
         printStatusMsg('Firewall Object(s)', 22, '>', color=colors.HEADER2)
         
-        print firewallObject
+        print(firewallObject)
 
         printStatusMsg('Firewall Object(s)', 22, '<', color=colors.HEADER2)
         
@@ -96,7 +96,7 @@ end''' % (event.fw_object_name, msg.replace('"', '').rstrip(), event.ip_address,
         
         query = '''search index=cirta level=INFO msg="quarantine hosts" | head 1 | table _time hosts'''
     
-        print('\nChecking Splunk...'),
+        print('\nChecking Splunk...', end='')
             
         results = sp.search(query)
     
@@ -178,11 +178,11 @@ end''' % (event.quarantine_hosts)
         final += '\n' + groupModifications
         
     printStatusMsg('Final FW Change', 22, '>', color=colors.HEADER2)
-    print final
+    print(final)
     printStatusMsg('Final FW Change', 22, '<', color=colors.HEADER2)
     
     if getUserIn('Commit final changes to quarantine state? (y/n)') in YES:
-        #print '''msg="quarantine hosts" hosts="%s"''' % (','.join(event.quarantine_hosts.strip('"').split('" "')))
+        #print('''msg="quarantine hosts" hosts="%s"''' % (','.join(event.quarantine_hosts.strip('"').split('" "'))))
         log.info('''msg="quarantine hosts" hosts="%s"''' % (','.join(event.quarantine_hosts.strip('"').split('" "'))))
         if not reset:
             with open(event._baseFilePath + '.fgblock', 'w') as outFile:

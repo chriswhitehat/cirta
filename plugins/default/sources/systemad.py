@@ -1,5 +1,5 @@
 '''
-Copyright (c) 2014 Chris White
+Copyright (c) 2020 Chris White
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), 
 to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, 
@@ -77,6 +77,6 @@ def execute(event):
     if 'ad_ou' in attrs:
         attrs['ad_ou'] = ','.join(attrs['ad_ou'].split(',')[1:])
 
-    for attr, value in attrs.iteritems():
+    for attr, value in attrs.items():
             event.setAttribute(attr, value)
     

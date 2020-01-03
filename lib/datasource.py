@@ -1,5 +1,5 @@
 '''
-Copyright (c) 2013 Chris White
+Copyright (c) 2020 Chris White
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
 
@@ -74,14 +74,14 @@ class DailyLogSource(object):
                     print("Checking %s..." % (fileName))
                 fullcmd = 'cat %s | %s' % (logpath, cmd)
                 stdin, stdout, stderr = server.exec_command(fullcmd)
-                #print stderr.readlines()
+                #print(stderr.readlines())
             elif daysBack > int(compressionDelay):
                 if compressionExtension == 'bz2':
                     if not toStdOut or collect:
                         print("Checking %s.%s.%s..." % (fileName, str(daysBack), compressionExtension))
                     fullcmd = 'bzcat %s.%s.%s | %s' % (logpath, str(daysBack), compressionExtension, cmd)
                     stdin, stdout, stderr = server.exec_command(fullcmd)
-                    #print stderr.readlines()
+                    #print(stderr.readlines())
                 else:
                     '''To add additional compression functionality to the daily pull please elif this block and add your logic here.'''
                     logging.warning('The daily logs you are attempting to pull are in a compression format, %s, that is currently not implemented' % (compressionExtension))
@@ -90,7 +90,7 @@ class DailyLogSource(object):
                     print("Checking %s.%s..." % (fileName, str(daysBack)))
                 fullcmd = 'cat %s.%s | %s' % (logpath, str(daysBack), cmd)
                 stdin, stdout, stderr = server.exec_command(fullcmd)
-                #print stderr.readlines()
+                #print(stderr.readlines())
                 
             startDate += oneDay
                     
@@ -193,14 +193,14 @@ class DailyLogSource(object):
                 print("Checking %s..." % (fileName))
                 fullcmd = 'cat %s | %s' % (logpath, cmd)
                 stdin, stdout, stderr = server.exec_command(fullcmd)
-                #print stderr.readlines()
+                #print(stderr.readlines())
             elif daysBack > compressionDelay:
                 if compressionExtension == 'bz2':
                     #if not toStdOut or collect:
                     print("Checking %s.%s.%s..." % (fileName, str(daysBack), compressionExtension))
                     fullcmd = 'bzcat %s.%s.%s | %s' % (logpath, str(daysBack), compressionExtension, cmd)
                     stdin, stdout, stderr = server.exec_command(fullcmd)
-                    #print stderr.readlines()
+                    #print(stderr.readlines())
                 else:
                     '''To add additional compression functionality to the daily pull please elif this block and add your logic here.'''
                     logging.warning('The daily logs you are attempting to pull are in a compression format, %s, that is currently not implemented' % (compressionExtension))
@@ -209,7 +209,7 @@ class DailyLogSource(object):
                 print("Checking %s.%s..." % (fileName, str(daysBack)))
                 fullcmd = 'cat %s.%s | %s' % (logpath, str(daysBack), cmd)
                 stdin, stdout, stderr = server.exec_command(fullcmd)
-                #print stderr.readlines()
+                #print(stderr.readlines())
                 
             startDate += oneDay
                     
@@ -294,7 +294,7 @@ class ISOLogSource(object):
                     fullcmd = '%s %s.%s.log.%s | %s' % (catCmd, logpath, currentDate, compressionExtension, cmd)
                     logging.debug('msg="Complete pull command" fullcmd="%s"' % fullcmd)
                     stdin, stdout, stderr = server.exec_command(fullcmd)
-                    #print stderr.readlines()
+                    #print(stderr.readlines())
                 else:
                     '''To add additional compression functionality to the daily pull please elif this block and add your logic here.'''
                     logging.warning('The daily logs you are attempting to pull are in a compression format, %s, that is currently not implemented' % (compressionExtension))
@@ -304,7 +304,7 @@ class ISOLogSource(object):
                 fullcmd = 'cat %s.%s.log | %s' % (logpath, currentDate, cmd)
                 logging.debug('msg="Complete pull command" fullcmd="%s"' % fullcmd)
                 stdin, stdout, stderr = server.exec_command(fullcmd)
-                #print stderr.readlines()
+                #print(stderr.readlines())
                 
             startDate += oneDay
                     
@@ -407,14 +407,14 @@ class ISOLogSource(object):
                 print("Checking %s..." % (fileName))
                 fullcmd = 'cat %s | %s' % (logpath, cmd)
                 stdin, stdout, stderr = server.exec_command(fullcmd)
-                #print stderr.readlines()
+                #print(stderr.readlines())
             elif daysBack > compressionDelay:
                 if compressionExtension == 'bz2':
                     #if not toStdOut or collect:
                     print("Checking %s.%s.%s..." % (fileName, str(daysBack), compressionExtension))
                     fullcmd = 'bzcat %s.%s.%s | %s' % (logpath, str(daysBack), compressionExtension, cmd)
                     stdin, stdout, stderr = server.exec_command(fullcmd)
-                    #print stderr.readlines()
+                    #print(stderr.readlines())
                 else:
                     '''To add additional compression functionality to the daily pull please elif this block and add your logic here.'''
                     logging.warning('The daily logs you are attempting to pull are in a compression format, %s, that is currently not implemented' % (compressionExtension))
@@ -423,7 +423,7 @@ class ISOLogSource(object):
                 print("Checking %s.%s..." % (fileName, str(daysBack)))
                 fullcmd = 'cat %s.%s | %s' % (logpath, str(daysBack), cmd)
                 stdin, stdout, stderr = server.exec_command(fullcmd)
-                #print stderr.readlines()
+                #print(stderr.readlines())
                 
             startDate += oneDay
                     

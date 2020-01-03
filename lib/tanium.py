@@ -51,12 +51,12 @@ class Tanium():
         
         kwargs["package"] = u'Live Response - Windows{$1=%s,$2=SCP}' % (selected[0]) 
        
-        print 'Deploying Live Response with Collector Config: %s and Transfer Config: SCP to machine:' % (selected[0])
+        print('Deploying Live Response with Collector Config: %s and Transfer Config: SCP to machine:' % (selected[0]))
 
         response = handler.deploy_action(**kwargs)
        
         if response['action_results']:
-           print "Live Response is finished gather information on %s" % (endpoint)
+           print("Live Response is finished gather information on %s" % (endpoint))
 
           
 
@@ -95,5 +95,5 @@ class Tanium():
                     for y,p in enumerate(x):
                         print_results.append(p['column.values'][0])
                         if y == (num-1):
-                            print ''.join('%-40s' % result for  result in print_results)
+                            print(''.join('%-40s' % result for  result in print_results))
                             

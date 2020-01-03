@@ -5,7 +5,7 @@ def execute(event):
     
     inputHeader = "%s" % FORMAL_NAME
     answer = getUserIn("Reset Google Creds (yes/no)")
-    print answer
+    print(answer)
 
 
 
