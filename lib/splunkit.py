@@ -140,7 +140,7 @@ class SplunkIt():
 
         if filename:
             if os.path.exists(filename):
-                events = open(filename, 'rb')
+                events = open(filename, 'r')
             else:
                 events = []
         elif eventList:
@@ -158,10 +158,10 @@ class SplunkIt():
                 i = 0
                 for line in events:
                     if exclusionRegex and not inclusionRegex:
-                        if re.search(exclusionRegex, line.decode('utf-8')):
+                        if re.search(exclusionRegex, line):
                             continue
                     elif inclusionRegex:
-                        if not re.search(inclusionRegex, line.decode('utf-8')):
+                        if not re.search(inclusionRegex, line):
                             continue
                     i += 1
                     if not line.endswith('\n'):

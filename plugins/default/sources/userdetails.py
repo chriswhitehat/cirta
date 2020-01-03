@@ -87,20 +87,20 @@ def execute(event):
     
     entr = pydap.ldapSearch('sAMAccountName=' + event._analystUsername)
     if entr:
-        entry = entr[0][0][1]
-        event.setAttribute('_analystName', '%s, %s' % (entry['sn'], entry['givenName']))
+        entry = entr[0]
+        event.setAttribute('_analystName', '%s, %s' % (entry.sn.values[0], entry.givenName.values[0]))
 
     entr = pydap.ldapSearch('sAMAccountName=' + event.username)
     if not entr:
         return 
     
-    entry = entr[0][0][1]
+    entry = entr[0]
     
     if 'manager' in entry:
-        manage = pydap.ldapSearch(entry['manager'][0].split(',')[0])
+        manage = pydap.ldapSearch(entry.manager.values[0].split(',')[0])
         
         if manage:
-            manager = manage[0][0][1]
+            manager = manage[0]
         else:
             manager = {}
     else:
@@ -131,12 +131,12 @@ def execute(event):
     
     for ldapName, attrName in empAttrMap:
         if ldapName in entry and attrName not in attrs:
-            attrs[attrName] = entry[ldapName][0]
+            attrs[attrName] = entry.get(ldapName).values[0]
 
     
-    if 'adminCount' in entry and entry['adminCount'] == '1':
+    if 'adminCount' in entry and entry.adminCount.values[0] == '1':
         event.setAttribute('privileged_account', 'adminCount', exceptional=True)
-        event.setAttribute('privileged_adminCount', entry['adminCount'], exceptional=True)
+        event.setAttribute('privileged_adminCount', entry.adminCount.values[0], exceptional=True)
     
     createFullName(attrs)
     createPostalAddress(attrs)
@@ -152,7 +152,7 @@ def execute(event):
     
     for ldapName, attrName in manAttrMap:
         if ldapName in manager:
-            manAttrs[attrName] = manager[ldapName][0]
+            manAttrs[attrName] = manager.get(ldapName).values[0]
     
     
     createFullName(manAttrs)
@@ -160,9 +160,9 @@ def execute(event):
     
     
     if 'manager' in manAttrs:
-        attrs['manager'] = manAttrs['manager']
+        attrs['manager'] = manAttrs.manager.values[0]
     if 'manager_email' in manAttrs:
-        attrs['manager_email'] = manAttrs['manager_email']
+        attrs['manager_email'] = manAttrs.manager_email.values[0]
     
     for attr, value in attrs.items():
         if attr[0] != '_':
