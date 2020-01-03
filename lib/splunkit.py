@@ -158,10 +158,10 @@ class SplunkIt():
                 i = 0
                 for line in events:
                     if exclusionRegex and not inclusionRegex:
-                        if re.search(exclusionRegex, line):
+                        if re.search(exclusionRegex, line.decode('utf-8')):
                             continue
                     elif inclusionRegex:
-                        if not re.search(inclusionRegex, line):
+                        if not re.search(inclusionRegex, line.decode('utf-8')):
                             continue
                     i += 1
                     if not line.endswith('\n'):
