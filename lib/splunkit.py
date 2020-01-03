@@ -164,10 +164,11 @@ class SplunkIt():
                         if not re.search(inclusionRegex, line):
                             continue
                     i += 1
-                    if line.endswith('\n'):
-                        sock.send(line)
-                    else:
-                        sock.send(line + '\n')
+                    if not line.endswith('\n'):
+                        line += '\n'
+                        
+                    sock.send(line.encode())
+                    
                 log.debug('msg="pushed data to splunk" type="%s" event_count="%s"' % (sourcetype, i))
         except ValueError as error:
             log.error('''msg="There was an error trying to push data to the Splunk Host" splunkHosst="%s"''' % (self.host))
