@@ -73,7 +73,7 @@ def execute(event):
         if origin:
             as_number, bgp_prefix, cc, registry, allocated = [x.strip().strip('"') for x in origin[0].split(' | ')]
 
-            asn = [x for x in runBash('dig +short AS%s.asn.cymru.com TXT' % as_number).read().splitlines() if re.match('"[0-9]', x)]
+            asn = [x.decode() for x in runBash('dig +short AS%s.asn.cymru.com TXT' % as_number).read().splitlines() if re.match('"[0-9]', x.decode())]
 
             if asn:
                 as_number, cc, registry, as_allocated, as_name = [x.strip().strip('"') for x in asn[0].split(' | ')]
