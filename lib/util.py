@@ -136,17 +136,17 @@ def fileInScriptPath(filename, realScriptPath=os.path.realpath(__file__).split('
 
 def runBash(cmd, lstdout=False, lstderr=True):
     p = Popen(cmd, shell=True, stdout=PIPE)
-    out = p.stdout
-    err = p.stderr
+    out = p.stdout.read().decode('utf-8')
+    err = p.stderr.read().decode('utf-8')
     
     if lstdout and out:
-        log.info(out.read().decode('utf-8').strip())
+        log.info(out.strip())
     if lstderr and err:
-        log.error(err.read().decode('utf-8').strip())
+        log.error(err.strip())
         
     p.wait()
         
-    return out.decode('utf-8')
+    return out
 
 def stdWriteFlush(msg):
     sys.stdout.write(msg)
