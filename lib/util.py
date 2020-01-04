@@ -140,13 +140,13 @@ def runBash(cmd, lstdout=False, lstderr=True):
     err = p.stderr
     
     if lstdout and out:
-        log.info(out.read().decode().strip())
+        log.info(out.read().decode('utf-8').strip())
     if lstderr and err:
-        log.error(err.read().decode().strip())
+        log.error(err.read().decode('utf-8').strip())
         
     p.wait()
         
-    return out.decode()
+    return out.decode('utf-8')
 
 def stdWriteFlush(msg):
     sys.stdout.write(msg)

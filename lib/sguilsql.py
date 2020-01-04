@@ -40,9 +40,9 @@ def getSguilSql(query, sguilserver=None, serverUser=None, serverPass=None, serve
         print(err)
         
     if tableSplit:
-        return [x.split('\t') for x in stdout.read().decode().splitlines()]
+        return [x.split('\t') for x in stdout.read().decode('utf-8').splitlines()]
     else:
-        return stdout.read().decode()
+        return stdout.read().decode('utf-8')
 
     
     

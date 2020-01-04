@@ -54,7 +54,7 @@ class Google():
             else:
                 print('Users:')
                 for user in users:
-                    print('{0} ({1})'.format(user['primaryEmail'].decode().strip(),user['name']['fullName'].decode().strip()))
+                    print('{0} ({1})'.format(user['primaryEmail'].decode('utf-8').strip(),user['name']['fullName'].decode('utf-8').strip()))
 
         except ValueError as error:
 	    return error

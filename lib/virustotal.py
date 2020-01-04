@@ -79,7 +79,7 @@ class VirusTotal(object):
                 req = urllib2.Request(reqURL, data)
             else:
                 req = "%s?%s" % (reqURL, data)
-            response = urllib2.urlopen(req).read().decode()
+            response = urllib2.urlopen(req).read().decode('utf-8')
             json = response
         except(urllib2.URLError):
             print(colors.FAIL + "Proxy Auth: Refresh your browser!" + colors.ENDC)
@@ -112,7 +112,7 @@ class VirusTotal(object):
     #             files = {'file': {'filename': realFileName, 'content': open(localFilePath, 'rb').read()}}
     #             data, headers = formdata.encode_multipart(fields, files)
     #             req = urllib2.Request('https://www.virustotal.com/vtapi/v2/file/scan', data=data, headers=headers)
-    #             response = urllib2.urlopen(req).read().decode()
+    #             response = urllib2.urlopen(req).read().decode('utf-8')
         
     #             if response:
     #                 report = simplejson.loads(response)

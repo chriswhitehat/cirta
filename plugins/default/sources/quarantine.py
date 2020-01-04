@@ -148,7 +148,7 @@ with this input.
 
 (Ctrl+D on empty line to end input)\n''')
         
-        event.quarantine_hosts = sys.stdin.read().decode().strip()
+        event.quarantine_hosts = sys.stdin.read().decode('utf-8').strip()
         
         groupModifications = '''config vdom
 edit vd-inet

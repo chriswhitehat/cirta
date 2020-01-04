@@ -164,6 +164,9 @@ class SplunkIt():
                         if not re.search(inclusionRegex, line):
                             continue
                     i += 1
+                    if isinstance(line, bytes):
+                        line = line.decode('utf-8')
+                    
                     if not line.endswith('\n'):
                         line += '\n'
                         
