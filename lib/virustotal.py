@@ -74,7 +74,7 @@ class VirusTotal(object):
         
     def makeRequest(self, reqURL, parameters, count=0):
         try:
-            data = urllib.urlencode(parameters)
+            data = urllib.parse.urlencode(parameters)
             if self.request:
                 req = urllib2.Request(reqURL, data)
             else:
