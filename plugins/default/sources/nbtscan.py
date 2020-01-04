@@ -33,7 +33,7 @@ def execute(event):
     
     nbt = runBash(cmd)
     
-    results = nbt.splitlines()[-1].decode('utf-8')
+    results = nbt.splitlines()[-1]
     
     print('\n' + results)
     
