@@ -55,12 +55,12 @@ def execute(event):
 
         urllib2.install_opener(opener)
 
-        #try:
-        result = urllib2.urlopen(epoURL)
-        #except(urllib2.HTTPError):
-        #    log.warn('Warning: HTTPError returned from ePO server, skipping...')
-        #    log.debug('msg="HTTPError returned from ePO server, skipping" server="%s"' % server)
-        #    continue
+        try:
+            result = urllib2.urlopen(epoURL)
+        except(urllib2.HTTPError):
+           log.warn('Warning: HTTPError returned from ePO server, skipping...')
+           log.debug('msg="HTTPError returned from ePO server, skipping" server="%s"' % server)
+           continue
 
         #print('curl -k -u %s:%s https://%s/remote/system.find?searchText=%s' % (event.epoUser, event.epoPassword, server, event.ip_address))
         #result = runBash('curl -k -u %s:%s https://%s/remote/system.find?searchText=%s' % (event.epoUser, event.epoPassword, server, event.ip_address))
