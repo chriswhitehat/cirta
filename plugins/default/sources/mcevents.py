@@ -69,7 +69,7 @@ def execute(event):
     with open("%s.%s" % (event._baseFilePath, 'mc'), 'w') as orf:
         
         for row in raw:
-            orf.write(row.decode('utf-8'))
+            orf.write(row)
 
     #event._splunk.push(sourcetype=confVars.splunkSourcetype, eventList=results)
 
