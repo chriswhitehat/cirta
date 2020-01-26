@@ -49,14 +49,14 @@ def execute(event):
 
         authhandler = urllib2.HTTPBasicAuthHandler(passman)
 
-        opener = urllib2.build_opener(authhandler)
-
         context = ssl._create_unverified_context()
+
+        opener = urllib2.build_opener(authhandler, urllib2.HTTPSHandler(context=context))
 
         urllib2.install_opener(opener)
 
         #try:
-        result = urllib2.urlopen(epoURL, context=context)
+        result = urllib2.urlopen(epoURL)
         #except(urllib2.HTTPError):
         #    log.warn('Warning: HTTPError returned from ePO server, skipping...')
         #    log.debug('msg="HTTPError returned from ePO server, skipping" server="%s"' % server)
