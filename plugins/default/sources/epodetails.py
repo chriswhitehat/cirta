@@ -13,7 +13,7 @@ COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER I
 ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 '''
 
-import re
+import re, ssl
 import urllib.request as urllib2
 from lib.util import printStatusMsg
 from getpass import getpass
@@ -51,10 +51,12 @@ def execute(event):
 
         opener = urllib2.build_opener(authhandler)
 
+        context = ssl._create_unverified_context()
+
         urllib2.install_opener(opener)
 
         try:
-            result = urllib2.urlopen(epoURL)
+            result = urllib2.urlopen(epoURL, context=context)
         except(urllib2.HTTPError):
             log.warn('Warning: HTTPError returned from ePO server, skipping...')
             log.debug('msg="HTTPError returned from ePO server, skipping" server="%s"' % server)
