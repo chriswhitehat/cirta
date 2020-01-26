@@ -174,7 +174,7 @@ class VirusTotal(object):
             self.stdWriteFlush("\r%-70s [ %sScanning%s ]\n" % (self.getPrintResource(report), colors.WARNING, colors.ENDC))
 
     def finished(self, report):
-        if 'scan_date' in report:
+        if 'scan_date' in report and report['scan_date']:
             scanDate = datetime.datetime.strptime(report['scan_date'], "%Y-%m-%d %H:%M:%S")
             if scanDate < self.oldestScanDate:
                 self.addResource(report, self.unscanned)
@@ -183,7 +183,7 @@ class VirusTotal(object):
                     self.stdWriteFlush("\r%-70s [ %sFinished%s ]\n" % (self.getPrintResource(report), colors.OKBLUE, colors.ENDC))
                 self.reports.append(report)
                 self.removeScan(report)
-        elif 'resolutions' in report:
+        elif 'resolutions' in report and report['resolutions']:
             if self.status:
                 self.stdWriteFlush("\r%-70s [ %sFinished%s ]\n" % (self.getPrintResource(report), colors.OKBLUE, colors.ENDC))
             self.reports.append(report)
