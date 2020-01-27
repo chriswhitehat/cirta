@@ -49,7 +49,7 @@ def execute(event):
 
     timedelta = (datetime.date(event._DT) - datetime.date(cirtaDT)).days
 
-    earliest = timedelta - event._daysBefore
+    earliest = timedelta - 1 - event._daysBefore
 
     latest = timedelta + 1 + event._daysAfter
 
