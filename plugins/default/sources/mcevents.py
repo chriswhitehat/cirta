@@ -93,7 +93,7 @@ def execute(event):
         print("\n_time\t\t\tmcafee_id\ttype\taction\tuser\tsrc_ip\t\tdest_ip\t\tsignature\t\tfile_name")
         print("-" * 115)
         for result in results:
-            print(result['_time'].split('.')[0] + "\t" + '\t'.join(result.values()[1:]))
+            print(result['_time'].split('.')[0] + "\t" + '\t'.join(list(result.values())[1:]))
 
 
     event._splunk.push(sourcetype=confVars.splunkSourcetype, eventList=raw)
