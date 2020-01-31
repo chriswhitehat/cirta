@@ -61,7 +61,7 @@ def execute(event):
     if not entr:
         return 
     
-    entry = entr[0][0][1]
+    entry = entr[0].entry_get_attributes_dict()
     
     attrs = OrderedDict()
     
