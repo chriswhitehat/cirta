@@ -1,5 +1,8 @@
 import re
 import requests
+import urllib3
+
+urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
 def mac_check(mac_address):
 
