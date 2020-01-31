@@ -41,7 +41,7 @@ def execute(event):
             
             log.debug('msg="MySQL query statement for alert id" alertID="%s" query="%s"' % (event.sguilID, query))
             
-            queryResults = getSguilSql('SELECT timestamp, INET_NTOA(src_ip), INET_NTOA(dst_ip), signature FROM event WHERE sid in (%s) AND cid in (%s);' % (event._sID, event._cID), sguilserver=SGUIL_SERVER, tableSplit=True)
+            queryResults = getSguilSql(query, sguilserver=SGUIL_SERVER, serverUser='cirta', serverKey='/nsm/scripts/python/cirta/resources/nsm/.cirtaid', tableSplit=True)
 
             return queryResults[-1]
             
