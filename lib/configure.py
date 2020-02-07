@@ -12,7 +12,7 @@ WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEM
 COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, 
 ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 '''
-import configparser, os, logging, getpass, sys
+import configparser, os, logging, getpass, sys, codecs
 from copy import deepcopy
 from collections import OrderedDict
 
@@ -64,7 +64,7 @@ def mergeConfigs(confPaths):
     
     def normalize(val):
         # Decode not needed in python3
-        # val = val.decode('string_escape')
+        val = codecs.decode(val, "unicode-escape")
         # Replace None, True, False, etc values to Python appropriate objects
         # Compensate for end user inconsistency with .lower
         if val.lower() in replacements:
