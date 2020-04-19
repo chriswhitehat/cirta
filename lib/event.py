@@ -167,7 +167,7 @@ class Event(object):
     def addChildEvent(self):
         eventSuffix = ".%d" % len(self._childEvents)
 
-        self._childEvents.append(Event(cirta_id + eventSuffix, self._configs, self._options, self._playbook, self._cirtaHome))
+        self._childEvents.append(Event(self.cirta_id + eventSuffix, self._configs, self._options, self._playbook, self._cirtaHome))
          
         self._childEvents[-1]._baseFilePath = self._baseFilePath + eventSuffix
         self._childEvents[-1]._fifoAttrs = deepcopy(self._fifoAttrs)
