@@ -600,35 +600,43 @@ def main():
     launchInitializers(playbook, event)
     
     collectSourcesInput(playbook, event)
-    
-    launchSources(playbook, event, preAction=True)
-    
-    if playbook.POST_SOURCES and playbook.ACTIONS and launchActionsNow(playbook, event):        
-        playbook.actionsLaunched = True
-        launchActions(playbook, event)
 
-    launchSources(playbook, event, preAction=False)
-        
-    if playbook.POST_SOURCES and playbook.ACTIONS and not playbook.actionsLaunched:
-        keepaliveWait()
-        playbook.actionsLaunched = True
-        launchActions(playbook, event)
-        
-    if not playbook.actionsLaunched:
-        keepaliveWait()
-        launchActions(playbook, event)
-        
-    if hasattr(event, "_backgroundedDS"):
-        launchBackgroundedSources(playbook, event)
-        
-    if hasattr(event, "_backgroundedActions"):
-        launchBackgroundedActions(playbook, event)
-        
-    checkStackTraces(event)
+    if event._childEvents:
+        events = event._childEvents
+    else:
+        events = [event]
+
+    for event in events:
     
+        launchSources(playbook, event, preAction=True)
+        
+        if playbook.POST_SOURCES and playbook.ACTIONS and launchActionsNow(playbook, event):        
+            playbook.actionsLaunched = True
+            launchActions(playbook, event)
+
+        launchSources(playbook, event, preAction=False)
+            
+        if playbook.POST_SOURCES and playbook.ACTIONS and not playbook.actionsLaunched:
+            keepaliveWait()
+            playbook.actionsLaunched = True
+            launchActions(playbook, event)
+            
+        if not playbook.actionsLaunched:
+            keepaliveWait()
+            launchActions(playbook, event)
+            
+        if hasattr(event, "_backgroundedDS"):
+            launchBackgroundedSources(playbook, event)
+            
+        if hasattr(event, "_backgroundedActions"):
+            launchBackgroundedActions(playbook, event)
+            
+        checkStackTraces(event)
+        
     event.cirta_status = 'finished'
     log.state(event.getAttrs())
     log.info('msg="cirta execution finished"')
+    
     
 if __name__ == '__main__':
     try:

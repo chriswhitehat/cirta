@@ -19,6 +19,7 @@ from collections import OrderedDict
 from socket import gethostname
 from lib.util import printStatusMsg, getUserIn, getUserInWithDef, YES, epochToDatetime, datetimeToEpoch
 from lib.splunkit import SplunkIt
+from copy import deepcopy
 
 log = logging.getLogger(__name__)
 
@@ -155,11 +156,23 @@ class Event(object):
         self._outDir = configs['cirta']['settings']['IR_PATH'] + self._DT.date().isoformat()
         self._outDirGroup = configs['cirta']['settings']['IR_PATH_GROUP']
         self._resourcesPath = os.path.join(self._cirtaHome, 'resources')
+        self._childEvents = []
     
     
     def __setattr__(self, name, value):
         
         self.setAttribute(name, value)
+
+
+    def addChildEvent(self):
+        self._childEvents.append(deepcopy(self))
+
+        eventSuffix = ".%d" % len(self._childEvents)
+        
+        self._childEvents[-1].cirta_id = cirta_id + eventSuffix
+        self._childEvents[-1]._baseFilePath = self._baseFilePath + eventSuffix
+        self._childEvents[-1].childEvents = []
+
         
         
     def setAttribute(self, name, value=None, **kwargs):
