@@ -165,13 +165,13 @@ class Event(object):
 
 
     def addChildEvent(self):
-        self._childEvents.append(deepcopy(self))
-
         eventSuffix = ".%d" % len(self._childEvents)
-        
-        self._childEvents[-1].cirta_id = cirta_id + eventSuffix
+
+        self._childEvents.append(Event(cirta_id + eventSuffix, self._configs, self._options, self._playbook, self._cirtaHome))
+         
         self._childEvents[-1]._baseFilePath = self._baseFilePath + eventSuffix
-        self._childEvents[-1].childEvents = []
+        self._childEvents[-1]._fifoAttrs = deepcopy(self._fifoAttrs)
+        
 
         
         
