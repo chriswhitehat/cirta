@@ -606,16 +606,16 @@ def main():
     else:
         events = [event]
 
-    for event in events:
-    
+    for event in events:    
         launchSources(playbook, event, preAction=True)
         
-        if playbook.POST_SOURCES and playbook.ACTIONS and launchActionsNow(playbook, event):        
+        if playbook.POST_SOURCES and playbook.ACTIONS and len(events) == 1 and launchActionsNow(playbook, event):        
             playbook.actionsLaunched = True
             launchActions(playbook, event)
 
         launchSources(playbook, event, preAction=False)
-            
+
+    for event in events:            
         if playbook.POST_SOURCES and playbook.ACTIONS and not playbook.actionsLaunched:
             keepaliveWait()
             playbook.actionsLaunched = True
@@ -624,7 +624,8 @@ def main():
         if not playbook.actionsLaunched:
             keepaliveWait()
             launchActions(playbook, event)
-            
+
+    for event in events:    
         if hasattr(event, "_backgroundedDS"):
             launchBackgroundedSources(playbook, event)
             
@@ -633,10 +634,10 @@ def main():
             
         checkStackTraces(event)
         
-    event.cirta_status = 'finished'
-    log.state(event.getAttrs())
-    log.info('msg="cirta execution finished"')
-    
+        event.cirta_status = 'finished'
+        log.state(event.getAttrs())
+        log.info('msg="cirta execution finished"')
+
     
 if __name__ == '__main__':
     try:
